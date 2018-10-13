@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>TimeOffTracker.Interfaces</AssemblyName>
+    <RootNamespace>TimeOffTracker.Interfaces</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TOT.Entities\TOT.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
