@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace TimeOffTracker.Interfaces
+namespace TOT.Interfaces
 {
     public interface IRepository<T> where T : class
     {

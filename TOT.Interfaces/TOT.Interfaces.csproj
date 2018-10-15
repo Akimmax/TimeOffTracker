@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>TimeOffTracker.Interfaces</AssemblyName>
-    <RootNamespace>TimeOffTracker.Interfaces</RootNamespace>
+    <AssemblyName>TOT.Interfaces</AssemblyName>
+    <RootNamespace>TOT.Interfaces</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

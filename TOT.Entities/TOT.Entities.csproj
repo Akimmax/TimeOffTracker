@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>TimeOffTracker.Entities</AssemblyName>
-    <RootNamespace>TimeOffTracker.Entities</RootNamespace>
+    <AssemblyName>TOT.Entities</AssemblyName>
+    <RootNamespace>TOT.Entities</RootNamespace>
   </PropertyGroup>
 
 </Project>

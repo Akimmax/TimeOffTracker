@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TimeOffTracker.Entities.Request_Entities
+namespace TOT.Entities.Request_Entities
 {
     public class TimeOffRequest
     {

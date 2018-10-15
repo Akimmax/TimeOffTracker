@@ -1,7 +1,7 @@
 ﻿using System;
-using TimeOffTracker.Entities.Request_Entities;
+using TOT.Entities.Request_Entities;
 
-namespace TimeOffTracker.Interfaces
+namespace TOT.Interfaces
 {
     public interface IUnitOfWork
     {
