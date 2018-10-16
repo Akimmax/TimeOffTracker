@@ -8,10 +8,6 @@ namespace TOT.Data
         public TOTDBContext(DbContextOptions options) : base(options)
         {
         }
-        public DbSet<TimeOffRequest> TimeOffRequests { get;}
-        public DbSet<TimeOffType> TimeOffTypes { get;}
-        public DbSet<Check> Checks { get;}
-        public DbSet<RequestStatus> RequestStatuses { get;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
