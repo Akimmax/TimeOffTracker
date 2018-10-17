@@ -7,9 +7,9 @@ namespace TOT.Data
 {
     public class TOTUnitOfWork : IUnitOfWork
     {
-        private readonly DBContext dbContext;
+        private readonly TOTDBContext dbContext;
 
-        public TOTUnitOfWork(DBContext context)
+        public TOTUnitOfWork(TOTDBContext context)
         {
             dbContext = context;
         }

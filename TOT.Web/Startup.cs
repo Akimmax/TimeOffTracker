@@ -28,7 +28,7 @@ namespace TOT.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<DBContext>(options =>
+            services.AddDbContext<TOTDBContext>(options =>
             options.UseMySql(connectionString));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
