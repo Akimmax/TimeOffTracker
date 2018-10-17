@@ -6,4 +6,8 @@
     <RootNamespace>TOT.Entities</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Policy_Entities\" />
+  </ItemGroup>
+
 </Project>
