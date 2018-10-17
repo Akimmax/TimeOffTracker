@@ -12,16 +12,7 @@ namespace TOT.Data
         public TOTUnitOfWork(DBContext context)
         {
             dbContext = context;
-            TimeOffRequests = new BasicRepository<TimeOffRequest>(context);
-            TimeOffTypes = new BasicRepository<TimeOffType>(context);
-            Checks = new BasicRepository<Check>(context);
-            RequstStatuses = new BasicRepository<RequestStatus>(context);
         }
-
-        public IRepository<TimeOffRequest> TimeOffRequests { get; }
-        public IRepository<TimeOffType> TimeOffTypes { get; }
-        public IRepository<Check> Checks { get; }
-        public IRepository<RequestStatus> RequstStatuses { get; }
 
         public Task SaveAsync()
         {
