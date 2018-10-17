@@ -12,7 +12,7 @@ namespace TOT.Data.Repositories
     {
         private readonly DbSet<T> set;
 
-        public BasicRepository(DBContext context)
+        public BasicRepository(TOTDBContext context)
         {
             set = context.Set<T>();
         }

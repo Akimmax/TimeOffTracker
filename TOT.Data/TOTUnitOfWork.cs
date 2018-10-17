@@ -1,15 +1,14 @@
 ﻿using System.Threading.Tasks;
 using TOT.Data.Repositories;
-using TOT.Entities.Request_Entities;
 using TOT.Interfaces;
 
 namespace TOT.Data
 {
     public class TOTUnitOfWork : IUnitOfWork
     {
-        private readonly DBContext dbContext;
+        private readonly TOTDBContext dbContext;
 
-        public TOTUnitOfWork(DBContext context)
+        public TOTUnitOfWork(TOTDBContext context)
         {
             dbContext = context;
         }
