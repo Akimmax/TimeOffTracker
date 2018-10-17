@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TOT.Entities.Request_Entities;
+using TOT.Entities.Policy_Entities;
 
 namespace TOT.Data
 {
@@ -14,8 +15,14 @@ namespace TOT.Data
         public DbSet<Check> Checks { get; }
         public DbSet<RequestStatus> RequestStatuses { get; }
 
+        public DbSet<Policy> Policies { get; }
+        public DbSet<TimeMeasures> TimeMeasures { get; }
+        public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
+        public DbSet<AccrualSchedule> AccrualSchedules { get; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //--------------------------Request_Entities----------------------
             modelBuilder.Entity<TimeOffRequest>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<TimeOffRequest>()
@@ -51,6 +58,47 @@ namespace TOT.Data
                 new RequestStatus { Title = "In progres", Id = (int)Statuses.InProgres },
                 new RequestStatus { Title = "Denied", Id = (int)Statuses.Denied },
                 new RequestStatus { Title = "Accepted", Id = (int)Statuses.Accepted });
+
+            //--------------------------Policy_Entities----------------------
+
+            modelBuilder.Entity<Policy>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<Policy>()
+                .Property(x=>x.Title)
+                .IsRequired();
+
+            modelBuilder.Entity<TimeMeasures>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<TimeMeasures>()
+                .Property(x => x.Title)
+                .IsRequired();
+            modelBuilder.Entity<TimeMeasures>()
+                .HasData(
+                new TimeMeasures { Title = "Hours", Id = 1 },
+                new TimeMeasures { Title = "Days", Id = 2 },
+                new TimeMeasures { Title = "Month", Id = 3 },
+                new TimeMeasures { Title = "Years", Id = 4 });
+
+            modelBuilder.Entity<TimeOffPolicy>()
+               .HasKey(x => x.Id);
+            modelBuilder.Entity<TimeOffPolicy>()
+               .HasOne(x=>x.TimeOffType)
+               .WithMany()
+               .IsRequired();
+            modelBuilder.Entity<TimeOffPolicy>()
+               .HasOne(x => x.Policy)
+               .WithMany()
+               .IsRequired();
+            modelBuilder.Entity<TimeOffPolicy>()
+               .HasMany(x=>x.AccrualSchedules)
+               .WithOne();
+
+            modelBuilder.Entity<AccrualSchedule>()
+               .HasKey(x => x.Id);
+            modelBuilder.Entity<AccrualSchedule>()
+               .HasOne(x => x.TimeMeasure)
+               .WithMany()
+               .IsRequired();
 
             base.OnModelCreating(modelBuilder);
         }
