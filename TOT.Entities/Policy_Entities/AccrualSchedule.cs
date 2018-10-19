@@ -8,6 +8,5 @@
         public double AmmountAccruedTime { get; set; }//time in hours given as timeoffs 
         public string AmmountAccruedTimeDates { get; set; }// Json including dates of resets like {{-1,0},{-1,14}}, mean 1st day of every month
                                                             //and 15th day of every month
-        public double MaxAccrual { get; set; }
     }
 }

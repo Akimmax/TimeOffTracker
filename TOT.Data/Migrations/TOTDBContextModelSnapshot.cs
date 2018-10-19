@@ -26,8 +26,6 @@ namespace TOT.Data.Migrations
 
                     b.Property<string>("AmmountAccruedTimeDates");
 
-                    b.Property<double>("MaxAccrual");
-
                     b.Property<double>("TimeAmount");
 
                     b.Property<int?>("TimeMeasureId")
@@ -44,7 +42,7 @@ namespace TOT.Data.Migrations
                     b.ToTable("AccrualSchedules");
                 });
 
-            modelBuilder.Entity("TOT.Entities.Policy_Entities.Policy", b =>
+            modelBuilder.Entity("TOT.Entities.Policy_Entities.Positions", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -53,7 +51,7 @@ namespace TOT.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Policies");
+                    b.ToTable("Positions");
                 });
 
             modelBuilder.Entity("TOT.Entities.Policy_Entities.TimeMeasures", b =>
@@ -81,7 +79,7 @@ namespace TOT.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("PolicyId")
+                    b.Property<int?>("PositionId")
                         .IsRequired();
 
                     b.Property<int?>("TimeOffTypeId")
@@ -89,11 +87,33 @@ namespace TOT.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PolicyId");
+                    b.HasIndex("PositionId");
 
                     b.HasIndex("TimeOffTypeId");
 
                     b.ToTable("TimeOffPolicies");
+                });
+
+            modelBuilder.Entity("TOT.Entities.Policy_Entities.TimeOffPolicyCheckers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Amount");
+
+                    b.Property<int?>("PositionId")
+                        .IsRequired();
+
+                    b.Property<int?>("TimeOffPolicyId")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PositionId");
+
+                    b.HasIndex("TimeOffPolicyId");
+
+                    b.ToTable("TimeOffPolicyCheckers");
                 });
 
             modelBuilder.Entity("TOT.Entities.Request_Entities.Check", b =>
@@ -192,14 +212,27 @@ namespace TOT.Data.Migrations
 
             modelBuilder.Entity("TOT.Entities.Policy_Entities.TimeOffPolicy", b =>
                 {
-                    b.HasOne("TOT.Entities.Policy_Entities.Policy", "Policy")
+                    b.HasOne("TOT.Entities.Policy_Entities.Positions", "Position")
                         .WithMany()
-                        .HasForeignKey("PolicyId")
+                        .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TOT.Entities.Request_Entities.TimeOffType", "TimeOffType")
                         .WithMany()
                         .HasForeignKey("TimeOffTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TOT.Entities.Policy_Entities.TimeOffPolicyCheckers", b =>
+                {
+                    b.HasOne("TOT.Entities.Policy_Entities.Positions", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TOT.Entities.Policy_Entities.TimeOffPolicy")
+                        .WithMany("TimeOffPolicyCheckers")
+                        .HasForeignKey("TimeOffPolicyId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

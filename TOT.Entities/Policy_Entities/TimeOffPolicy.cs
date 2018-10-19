@@ -8,10 +8,12 @@ namespace TOT.Entities.Policy_Entities
         public TimeOffPolicy()
         {
             AccrualSchedules = new List<AccrualSchedule>();
+            TimeOffPolicyCheckers = new List<TimeOffPolicyCheckers>();
         }
         public int Id { get; set; }
         public TimeOffType TimeOffType { get; set; }
-        public Policy Policy { get; set; }
+        public Positions Position { get; set; }
+        public ICollection<TimeOffPolicyCheckers> TimeOffPolicyCheckers { get; set; }
         public ICollection<AccrualSchedule> AccrualSchedules { get; set; }
     }
 }

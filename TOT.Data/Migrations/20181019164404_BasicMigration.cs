@@ -9,7 +9,7 @@ namespace TOT.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Policies",
+                name: "Positions",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -18,7 +18,7 @@ namespace TOT.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Policies", x => x.Id);
+                    table.PrimaryKey("PK_Positions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,15 +67,15 @@ namespace TOT.Data.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     TimeOffTypeId = table.Column<int>(nullable: false),
-                    PolicyId = table.Column<int>(nullable: false)
+                    PositionId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TimeOffPolicies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TimeOffPolicies_Policies_PolicyId",
-                        column: x => x.PolicyId,
-                        principalTable: "Policies",
+                        name: "FK_TimeOffPolicies_Positions_PositionId",
+                        column: x => x.PositionId,
+                        principalTable: "Positions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -119,7 +119,6 @@ namespace TOT.Data.Migrations
                     TimeMeasureId = table.Column<int>(nullable: false),
                     AmmountAccruedTime = table.Column<double>(nullable: false),
                     AmmountAccruedTimeDates = table.Column<string>(nullable: true),
-                    MaxAccrual = table.Column<double>(nullable: false),
                     TimeOffPolicyId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -137,6 +136,33 @@ namespace TOT.Data.Migrations
                         principalTable: "TimeOffPolicies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TimeOffPolicyCheckers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PositionId = table.Column<int>(nullable: false),
+                    Amount = table.Column<int>(nullable: false),
+                    TimeOffPolicyId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimeOffPolicyCheckers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TimeOffPolicyCheckers_Positions_PositionId",
+                        column: x => x.PositionId,
+                        principalTable: "Positions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TimeOffPolicyCheckers_TimeOffPolicies_TimeOffPolicyId",
+                        column: x => x.TimeOffPolicyId,
+                        principalTable: "TimeOffPolicies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,14 +237,24 @@ namespace TOT.Data.Migrations
                 column: "TimeOffRequestId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TimeOffPolicies_PolicyId",
+                name: "IX_TimeOffPolicies_PositionId",
                 table: "TimeOffPolicies",
-                column: "PolicyId");
+                column: "PositionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TimeOffPolicies_TimeOffTypeId",
                 table: "TimeOffPolicies",
                 column: "TimeOffTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeOffPolicyCheckers_PositionId",
+                table: "TimeOffPolicyCheckers",
+                column: "PositionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeOffPolicyCheckers_TimeOffPolicyId",
+                table: "TimeOffPolicyCheckers",
+                column: "TimeOffPolicyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TimeOffRequests_TimeOffTypeId",
@@ -235,10 +271,10 @@ namespace TOT.Data.Migrations
                 name: "Checks");
 
             migrationBuilder.DropTable(
-                name: "TimeMeasures");
+                name: "TimeOffPolicyCheckers");
 
             migrationBuilder.DropTable(
-                name: "TimeOffPolicies");
+                name: "TimeMeasures");
 
             migrationBuilder.DropTable(
                 name: "RequestStatuses");
@@ -247,7 +283,10 @@ namespace TOT.Data.Migrations
                 name: "TimeOffRequests");
 
             migrationBuilder.DropTable(
-                name: "Policies");
+                name: "TimeOffPolicies");
+
+            migrationBuilder.DropTable(
+                name: "Positions");
 
             migrationBuilder.DropTable(
                 name: "TimeOffTypes");

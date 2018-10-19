@@ -15,10 +15,11 @@ namespace TOT.Data
         public DbSet<Check> Checks { get; }
         public DbSet<RequestStatus> RequestStatuses { get; }
 
-        public DbSet<Policy> Policies { get; }
+        public DbSet<Positions> Positions { get; }
         public DbSet<TimeMeasures> TimeMeasures { get; }
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
         public DbSet<AccrualSchedule> AccrualSchedules { get; }
+        public DbSet<TimeOffPolicyCheckers> TimeOffPolicyCheckers { get; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,9 +62,9 @@ namespace TOT.Data
 
             //--------------------------Policy_Entities----------------------
 
-            modelBuilder.Entity<Policy>()
+            modelBuilder.Entity<Positions>()
                 .HasKey(x => x.Id);
-            modelBuilder.Entity<Policy>()
+            modelBuilder.Entity<Positions>()
                 .Property(x=>x.Title)
                 .IsRequired();
 
@@ -86,17 +87,28 @@ namespace TOT.Data
                .WithMany()
                .IsRequired();
             modelBuilder.Entity<TimeOffPolicy>()
-               .HasOne(x => x.Policy)
+               .HasOne(x => x.Position)
                .WithMany()
                .IsRequired();
             modelBuilder.Entity<TimeOffPolicy>()
                .HasMany(x=>x.AccrualSchedules)
                .WithOne();
+            modelBuilder.Entity<TimeOffPolicy>()
+               .HasMany(x => x.TimeOffPolicyCheckers)
+               .WithOne()
+               .IsRequired();
 
             modelBuilder.Entity<AccrualSchedule>()
                .HasKey(x => x.Id);
             modelBuilder.Entity<AccrualSchedule>()
                .HasOne(x => x.TimeMeasure)
+               .WithMany()
+               .IsRequired();
+
+            modelBuilder.Entity<TimeOffPolicyCheckers>()
+               .HasKey(x => x.Id);
+            modelBuilder.Entity<TimeOffPolicyCheckers>()
+               .HasOne(x => x.Position)
                .WithMany()
                .IsRequired();
 
