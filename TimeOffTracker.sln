@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TOT.Data", "TOT.Data\TOT.Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TOT.Web", "TOT.Web\TOT.Web.csproj", "{38230534-1D02-4D41-8C8C-007F61119156}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TOT.Business", "TOT.Business\TOT.Business.csproj", "{844B75BC-45B6-48C6-8F8F-2935AF07608D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TOT.Business", "TOT.Business\TOT.Business.csproj", "{844B75BC-45B6-48C6-8F8F-2935AF07608D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TOT.Dto", "TOT.Dto\TOT.Dto.csproj", "{ECB04FE8-831D-444A-BC6A-87DDAFF73755}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TOT.Dto", "TOT.Dto\TOT.Dto.csproj", "{ECB04FE8-831D-444A-BC6A-87DDAFF73755}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TOT.Bootstrap", "TOT.Bootstrap\TOT.Bootstrap.csproj", "{D348C8F3-59A7-44CF-8932-8D377CDE13F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{ECB04FE8-831D-444A-BC6A-87DDAFF73755}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECB04FE8-831D-444A-BC6A-87DDAFF73755}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECB04FE8-831D-444A-BC6A-87DDAFF73755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D348C8F3-59A7-44CF-8932-8D377CDE13F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D348C8F3-59A7-44CF-8932-8D377CDE13F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D348C8F3-59A7-44CF-8932-8D377CDE13F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D348C8F3-59A7-44CF-8932-8D377CDE13F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
