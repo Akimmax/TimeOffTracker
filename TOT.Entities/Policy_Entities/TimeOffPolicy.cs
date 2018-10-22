@@ -3,7 +3,13 @@ using TOT.Entities.Request_Entities;
 
 namespace TOT.Entities.Policy_Entities
 {
-    public class TimeOffPolicy
+    public class EmployeePositionTimeOffPolicy
+    {
+          public int Id { get; set; }
+          public EmployeePosition EmployeePosition { get; set; }
+          public TimeOffPolicy Policy { get; set; }
+          public ICollection<TimeOffPolicyApproval> Approvals { get; set; }  
+    }
     {
         public TimeOffPolicy()
         {
