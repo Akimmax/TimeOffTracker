@@ -1,6 +1,12 @@
 ﻿namespace TOT.Entities.Policy_Entities
 {
-    public class AccrualSchedule
+    public class TimeOffPolicy
+    {
+         public int Id { get; set; }
+         public string Name { get; set; }
+         public TimeOffType Type { get; set; }
+         public int TimeOffDaysPerYear { get; set;}
+    }
     {
         public int Id { get; set; }
         public double TimeAmount { get; set; }//time counting back from hired date
