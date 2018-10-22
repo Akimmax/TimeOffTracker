@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using TOT.Entities.TimeOffRequests;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TOT.Entities.TimeOffPolicies
 {
@@ -7,13 +7,13 @@ namespace TOT.Entities.TimeOffPolicies
     {
         public EmployeePositionTimeOffPolicy()
         {
-            AccrualSchedules = new List<AccrualSchedule>();
-            Approvals = new List<TimeOffPolicyCheckers>();
+            Approvals = new List<TimeOffPolicyApproval>();
         }
         public int Id { get; set; }
         public EmployeePosition EmployeePosition { get; set; }
         public TimeOffPolicy Policy { get; set; }
         public ICollection<TimeOffPolicyApproval> Approvals { get; set; }
-        public ICollection<AccrualSchedule> AccrualSchedules { get; set; }
+        public bool IsDelited { get; set; }
+        public DateTime DateOfChanging { get; set; }
     }
 }

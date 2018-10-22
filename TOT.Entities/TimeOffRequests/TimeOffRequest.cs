@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TOT.Entities.TimeOffPolicies;
 
 namespace TOT.Entities.TimeOffRequests
 {
@@ -7,7 +8,7 @@ namespace TOT.Entities.TimeOffRequests
     {
         public TimeOffRequest()
         {
-            Checks = new List<Check>();
+            Approvals = new List<TimeOffRequestApproval>();
         }
         public int Id { get; set; }
         public string User { get; set; } //employee who request time off
@@ -15,6 +16,7 @@ namespace TOT.Entities.TimeOffRequests
         public DateTime StartsAt { get; set; }// date of starting timeoff
         public DateTime EndsOn { get; set; }// date of timeoff ending
         public string Note { get; set; }// extra information
-        public ICollection<Check> Checks { get; set; }
+        public ICollection<TimeOffRequestApproval> Approvals { get; set; }
+        public EmployeePositionTimeOffPolicy Policy { get; set; }
     }
 }
