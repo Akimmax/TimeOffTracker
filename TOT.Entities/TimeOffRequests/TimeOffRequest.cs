@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TOT.Entities.Request_Entities
+namespace TOT.Entities.TimeOffRequests
 {
     public class TimeOffRequest
     {
@@ -11,9 +11,9 @@ namespace TOT.Entities.Request_Entities
         }
         public int Id { get; set; }
         public string User { get; set; } //employee who request time off
-        public TimeOffType TimeOffType { get; set; }//string type should be changed on TimeOfType
-        public DateTime StartTimeOffDate { get; set; }// date of starting timeoff
-        public DateTime EndTimeOffDate { get; set; }// date of timeoff ending
+        public TimeOffType Type { get; set; }//Type of timeoff
+        public DateTime StartsAt { get; set; }// date of starting timeoff
+        public DateTime EndsOn { get; set; }// date of timeoff ending
         public string Note { get; set; }// extra information
         public ICollection<Check> Checks { get; set; }
     }

@@ -1,6 +1,6 @@
-﻿namespace TOT.Entities.Request_Entities
+﻿namespace TOT.Entities.TimeOffRequests
 {
-    public enum Statuses : int
+    public enum TimeOffRequestApprovalStatuses : int
     {
         Requsted = 1,
         InProgres = 2,

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using TOT.Entities.Request_Entities;
-using TOT.Entities.Policy_Entities;
+using TOT.Entities.TimeOffRequests;
+using TOT.Entities.TimeOffPolicies;
 
 namespace TOT.Data
 {

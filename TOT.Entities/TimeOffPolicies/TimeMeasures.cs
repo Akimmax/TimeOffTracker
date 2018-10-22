@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TOT.Entities.Policy_Entities
+namespace TOT.Entities.TimeOffPolicies
 {
     public class TimeMeasures
     {
