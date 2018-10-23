@@ -6,7 +6,7 @@ namespace TOT.Data
 {
     public class TOTDBContext : IdentityDbContext<User>
     {
-        public TOTDBContext(DbContextOptions options) : base(options)
+        public TOTDBContext(DbContextOptions<TOTDBContext> options) : base(options)
         {
         }
 
