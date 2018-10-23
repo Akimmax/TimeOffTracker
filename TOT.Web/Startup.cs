@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using TOT.Data;
+using TOT.Entities.IdentityEntities;
+using Microsoft.AspNetCore.Identity;
 
 namespace TOT.Web
 {
@@ -27,9 +29,14 @@ namespace TOT.Web
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<TOTDBContext>(options =>
             options.UseMySql(connectionString));
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<TOTDBContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -48,6 +55,7 @@ namespace TOT.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
