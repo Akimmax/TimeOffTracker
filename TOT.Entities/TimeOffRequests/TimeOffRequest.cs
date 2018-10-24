@@ -16,7 +16,7 @@ namespace TOT.Entities.TimeOffRequests
         public DateTime StartsAt { get; set; }// date of starting timeoff
         public DateTime EndsOn { get; set; }// date of timeoff ending
         public string Note { get; set; }// extra information
-        public ICollection<TimeOffRequestApproval> Approvals { get; set; }
         public EmployeePositionTimeOffPolicy Policy { get; set; }
+        public ICollection<TimeOffRequestApproval> Approvals { get; set; }
     }
 }

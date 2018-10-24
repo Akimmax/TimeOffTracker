@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using TOT.Data.Repositories;
-using TOT.Entities.TimeOffRequests;
 using TOT.Interfaces;
 
 namespace TOT.Data

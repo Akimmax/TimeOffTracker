@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TOT.Entities;
 using TOT.Entities.TimeOffRequests;
 using TOT.Entities.TimeOffPolicies;
 
@@ -11,15 +12,13 @@ namespace TOT.Data
         }
 
         public DbSet<TimeOffRequest> TimeOffRequests { get; }
-        public DbSet<TimeOffType> TimeOffTypes { get; }
-        public DbSet<Check> Checks { get; }
-        public DbSet<RequestStatus> RequestStatuses { get; }
+        public DbSet<TimeOffRequestApproval> TimeOffRequestApprovals { get; }
 
-        public DbSet<Positions> Positions { get; }
-        public DbSet<TimeMeasures> TimeMeasures { get; }
+        public DbSet<EmployeePosition> Positions { get; }
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
-        public DbSet<AccrualSchedule> AccrualSchedules { get; }
-        public DbSet<TimeOffPolicyCheckers> TimeOffPolicyCheckers { get; }
+        public DbSet<TimeOffPolicyApproval> TimeOffPolicyApprovals { get; }
+        public DbSet<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicies { get; }
+ 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,14 +26,12 @@ namespace TOT.Data
             modelBuilder.Entity<TimeOffRequest>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<TimeOffRequest>()
-                .HasOne(x => x.TimeOffType)
+                .HasOne(x => x.Policy)
                 .WithMany()
                 .IsRequired();
-
-            modelBuilder.Entity<TimeOffType>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeOffType>()
-                .Property(x => x.Title)
+            modelBuilder.Entity<TimeOffRequest>()
+                .HasOne(x => x.Type)
+                .WithMany()
                 .IsRequired();
 
             modelBuilder.Entity<Check>()
