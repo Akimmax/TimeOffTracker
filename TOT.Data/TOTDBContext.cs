@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql;
 using TOT.Entities;
 using TOT.Entities.TimeOffRequests;
 using TOT.Entities.TimeOffPolicies;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TOT.Data
 {
@@ -11,8 +13,10 @@ namespace TOT.Data
         {
         }
 
+        public DbSet<TimeOffPolicy> TimeOffTypes { get; }
         public DbSet<TimeOffRequest> TimeOffRequests { get; }
         public DbSet<TimeOffRequestApproval> TimeOffRequestApprovals { get; }
+        public DbSet<TimeOffRequestApprovalStatuses> TimeOffRequestApprovalStatuses { get; }
 
         public DbSet<EmployeePosition> Positions { get; }
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
@@ -29,6 +33,18 @@ namespace TOT.Data
                 .Property(x => x.Title)
                 .IsRequired();
 
+            modelBuilder.Entity<TimeOffType>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<TimeOffType>()
+                .Property(x=>x.Id)
+                .ValueGeneratedNever();
+            modelBuilder.Entity<TimeOffType>()
+                .Property(x => x.Title)
+                .IsRequired();
+            modelBuilder.Entity<TimeOffType>()
+                .HasData(
+                new TimeOffType() { Title = "PayedTimeOff", Id = (int)TimeOffTypeEnum.PayedTimeOff });
+
             //--------------------------TimeOffRequests----------------------
             modelBuilder.Entity<TimeOffRequest>()
                 .HasKey(x => x.Id);
@@ -37,22 +53,37 @@ namespace TOT.Data
                 .WithMany()
                 .IsRequired();
             modelBuilder.Entity<TimeOffRequest>()
-                .Property(x => x.Type)
-                .HasConversion<string>()
+                .HasOne(x => x.Type)
+                .WithMany()
                 .IsRequired();
             modelBuilder.Entity<TimeOffRequest>()
                 .HasMany(x => x.Approvals)
-                .WithOne()
+                .WithOne(x=>x.TimeOffRequest)
+                .HasForeignKey(x=>x.TimeOffRequestId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             modelBuilder.Entity<TimeOffRequestApproval>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<TimeOffRequestApproval>()
-                .Property(x=>x.Status)
-                .HasDefaultValue(TimeOffRequestApprovalStatuses.Requested)
-                .HasConversion<string>()
+                .HasOne(x => x.Status)
+                .WithMany()
                 .IsRequired();
+
+            modelBuilder.Entity<TimeOffRequestApprovalStatuses>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<TimeOffRequestApprovalStatuses>()
+                .Property(x => x.Id)
+                .ValueGeneratedNever();
+            modelBuilder.Entity<TimeOffRequestApprovalStatuses>()
+                .Property(x => x.Title)
+                .IsRequired();
+            modelBuilder.Entity<TimeOffRequestApprovalStatuses>()
+                .HasData(
+                new TimeOffRequestApprovalStatuses() { Title = "Requested", Id = (int)TimeOffRequestApprovalStatusesEnum.Requested },
+                new TimeOffRequestApprovalStatuses() { Title = "In progres", Id = (int)TimeOffRequestApprovalStatusesEnum.InProgres },
+                new TimeOffRequestApprovalStatuses() { Title = "Denied", Id = (int)TimeOffRequestApprovalStatusesEnum.Denied },
+                new TimeOffRequestApprovalStatuses() { Title = "Accepted", Id = (int)TimeOffRequestApprovalStatusesEnum.Accepted });
 
             //--------------------------TimeOffEntities----------------------
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
@@ -69,8 +100,9 @@ namespace TOT.Data
                .HasMany(x=>x.Approvals)
                .WithOne();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
-               .Property(x=>x.Type)
-               .HasConversion<string>();
+               .HasOne(x=>x.Type)
+               .WithMany()
+               .IsRequired();
 
             modelBuilder.Entity<TimeOffPolicy>()
                .HasKey(x => x.Id);
