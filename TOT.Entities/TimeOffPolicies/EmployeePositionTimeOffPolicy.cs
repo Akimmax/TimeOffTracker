@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TOT.Entities.TimeOffRequests;
 
 namespace TOT.Entities.TimeOffPolicies
 {
@@ -10,8 +11,9 @@ namespace TOT.Entities.TimeOffPolicies
             Approvals = new List<TimeOffPolicyApproval>();
         }
         public int Id { get; set; }
+        public TimeOffType Type { get; set; }
         public TimeOffPolicy Policy { get; set; }
-        public EmployeePosition EmployeePosition { get; set; }
+        public EmployeePosition Position { get; set; }
         public ICollection<TimeOffPolicyApproval> Approvals { get; set; }
     }
 }

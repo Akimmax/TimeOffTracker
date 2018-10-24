@@ -1,4 +1,5 @@
-﻿using TOT.Entities.TimeOffRequests;
+﻿using System;
+using TOT.Entities.TimeOffRequests;
 
 namespace TOT.Entities.TimeOffPolicies
 {
@@ -6,7 +7,7 @@ namespace TOT.Entities.TimeOffPolicies
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public TimeOffType Type { get; set; }
+        public DateTime ResetDate { get; set; }// date of reset timeoff
         public int TimeOffDaysPerYear { get; set; }
     }
 }

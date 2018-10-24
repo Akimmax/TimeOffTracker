@@ -22,7 +22,14 @@ namespace TOT.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //--------------------------Request_Entities----------------------
+            //--------------------------Shared--------------------------------
+            modelBuilder.Entity<EmployeePosition>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<EmployeePosition>()
+                .Property(x => x.Title)
+                .IsRequired();
+
+            //--------------------------TimeOffRequests----------------------
             modelBuilder.Entity<TimeOffRequest>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<TimeOffRequest>()
@@ -30,81 +37,47 @@ namespace TOT.Data
                 .WithMany()
                 .IsRequired();
             modelBuilder.Entity<TimeOffRequest>()
-                .HasOne(x => x.Type)
-                .WithMany()
+                .Property(x => x.Type)
+                .HasConversion<string>()
+                .IsRequired();
+            modelBuilder.Entity<TimeOffRequest>()
+                .HasMany(x => x.Approvals)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
-            modelBuilder.Entity<Check>()
+            modelBuilder.Entity<TimeOffRequestApproval>()
                 .HasKey(x => x.Id);
-            modelBuilder.Entity<Check>()
-                .HasOne(x => x.Status)
-                .WithMany()
-                .IsRequired();
-            modelBuilder.Entity<Check>()
-                .HasOne(x => x.TimeOffRequest)
-                .WithMany(x => x.Checks)
+            modelBuilder.Entity<TimeOffRequestApproval>()
+                .Property(x=>x.Status)
+                .HasDefaultValue(TimeOffRequestApprovalStatuses.Requested)
+                .HasConversion<string>()
                 .IsRequired();
 
-            modelBuilder.Entity<RequestStatus>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<RequestStatus>()
-                .Property(x => x.Title)
-                .IsRequired();
-            modelBuilder.Entity<RequestStatus>()
-                .HasData(
-                new RequestStatus { Title = "Requsted", Id = (int)Statuses.Requsted },
-                new RequestStatus { Title = "In progres", Id = (int)Statuses.InProgres },
-                new RequestStatus { Title = "Denied", Id = (int)Statuses.Denied },
-                new RequestStatus { Title = "Accepted", Id = (int)Statuses.Accepted });
-
-            //--------------------------Policy_Entities----------------------
-
-            modelBuilder.Entity<Positions>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<Positions>()
-                .Property(x=>x.Title)
-                .IsRequired();
-
-            modelBuilder.Entity<TimeMeasures>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeMeasures>()
-                .Property(x => x.Title)
-                .IsRequired();
-            modelBuilder.Entity<TimeMeasures>()
-                .HasData(
-                new TimeMeasures { Title = "Hours", Id = 1 },
-                new TimeMeasures { Title = "Days", Id = 2 },
-                new TimeMeasures { Title = "Month", Id = 3 },
-                new TimeMeasures { Title = "Years", Id = 4 });
-
-            modelBuilder.Entity<TimeOffPolicy>()
+            //--------------------------TimeOffEntities----------------------
+            modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeOffPolicy>()
-               .HasOne(x=>x.TimeOffType)
+            modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
+               .HasOne(x => x.Policy)
                .WithMany()
                .IsRequired();
-            modelBuilder.Entity<TimeOffPolicy>()
+            modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x => x.Position)
                .WithMany()
                .IsRequired();
-            modelBuilder.Entity<TimeOffPolicy>()
-               .HasMany(x=>x.AccrualSchedules)
+            modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
+               .HasMany(x=>x.Approvals)
                .WithOne();
+            modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
+               .Property(x=>x.Type)
+               .HasConversion<string>();
+
             modelBuilder.Entity<TimeOffPolicy>()
-               .HasMany(x => x.TimeOffPolicyCheckers)
-               .WithOne()
-               .IsRequired();
-
-            modelBuilder.Entity<AccrualSchedule>()
                .HasKey(x => x.Id);
-            modelBuilder.Entity<AccrualSchedule>()
-               .HasOne(x => x.TimeMeasure)
-               .WithMany()
-               .IsRequired();
 
-            modelBuilder.Entity<TimeOffPolicyCheckers>()
+            modelBuilder.Entity<TimeOffPolicyApproval>()
                .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeOffPolicyCheckers>()
+            modelBuilder.Entity<TimeOffPolicyApproval>()
                .HasOne(x => x.Position)
                .WithMany()
                .IsRequired();

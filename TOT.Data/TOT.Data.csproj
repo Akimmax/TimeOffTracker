@@ -8,6 +8,7 @@
     <Compile Remove="Migrations\20181015080909_BaseMigration.cs" />
     <Compile Remove="Migrations\20181015085148_BaseMigratin.cs" />
     <Compile Remove="Migrations\20181017205753_BasicMigration.cs" />
+    <Compile Remove="Migrations\20181019164404_BasicMigration.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\TOT.Entities\TOT.Entities.csproj" />
     <ProjectReference Include="..\TOT.Interfaces\TOT.Interfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
