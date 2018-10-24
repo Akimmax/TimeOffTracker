@@ -35,8 +35,15 @@ namespace TOT.Web
             services.AddDbContext<TOTDBContext>(options =>
             options.UseMySql(connectionString));
 
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<TOTDBContext>();
+            services.AddIdentity<User, IdentityRole>(opts =>
+            {
+                opts.Password.RequiredLength = 5;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = false;
+                opts.Password.RequireDigit = false;
+            })
+            .AddEntityFrameworkStores<TOTDBContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -50,13 +57,19 @@ namespace TOT.Web
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
