@@ -1,6 +1,6 @@
-﻿namespace TOT.Entities.Policy_Entities
+﻿namespace TOT.Entities
 {
-    public class Positions
+    public class EmployeePosition
     {
         public int Id { get; set; }
         public int Title { get; set; }

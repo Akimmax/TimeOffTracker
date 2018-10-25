@@ -8,6 +8,11 @@
     <Compile Remove="Migrations\20181015080909_BaseMigration.cs" />
     <Compile Remove="Migrations\20181015085148_BaseMigratin.cs" />
     <Compile Remove="Migrations\20181017205753_BasicMigration.cs" />
+    <Compile Remove="Migrations\20181019164404_BasicMigration.cs" />
+    <Compile Remove="Migrations\20181024165609_BasicMigration.cs" />
+    <Compile Remove="Migrations\20181024170911_BasicMigration.cs" />
+    <Compile Remove="Migrations\20181024171254_BasicMigration.cs" />
+    <Compile Remove="Migrations\20181024173808_BasicMigration.cs" />
   </ItemGroup>
 
   <ItemGroup>
