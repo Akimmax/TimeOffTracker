@@ -6,8 +6,8 @@ namespace TOT.Interfaces
 {
     public interface IUnitOfWork
     {
-        IRepository<Check> Checks { get; }
-        IRepository<RequestStatus> RequestStatuses { get; }
+        IRepository<TimeOffRequestApproval> RequestApprovals { get; }
+        IRepository<TimeOffRequestApprovalStatuses> RequestApprovalStatuses { get; }
         IRepository<TimeOffRequest> TimeOffRequests { get; }
         IRepository<TimeOffType> TimeOffTypes { get; }
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TOT.Interfaces;
 using System.Linq.Expressions;
 using System.Linq;
-using TOT.Entities.Request_Entities;
+using TOT.Entities.TimeOffRequests;
 
 namespace TOT.Data.Repositories
 {
@@ -39,8 +39,8 @@ namespace TOT.Data.Repositories
         public TimeOffRequest Find(Expression<Func<TimeOffRequest, bool>> predicate)
         {
             return set
-                .Include(t => t.TimeOffType)
-                .Include(t => t.Checks)
+                .Include(t => t.Type)
+                .Include(t => t.Approvals)
                 .ThenInclude(t => t.Status)
                 .FirstOrDefault(predicate);
         }
@@ -48,8 +48,8 @@ namespace TOT.Data.Repositories
         public TimeOffRequest Get(int id)
         {
             return set
-                .Include(t => t.TimeOffType)
-                .Include(t => t.Checks)
+                .Include(t => t.Type)
+                .Include(t => t.Approvals)
                 .ThenInclude(t => t.Status)
                 .FirstOrDefault(t => t.Id == id);
         }
@@ -57,8 +57,8 @@ namespace TOT.Data.Repositories
         public IEnumerable<TimeOffRequest> GetAll()
         {
             return set
-                .Include(t => t.TimeOffType)
-                .Include(t => t.Checks)
+                .Include(t => t.Type)
+                .Include(t => t.Approvals)
                 .ThenInclude(t => t.Status);
         }
 
