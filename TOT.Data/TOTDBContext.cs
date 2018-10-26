@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TOT.Entities.IdentityEntities;
 using Pomelo.EntityFrameworkCore.MySql;
 using TOT.Entities;
 using TOT.Entities.TimeOffRequests;
@@ -7,9 +9,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TOT.Data
 {
-    public class TOTDBContext : DbContext
+    public class TOTDBContext : IdentityDbContext<User>
     {
-        public TOTDBContext(DbContextOptions options) : base(options)
+        public TOTDBContext(DbContextOptions<TOTDBContext> options) : base(options)
         {
         }
 
