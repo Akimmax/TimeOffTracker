@@ -20,7 +20,7 @@ namespace TOT.Data
         public DbSet<TimeOffRequestApproval> TimeOffRequestApprovals { get; }
         public DbSet<TimeOffRequestApprovalStatuses> TimeOffRequestApprovalStatuses { get; }
 
-        public DbSet<EmployeePosition> Positions { get; }
+        public DbSet<EmployeePosition> EmployeePositions { get; }
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
         public DbSet<TimeOffPolicyApproval> TimeOffPolicyApprovals { get; }
         public DbSet<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicies { get; }

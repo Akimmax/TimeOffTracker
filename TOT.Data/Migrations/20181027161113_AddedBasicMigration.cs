@@ -9,16 +9,16 @@ namespace TOT.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Positions",
+                name: "EmployeePositions",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<int>(nullable: false)
+                    Title = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Positions", x => x.Id);
+                    table.PrimaryKey("PK_EmployeePositions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,9 +80,9 @@ namespace TOT.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeePositionTimeOffPolicies_Positions_PositionId",
+                        name: "FK_EmployeePositionTimeOffPolicies_EmployeePositions_PositionId",
                         column: x => x.PositionId,
-                        principalTable: "Positions",
+                        principalTable: "EmployeePositions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -114,9 +114,9 @@ namespace TOT.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TimeOffPolicyApprovals_Positions_PositionId",
+                        name: "FK_TimeOffPolicyApprovals_EmployeePositions_PositionId",
                         column: x => x.PositionId,
-                        principalTable: "Positions",
+                        principalTable: "EmployeePositions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -263,7 +263,7 @@ namespace TOT.Data.Migrations
                 name: "TimeOffPolicy");
 
             migrationBuilder.DropTable(
-                name: "Positions");
+                name: "EmployeePositions");
 
             migrationBuilder.DropTable(
                 name: "TimeOffType");

@@ -9,7 +9,7 @@ using TOT.Data;
 namespace TOT.Data.Migrations
 {
     [DbContext(typeof(TOTDBContext))]
-    [Migration("20181026131201_AddedBasicMigration")]
+    [Migration("20181027161113_AddedBasicMigration")]
     partial class AddedBasicMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -131,11 +131,12 @@ namespace TOT.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("Title");
+                    b.Property<string>("Title")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
-                    b.ToTable("Positions");
+                    b.ToTable("EmployeePositions");
                 });
 
             modelBuilder.Entity("TOT.Entities.IdentityEntities.User", b =>

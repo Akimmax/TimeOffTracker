@@ -129,11 +129,12 @@ namespace TOT.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("Title");
+                    b.Property<string>("Title")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
-                    b.ToTable("Positions");
+                    b.ToTable("EmployeePositions");
                 });
 
             modelBuilder.Entity("TOT.Entities.IdentityEntities.User", b =>
