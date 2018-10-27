@@ -20,10 +20,11 @@ namespace TOT.Data
         public DbSet<TimeOffRequestApproval> TimeOffRequestApprovals { get; }
         public DbSet<TimeOffRequestApprovalStatuses> TimeOffRequestApprovalStatuses { get; }
 
-        public DbSet<EmployeePosition> Positions { get; }
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
+        public DbSet<EmployeePosition> EmployeePositions { get; }
         public DbSet<TimeOffPolicyApproval> TimeOffPolicyApprovals { get; }
         public DbSet<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicies { get; }
+        public DbSet<EmployeePositionTimeOffPolicyNotes> EmployeePositionTimeOffPolicyNotes { get; }
  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,6 +35,9 @@ namespace TOT.Data
             modelBuilder.Entity<EmployeePosition>()
                 .Property(x => x.Title)
                 .IsRequired();
+            modelBuilder.Entity<EmployeePosition>()
+                .HasData(
+                new EmployeePosition() { Id=1,Title="Admin"});
 
             modelBuilder.Entity<TimeOffType>()
                 .HasKey(x => x.Id);
@@ -45,7 +49,10 @@ namespace TOT.Data
                 .IsRequired();
             modelBuilder.Entity<TimeOffType>()
                 .HasData(
-                new TimeOffType() { Title = "PayedTimeOff", Id = (int)TimeOffTypeEnum.PayedTimeOff });
+                new TimeOffType() { Title = "Paid Holiday", Id = (int)TimeOffTypeEnum.PaidHoliday },
+                new TimeOffType() { Title = "Unpaid leave", Id = (int)TimeOffTypeEnum.UnpaidLeave },
+                new TimeOffType() { Title = "Study Holiday", Id = (int)TimeOffTypeEnum.StudyHoliday },
+                new TimeOffType() { Title = "Sick leave", Id = (int)TimeOffTypeEnum.SickLeave});
 
             //--------------------------TimeOffRequests----------------------
             modelBuilder.Entity<TimeOffRequest>()
@@ -88,6 +95,32 @@ namespace TOT.Data
                 new TimeOffRequestApprovalStatuses() { Title = "Accepted", Id = (int)TimeOffRequestApprovalStatusesEnum.Accepted });
 
             //--------------------------TimeOffEntities----------------------
+            modelBuilder.Entity<EmployeePositionTimeOffPolicyNotes>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<EmployeePositionTimeOffPolicyNotes>()
+                .Property(x => x.Name)
+                .IsRequired();
+            modelBuilder.Entity<EmployeePositionTimeOffPolicyNotes>()
+                .Property(x => x.Note)
+                .IsRequired();
+
+            modelBuilder.Entity<TimeOffPolicy>()
+               .HasKey(x => x.Id);
+            modelBuilder.Entity<TimeOffPolicy>()
+                .HasData(
+                new TimeOffPolicy() { Id=1,Name="≈жегодный оплачиваемый отпуск",ResetDate = new System.DateTime(0,1,1),TimeOffDaysPerYear=20}
+                );
+
+            modelBuilder.Entity<TimeOffPolicyApproval>()
+               .HasKey(x => x.Id);
+            modelBuilder.Entity<TimeOffPolicyApproval>()
+               .HasOne(x => x.Position)
+               .WithMany()
+               .IsRequired();
+            modelBuilder.Entity<TimeOffPolicyApproval>()
+                .HasData(
+                new TimeOffPolicyApproval() { Id=1,Amount=1,Position= new EmployeePosition() { Id = 1, Title = "Admin" }, UserId=null});
+
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasKey(x => x.Id);
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
@@ -96,8 +129,7 @@ namespace TOT.Data
                .IsRequired();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x => x.Position)
-               .WithMany()
-               .IsRequired();
+               .WithMany();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasMany(x=>x.Approvals)
                .WithOne();
@@ -105,16 +137,13 @@ namespace TOT.Data
                .HasOne(x=>x.Type)
                .WithMany()
                .IsRequired();
-
-            modelBuilder.Entity<TimeOffPolicy>()
-               .HasKey(x => x.Id);
-
-            modelBuilder.Entity<TimeOffPolicyApproval>()
-               .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeOffPolicyApproval>()
-               .HasOne(x => x.Position)
+            modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
+               .HasOne(x => x.Note)
                .WithMany()
                .IsRequired();
+            modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
+                .HasData(
+                new EmployeePositionTimeOffPolicy() { Id=1,});
 
             base.OnModelCreating(modelBuilder);
         }
