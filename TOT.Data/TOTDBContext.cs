@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TOT.Entities.IdentityEntities;
-using Pomelo.EntityFrameworkCore.MySql;
 using TOT.Entities;
 using TOT.Entities.TimeOffRequests;
 using TOT.Entities.TimeOffPolicies;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace TOT.Data
 {
@@ -35,9 +34,6 @@ namespace TOT.Data
             modelBuilder.Entity<EmployeePosition>()
                 .Property(x => x.Title)
                 .IsRequired();
-            modelBuilder.Entity<EmployeePosition>()
-                .HasData(
-                new EmployeePosition() { Id=1,Title="Admin"});
 
             modelBuilder.Entity<TimeOffType>()
                 .HasKey(x => x.Id);
@@ -106,44 +102,189 @@ namespace TOT.Data
 
             modelBuilder.Entity<TimeOffPolicy>()
                .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeOffPolicy>()
-                .HasData(
-                new TimeOffPolicy() { Id=1,Name="Ежегодный оплачиваемый отпуск",ResetDate = new System.DateTime(0,1,1),TimeOffDaysPerYear=20}
-                );
 
             modelBuilder.Entity<TimeOffPolicyApproval>()
                .HasKey(x => x.Id);
             modelBuilder.Entity<TimeOffPolicyApproval>()
-               .HasOne(x => x.Position)
+               .HasOne(x => x.EmployeePosition)
                .WithMany()
+               .HasForeignKey(x=>x.EmployeePositionId)
                .IsRequired();
-            modelBuilder.Entity<TimeOffPolicyApproval>()
-                .HasData(
-                new TimeOffPolicyApproval() { Id=1,Amount=1,Position= new EmployeePosition() { Id = 1, Title = "Admin" }, UserId=null});
 
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasKey(x => x.Id);
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x => x.Policy)
                .WithMany()
+               .HasForeignKey(x=>x.PolicyId)
                .IsRequired();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x => x.Position)
                .WithMany();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasMany(x=>x.Approvals)
-               .WithOne();
+               .WithOne()
+               .HasForeignKey(x=>x.EmployeePositionTimeOffPolicyId);
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x=>x.Type)
                .WithMany()
+               .HasForeignKey(x=>x.TypeId)
                .IsRequired();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x => x.Note)
                .WithMany()
+               .HasForeignKey(x=>x.NoteId)
                .IsRequired();
+            //--------------------Data Initializing----------------------
+            modelBuilder.Entity<EmployeePosition>()
+                .HasData(
+                new EmployeePosition()
+                {
+                    Id = 1,
+                    Title = "Admin"
+                });
+
+            modelBuilder.Entity<EmployeePositionTimeOffPolicyNotes>()
+                .HasData(
+                new EmployeePositionTimeOffPolicyNotes()
+                {
+                    Id = 1,
+                    Name = "Оплачиваемый отпуск",
+                    Note =
+                "Всего начисляется 20 рабочих дней отпуска в год."
+                },
+                new EmployeePositionTimeOffPolicyNotes()
+                {
+                Id = 2,
+                    Name = "Административный (неоплачиваемый) отпуск",
+                    Note =
+                "Сотрудникам компании разрешается взять не более 15 рабочих дней в год неоплачиваемого отпуска."
+                },
+                new EmployeePositionTimeOffPolicyNotes()
+                {
+                    Id = 3,
+                    Name = "Учебный отпуск",
+                    Note =
+                "Учебный отпуск можно взять только в период сессии, только тем сотрудникам," +
+                " кто учится на дневном отделении, и проработал уже 6 месяцев с момента прохождения испытательного срока.<br>" +
+                " Суммарное количество дней учебного отпуска не может превышать 10 рабочих дней в год.<br>" +
+                " На одну сессию нельзя взять больше 5 рабочих дней отпуска."
+                },
+                new EmployeePositionTimeOffPolicyNotes()
+                {
+                    Id = 4,
+                    Name = "Больничный",
+                    Note =
+                "При 1-2 днях отсутствия по болезни можно не брать официальный больничный лист. Таких дней может быть не более 7 в год.<br>"+
+                "Первые 10 суммарных рабочих дней в году," +
+                " проведенных на больничном(как по больничному листу, так и без него) компания оплачивает в полном 100 % размере.<br>" +
+                "Следующие 10 суммарных рабочих дней в году," +
+                " проведенных на больничном(как по больничному листу, так и без него) компания оплачивает в 50 % размере.<br>" +
+                "Следующие 10 суммарных рабочих дней в году," +
+                " проведенных на больничном(как по больничному листу, так и без него) компания оплачивает в 25 % размере.<br>" +
+                "Все последующие дни более 30 рабочих дней компания не оплачивает."
+                }
+                );
+
+            modelBuilder.Entity<TimeOffPolicy>()
+                .HasData(
+                new TimeOffPolicy()
+                {
+                    Id = 1,
+                    Name = "Оплачиваемый отпуск",
+                    ResetDate = new System.DateTime(1, 1, 1),
+                    TimeOffDaysPerYear = 20
+                },
+                new TimeOffPolicy()
+                {
+                    Id = 2,
+                    Name = "Административный (неоплачиваемый) отпуск",
+                    ResetDate = new System.DateTime(1, 1, 1),
+                    TimeOffDaysPerYear = 15
+                },
+                new TimeOffPolicy()
+                {
+                    Id = 3,
+                    Name = "Учебный отпуск",
+                    ResetDate = new System.DateTime(1, 1, 1),
+                    TimeOffDaysPerYear = 10
+                },
+                new TimeOffPolicy()
+                {
+                    Id = 4,
+                    Name = "Больничный",
+                    ResetDate = new System.DateTime(1, 1, 1),
+                    TimeOffDaysPerYear = 30
+                }
+                );
+
+            modelBuilder.Entity<TimeOffPolicyApproval>()
+                .HasData(
+                new TimeOffPolicyApproval()
+                {
+                    Id = 1,
+                    Amount = 1,
+                    EmployeePositionId =1,
+                    UserId = null,
+                    EmployeePositionTimeOffPolicyId =1
+                },
+                new TimeOffPolicyApproval()
+                {
+                    Id = 2,
+                    Amount = 1,
+                    EmployeePositionId = 1,
+                    UserId = null,
+                    EmployeePositionTimeOffPolicyId = 2
+                },
+                new TimeOffPolicyApproval()
+                {
+                    Id = 3,
+                    Amount = 1,
+                    EmployeePositionId = 1,
+                    UserId = null,
+                    EmployeePositionTimeOffPolicyId = 3
+                },
+                new TimeOffPolicyApproval()
+                {
+                    Id = 4,
+                    Amount = 1,
+                    EmployeePositionId = 1,
+                    UserId = null,
+                    EmployeePositionTimeOffPolicyId = 4
+                }
+                );
+
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                 .HasData(
-                new EmployeePositionTimeOffPolicy() { Id=1,});
+                new EmployeePositionTimeOffPolicy()
+                {
+                    Id = 1,
+                    TypeId = (int)TimeOffTypeEnum.PaidHoliday,
+                    PolicyId = 1,
+                    NoteId = 1,
+                },
+                new EmployeePositionTimeOffPolicy()
+                {
+                    Id = 2,
+                    TypeId = (int)TimeOffTypeEnum.UnpaidLeave,
+                    PolicyId = 2,
+                    NoteId = 2,
+                },
+                new EmployeePositionTimeOffPolicy()
+                {
+                    Id = 3,
+                    TypeId = (int)TimeOffTypeEnum.StudyHoliday,
+                    PolicyId = 3,
+                    NoteId = 3,
+                },
+                new EmployeePositionTimeOffPolicy()
+                {
+                    Id = 4,
+                    TypeId = (int)TimeOffTypeEnum.SickLeave,
+                    PolicyId = 4,
+                    NoteId = 4,
+                }
+                );
 
             base.OnModelCreating(modelBuilder);
         }
