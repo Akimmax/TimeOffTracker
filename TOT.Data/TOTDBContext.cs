@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TOT.Entities.IdentityEntities;
 using Pomelo.EntityFrameworkCore.MySql;
 using TOT.Entities;
 using TOT.Entities.TimeOffRequests;
@@ -7,9 +9,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TOT.Data
 {
-    public class TOTDBContext : DbContext
+    public class TOTDBContext : IdentityDbContext<User>
     {
-        public TOTDBContext(DbContextOptions options) : base(options)
+        public TOTDBContext(DbContextOptions<TOTDBContext> options) : base(options)
         {
         }
 
@@ -18,7 +20,7 @@ namespace TOT.Data
         public DbSet<TimeOffRequestApproval> TimeOffRequestApprovals { get; }
         public DbSet<TimeOffRequestApprovalStatuses> TimeOffRequestApprovalStatuses { get; }
 
-        public DbSet<EmployeePosition> Positions { get; }
+        public DbSet<EmployeePosition> EmployeePositions { get; }
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
         public DbSet<TimeOffPolicyApproval> TimeOffPolicyApprovals { get; }
         public DbSet<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicies { get; }
