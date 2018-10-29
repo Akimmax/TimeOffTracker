@@ -134,6 +134,7 @@ namespace TOT.Data
                 {
                     Id = 1,
                     Name = "Paid vacation",
+                    DelayBeforeAvailable = 12,
                     TimeOffDaysPerYear = 20
                 },
                 new TimeOffPolicy()
@@ -146,14 +147,13 @@ namespace TOT.Data
                 {
                     Id = 3,
                     Name = "Study vacation",
-                    DelayBeforeUse = new System.TimeSpan(182,0,0,0),
+                    DelayBeforeAvailable = 6,
                     TimeOffDaysPerYear = 10
                 },
                 new TimeOffPolicy()
                 {
                     Id = 4,
                     Name = "Sick vacation",
-                    DelayBeforeUse =new System.TimeSpan(365,0,0,0),
                     TimeOffDaysPerYear = 30
                 }
                 );
