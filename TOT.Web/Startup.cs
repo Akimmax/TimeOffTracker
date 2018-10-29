@@ -1,3 +1,7 @@
+using System;
+using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +25,7 @@ namespace TOT.Web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -46,6 +50,12 @@ namespace TOT.Web
             .AddEntityFrameworkStores<TOTDBContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+            builder.RegisterAssemblyModules(Assembly.Load("TOT.Bootstrap"));
+            var container = builder.Build();
+            return new AutofacServiceProvider(container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

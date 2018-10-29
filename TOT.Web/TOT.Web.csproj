@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.12" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TOT.Bootstrap\TOT.Bootstrap.csproj" />
     <ProjectReference Include="..\TOT.Data\TOT.Data.csproj" />
     <ProjectReference Include="..\TOT.Entities\TOT.Entities.csproj" />
   </ItemGroup>
