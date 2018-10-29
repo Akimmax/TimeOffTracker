@@ -17,7 +17,5 @@ namespace TOT.Entities.TimeOffPolicies
         public int PolicyId { get; set; }
         public EmployeePosition Position { get; set; }
         public ICollection<TimeOffPolicyApproval> Approvals { get; set; }
-        public EmployeePositionTimeOffPolicyNotes Note { get; set; }
-        public int NoteId { get; set; }
     }
 }

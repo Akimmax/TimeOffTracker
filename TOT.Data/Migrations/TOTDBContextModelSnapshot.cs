@@ -135,10 +135,6 @@ namespace TOT.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmployeePositions");
-
-                    b.HasData(
-                        new { Id = 1, Title = "Admin" }
-                    );
                 });
 
             modelBuilder.Entity("TOT.Entities.IdentityEntities.User", b =>
@@ -196,17 +192,16 @@ namespace TOT.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("NoteId");
+                    b.Property<int?>("PolicyId")
+                        .IsRequired();
 
-                    b.Property<int>("PolicyId");
+                    b.Property<int?>("PositionId")
+                        .IsRequired();
 
-                    b.Property<int?>("PositionId");
-
-                    b.Property<int>("TypeId");
+                    b.Property<int?>("TypeId")
+                        .IsRequired();
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NoteId");
 
                     b.HasIndex("PolicyId");
 
@@ -215,36 +210,6 @@ namespace TOT.Data.Migrations
                     b.HasIndex("TypeId");
 
                     b.ToTable("EmployeePositionTimeOffPolicies");
-
-                    b.HasData(
-                        new { Id = 1, NoteId = 1, PolicyId = 1, TypeId = 1 },
-                        new { Id = 2, NoteId = 2, PolicyId = 2, TypeId = 2 },
-                        new { Id = 3, NoteId = 3, PolicyId = 3, TypeId = 3 },
-                        new { Id = 4, NoteId = 4, PolicyId = 4, TypeId = 4 }
-                    );
-                });
-
-            modelBuilder.Entity("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicyNotes", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.Property<string>("Note")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmployeePositionTimeOffPolicyNotes");
-
-                    b.HasData(
-                        new { Id = 1, Name = "Оплачиваемый отпуск", Note = "Всего начисляется 20 рабочих дней отпуска в год." },
-                        new { Id = 2, Name = "Административный (неоплачиваемый) отпуск", Note = "Сотрудникам компании разрешается взять не более 15 рабочих дней в год неоплачиваемого отпуска." },
-                        new { Id = 3, Name = "Учебный отпуск", Note = "Учебный отпуск можно взять только в период сессии, только тем сотрудникам, кто учится на дневном отделении, и проработал уже 6 месяцев с момента прохождения испытательного срока.<br> Суммарное количество дней учебного отпуска не может превышать 10 рабочих дней в год.<br> На одну сессию нельзя взять больше 5 рабочих дней отпуска." },
-                        new { Id = 4, Name = "Больничный", Note = "При 1-2 днях отсутствия по болезни можно не брать официальный больничный лист. Таких дней может быть не более 7 в год.<br>Первые 10 суммарных рабочих дней в году, проведенных на больничном(как по больничному листу, так и без него) компания оплачивает в полном 100 % размере.<br>Следующие 10 суммарных рабочих дней в году, проведенных на больничном(как по больничному листу, так и без него) компания оплачивает в 50 % размере.<br>Следующие 10 суммарных рабочих дней в году, проведенных на больничном(как по больничному листу, так и без него) компания оплачивает в 25 % размере.<br>Все последующие дни более 30 рабочих дней компания не оплачивает." }
-                    );
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicy", b =>
@@ -261,13 +226,6 @@ namespace TOT.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TimeOffPolicy");
-
-                    b.HasData(
-                        new { Id = 1, Name = "Оплачиваемый отпуск", ResetDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), TimeOffDaysPerYear = 20 },
-                        new { Id = 2, Name = "Административный (неоплачиваемый) отпуск", ResetDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), TimeOffDaysPerYear = 15 },
-                        new { Id = 3, Name = "Учебный отпуск", ResetDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), TimeOffDaysPerYear = 10 },
-                        new { Id = 4, Name = "Больничный", ResetDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), TimeOffDaysPerYear = 30 }
-                    );
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApproval", b =>
@@ -277,26 +235,20 @@ namespace TOT.Data.Migrations
 
                     b.Property<int>("Amount");
 
-                    b.Property<int>("EmployeePositionId");
+                    b.Property<int?>("EmployeePositionTimeOffPolicyId");
 
-                    b.Property<int>("EmployeePositionTimeOffPolicyId");
+                    b.Property<int?>("PositionId")
+                        .IsRequired();
 
                     b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeePositionId");
-
                     b.HasIndex("EmployeePositionTimeOffPolicyId");
 
-                    b.ToTable("TimeOffPolicyApprovals");
+                    b.HasIndex("PositionId");
 
-                    b.HasData(
-                        new { Id = 1, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 1 },
-                        new { Id = 2, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 2 },
-                        new { Id = 3, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 3 },
-                        new { Id = 4, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 4 }
-                    );
+                    b.ToTable("TimeOffPolicyApprovals");
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffRequests.TimeOffRequest", b =>
@@ -383,10 +335,7 @@ namespace TOT.Data.Migrations
                     b.ToTable("TimeOffType");
 
                     b.HasData(
-                        new { Id = 1, Title = "Paid Holiday" },
-                        new { Id = 2, Title = "Unpaid leave" },
-                        new { Id = 3, Title = "Study Holiday" },
-                        new { Id = 4, Title = "Sick leave" }
+                        new { Id = 1, Title = "PayedTimeOff" }
                     );
                 });
 
@@ -437,11 +386,6 @@ namespace TOT.Data.Migrations
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy", b =>
                 {
-                    b.HasOne("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicyNotes", "Note")
-                        .WithMany()
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("TOT.Entities.TimeOffPolicies.TimeOffPolicy", "Policy")
                         .WithMany()
                         .HasForeignKey("PolicyId")
@@ -449,7 +393,8 @@ namespace TOT.Data.Migrations
 
                     b.HasOne("TOT.Entities.EmployeePosition", "Position")
                         .WithMany()
-                        .HasForeignKey("PositionId");
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TOT.Entities.TimeOffRequests.TimeOffType", "Type")
                         .WithMany()
@@ -459,14 +404,13 @@ namespace TOT.Data.Migrations
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApproval", b =>
                 {
-                    b.HasOne("TOT.Entities.EmployeePosition", "EmployeePosition")
-                        .WithMany()
-                        .HasForeignKey("EmployeePositionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy")
                         .WithMany("Approvals")
-                        .HasForeignKey("EmployeePositionTimeOffPolicyId")
+                        .HasForeignKey("EmployeePositionTimeOffPolicyId");
+
+                    b.HasOne("TOT.Entities.EmployeePosition", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
