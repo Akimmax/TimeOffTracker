@@ -10,8 +10,12 @@ namespace TOT.Bootstrap
         {
             builder.RegisterType<TOTUnitOfWork>()
                 .As<IUnitOfWork>()
-                .InstancePerLifetimeScope();           
-            
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<Mapping.AutoMapper>()
+            .As<IMapper>()
+            .InstancePerLifetimeScope();
+
         }
     }
 }
