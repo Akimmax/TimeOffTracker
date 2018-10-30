@@ -7,5 +7,6 @@ namespace TOT.Entities.IdentityEntities
 {
     public class User : IdentityUser
     {
+        public DateTime HireDate { get; set; }
     }
 }
