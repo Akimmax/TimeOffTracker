@@ -6,6 +6,11 @@ namespace TOT.Interfaces
 {
     public interface IUnitOfWork
     {
+        IRepository<TimeOffRequestApproval> RequestApprovals { get; }
+        IRepository<TimeOffRequestApprovalStatuses> RequestApprovalStatuses { get; }
+        IRepository<TimeOffRequest> TimeOffRequests { get; }
+        IRepository<TimeOffType> TimeOffTypes { get; }
+
         Task SaveAsync();
     }
 }

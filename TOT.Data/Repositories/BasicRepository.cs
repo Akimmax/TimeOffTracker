@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace TOT.Data.Repositories
 {
-    class BasicRepository<T> : IRepository<T>
+    public class BasicRepository<T> : IRepository<T>
         where T : class
     {
         private readonly DbSet<T> set;
