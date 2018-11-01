@@ -33,7 +33,10 @@ namespace TOT.Data.Repositories
 
         public IEnumerable<TimeOffRequest> Filter(Expression<Func<TimeOffRequest, bool>> predicate)
         {
-            return set.Where(predicate);
+            return set.Where(predicate)
+               .Include(t => t.Type)
+               .Include(t => t.Approvals)
+               .ThenInclude(t => t.Status);
         }
 
         public TimeOffRequest Find(Expression<Func<TimeOffRequest, bool>> predicate)
