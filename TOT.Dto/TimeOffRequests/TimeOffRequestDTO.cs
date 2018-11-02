@@ -12,6 +12,7 @@ namespace TOT.Dto.TimeOffRequests
         }
         public int Id { get; set; }
         public string User { get; set; }
+        public int TypeId { get; set; }
         public TimeOffTypeDTO Type { get; set; }
         public DateTime StartsAt { get; set; }
         public DateTime? EndsOn { get; set; }

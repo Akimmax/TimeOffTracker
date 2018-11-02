@@ -1,0 +1,66 @@
+﻿@model TOT.Dto.TimeOffRequests.TimeOffRequestDTO
+
+@{
+    ViewData["Title"] = "Details";
+
+    int counter = 0;
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <div class="display-label"><b>Type</b></div>
+        <div class="display-field">
+            @Html.DisplayFor(model => Model.Type.Title)
+        </div>
+        <div class="display-label"><b>@Html.DisplayNameFor(model => Model.StartsAt)</b></div>
+        <div class="display-field">
+            @Model.StartsAt.ToString("MM/dd/yyyy")
+        </div>
+        <div class="display-label"><b>@Html.DisplayNameFor(model => Model.EndsOn)</b></div>
+        <div class="display-field">
+            @Model.EndsOn?.ToString("MM/dd/yyyy")
+        </div>
+        <div class="display-label"><b>@Html.DisplayNameFor(model => Model.Note)</b></div>
+        <div class="display-field">
+            @Html.DisplayFor(model => Model.Note)
+        </div>
+
+        @if (Model.Approvals.Any())
+        {
+            <div class="display-label"><b>Approvals</b></div>
+            <div class="table-responsive">
+                <table class="table ">
+                    <tbody>
+
+                        @foreach (var approval in Model.Approvals)
+                        {
+                            counter++;
+
+                            <tr>
+                                <td>
+                                    Approve @counter
+                                </td>
+                                <td>
+                                    @approval.Status.Title
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        else
+        {
+            <center>No items found</center>
+        }
+    </div>
+</div>
+<br />
+<div>
+    <a asp-action="List">Back to List</a>
+</div>
+<br />

@@ -12,6 +12,7 @@ namespace TOT.Entities.TimeOffRequests
         }
         public int Id { get; set; }
         public string User { get; set; } //employee who request time off
+        public int TypeId { get; set; }
         public TimeOffType Type { get; set; }//Type of timeoff
         public DateTime StartsAt { get; set; }// date of starting timeoff
         public DateTime? EndsOn { get; set; }// date of timeoff ending

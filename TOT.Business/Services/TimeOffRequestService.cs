@@ -43,13 +43,15 @@ namespace TOT.Business.Services
                 throw new ArgumentNullException(nameof(requestDTO));
             }
 
-            if (mapper.Map<TimeOffRequestDTO, TimeOffRequest>(requestDTO) is TimeOffRequest request)
+            var request = unitOfWork.TimeOffRequests.Get(requestDTO.Id);
+
+            if (request != null)
             {
-                unitOfWork.TimeOffRequests.Update(request);
+                request.Note = requestDTO.Note;
             }
             else
             {
-                return CreateAsync(requestDTO);
+                throw new EntityNotFoundException<TimeOffRequest>(requestDTO.Id);
             }
 
             return unitOfWork.SaveAsync();
