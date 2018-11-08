@@ -19,19 +19,24 @@ namespace TOT.Business.Services
         {
         }
 
-        public Task CreateAsync(TimeOffRequestDTO request)
+        public Task CreateAsync(TimeOffRequestDTO req, User user)
         {
-            if (request == null)
+            if (req == null)
             {
-                throw new ArgumentNullException(nameof(request));
+                throw new ArgumentNullException(nameof(req));
             }
 
-            var entry = mapper.Map<TimeOffRequestDTO, TimeOffRequest>(request);
+            var entry = mapper.Map<TimeOffRequestDTO, TimeOffRequest>(req);
 
+            entry.User = user.Id;
+            entry.Policy = GetEmployeePositionTimeOffPolicyByTypeAndPosition((int)req.TypeId, user.PositionId);
             unitOfWork.TimeOffRequests.Create(entry);
-           
+
+            CreateTimeOffRequestApprovalsForRequest(entry, req.UsersApproveRequestId);
+
             return unitOfWork.SaveAsync();
-        }
+
+        }        
 
         public Task DeleteAsync(int id)
         {
@@ -82,6 +87,14 @@ namespace TOT.Business.Services
             return requestsDTO;
         }
 
+        public IEnumerable<TimeOffRequestDTO> GetAllForCurrentUser(string userid)
+        {
+            var requests = unitOfWork.TimeOffRequests.Filter(r => r.User == userid);
+            var requestsDTO = mapper.Map<IEnumerable<TimeOffRequest>, IEnumerable<TimeOffRequestDTO>>(requests);
+
+            return requestsDTO;
+        }
+
         public IEnumerable<User> GetUsers(int typeId, int positionId, UserManager<User> userManager)
         {
 
@@ -110,6 +123,35 @@ namespace TOT.Business.Services
         {
             return unitOfWork.EmployeePositionTimeOffPolicy.Find(
               emtp => emtp.TypeId == typeId && emtp.PositionId == positionId);
+        }
+
+        public void CreateTimeOffRequestApprovalsForRequest
+           (TimeOffRequest request, IEnumerable<string> userPolicyApplovalsId)
+        {
+
+            var approvals = new List<TimeOffRequestApproval>();
+
+            foreach (var userPolicyApprovalId in userPolicyApplovalsId)
+            {
+                var approval = new TimeOffRequestApproval
+                {
+                    UserId = userPolicyApprovalId,
+                    TimeOffRequest = request,
+                    Status = unitOfWork.RequestApprovalStatuses.Get(
+                    (int)TimeOffRequestApprovalStatusesEnum.InProgres)
+                };
+
+                approvals.Add(approval);
+            }
+
+            approvals.FirstOrDefault().Status = unitOfWork.RequestApprovalStatuses.Get(
+                    (int)TimeOffRequestApprovalStatusesEnum.Requested);
+
+            foreach (var approval in approvals)
+            {
+                unitOfWork.RequestApprovals.Create(approval);
+            }
+
         }
 
     }

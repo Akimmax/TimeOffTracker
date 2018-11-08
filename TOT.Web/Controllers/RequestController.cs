@@ -12,6 +12,7 @@ using TOT.Business.Exceptions;
 
 namespace TOT.Web.Controllers
 {
+    [Authorize]
     public class RequestController : Controller
     {
         private readonly TimeOffRequestService requestService;
@@ -27,8 +28,7 @@ namespace TOT.Web.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]
-        [Authorize]
+        [HttpGet]        
         public IActionResult Create()
         {
 
@@ -42,14 +42,14 @@ namespace TOT.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Create(TimeOffRequestDTO req)
         {
-            User usr = await _userManager.GetUserAsync(HttpContext.User);
-
-            req.User = usr.Id.ToString();
+            User usr = await _userManager.GetUserAsync(HttpContext.User);            
 
             if (ModelState.IsValid)
             {
-                await requestService.CreateAsync(req);
+                await requestService.CreateAsync(req, usr);
+
                 return RedirectToAction(nameof(List));
+
             }
 
             return Create();
@@ -92,9 +92,10 @@ namespace TOT.Web.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            var сategories = requestService.GetAll();
+            var currentUserid = _userManager.GetUserId(HttpContext.User);
+            var requests = requestService.GetAllForCurrentUser(currentUserid);
 
-            return View(сategories);
+            return View(requests);
         }
 
         [HttpGet]
