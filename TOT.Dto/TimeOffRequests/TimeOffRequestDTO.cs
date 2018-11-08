@@ -30,6 +30,7 @@ namespace TOT.Dto.TimeOffRequests
         public string Note { get; set; }
 
         public ICollection<TimeOffRequestApprovalDTO> Approvals { get; set; }
+        public ICollection<string> UsersApproveRequestId { get; set; }
 
     }
 }

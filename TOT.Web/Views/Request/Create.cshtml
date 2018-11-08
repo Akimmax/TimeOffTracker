@@ -40,8 +40,16 @@
 
             <div class="form-group">
                 <label asp-for="Type" class="control-label"></label>
-                <select asp-for="TypeId" asp-items="@types" class="form-control custom-select"></select>
+                <select asp-for="TypeId" asp-items="@types"
+                        class="form-control custom-select" id="selectType">
+                    <option disabled selected>Select a type</option>
+                </select>
                 <span asp-validation-for="TypeId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <div id="partial"></div>
+                <span asp-validation-for="UsersApproveRequestId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -64,3 +72,27 @@
     <a asp-action="List">Back to List</a>
 </div>
 <br />
+
+<script src="~/scripts/jquery-3.3.1.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+
+    $("#selectType").change(function () {
+
+        var id = $("#target").val();
+
+        $('#partial').html("<center>Approvals are loading</center>")
+        $.ajax({
+            type: 'GET',
+            url: '../Request/PartialAsync/' + id,
+            data: { typeId: id },
+            success: function (result) {
+                $('#partial').html(result)
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    });
+</script>

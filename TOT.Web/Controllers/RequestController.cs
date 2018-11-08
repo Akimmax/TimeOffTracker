@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
 using TOT.Entities.IdentityEntities;
 using Microsoft.AspNetCore.Authorization;
-
+using System;
+using TOT.Business.Exceptions;
 
 namespace TOT.Web.Controllers
 {
@@ -94,6 +95,33 @@ namespace TOT.Web.Controllers
             var сategories = requestService.GetAll();
 
             return View(сategories);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PartialAsync(int typeId)
+        {
+
+            User user = await _userManager.GetUserAsync(HttpContext.User);
+
+            try
+            {
+                var users = requestService.GetUsers(typeId, user.PositionId, _userManager);
+                ViewData["Users"] = users.Select(u =>
+               new SelectListItem() { Value = u.Id.ToString(), Text = u.Email });
+                ViewData["AmountRequestApprovalsForRequest"] = users.Count();
+
+            }
+            catch (Exception e)
+            {
+                if (e is ApprovalsNotFoundException || e is EntityNotFoundException)
+                {
+                    ViewData["Eror message"] = e.Message;
+                }
+
+            }
+
+            return PartialView("_RequestApprovals");
+
         }
 
     }

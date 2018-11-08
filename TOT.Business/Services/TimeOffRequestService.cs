@@ -5,6 +5,10 @@ using TOT.Business.Exceptions;
 using TOT.Entities.TimeOffRequests;
 using TOT.Interfaces;
 using TOT.Dto.TimeOffRequests;
+using Microsoft.AspNetCore.Identity;
+using TOT.Entities.IdentityEntities;
+using System.Linq;
+using TOT.Entities.TimeOffPolicies;
 
 namespace TOT.Business.Services
 {
@@ -76,6 +80,36 @@ namespace TOT.Business.Services
             var requestsDTO = mapper.Map<IEnumerable<TimeOffRequest>, IEnumerable<TimeOffRequestDTO>>(requests);
 
             return requestsDTO;
+        }
+
+        public IEnumerable<User> GetUsers(int typeId, int positionId, UserManager<User> userManager)
+        {
+
+            var appropriateEmployeePositionTimeOffPolicy = GetEmployeePositionTimeOffPolicyByTypeAndPosition(typeId, positionId);
+
+            if (appropriateEmployeePositionTimeOffPolicy == null)
+            {
+                throw new EntityNotFoundException("Appropriate policy");
+            }
+
+            var approvals = appropriateEmployeePositionTimeOffPolicy.Approvals;
+
+            var aviableUserAsApprovals = userManager.Users.Where(u =>
+            approvals.Any(a => a.UserId == u.Id));//select Users available to approve requests this policy
+
+            if (aviableUserAsApprovals == null || !aviableUserAsApprovals.Any())
+            {
+                throw new ApprovalsNotFoundException("Approvals for appropriate policy");
+            }
+
+            return aviableUserAsApprovals;
+        }
+
+        public EmployeePositionTimeOffPolicy GetEmployeePositionTimeOffPolicyByTypeAndPosition
+            (int typeId, int positionId)
+        {
+            return unitOfWork.EmployeePositionTimeOffPolicy.Find(
+              emtp => emtp.TypeId == typeId && emtp.PositionId == positionId);
         }
 
     }

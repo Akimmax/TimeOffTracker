@@ -5,7 +5,7 @@ namespace TOT.Business.Exceptions
     public class EntityNotFoundException : Exception
     {
         public EntityNotFoundException(string entryName)
-            : base($"Entry {entryName} has not found")
+            : base($"{entryName} has not found")
         {
 
         }
