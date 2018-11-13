@@ -2,64 +2,73 @@
 @using TOT.Web.ViewModels;
 @model IEnumerable<TimeOffRequestDTO>
 
-    @{
-        ViewData["Title"] = "List";
-    }
-    <h2>@ViewData["Title"]</h2>
+@{
+    ViewData["Title"] = "List";
+}
+<h2>@ViewData["Title"]</h2>
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
 
-    @if (Model.Any())
-    {
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+
+                    <td>
+                        Type
+                    </td>
+                    <td>
+                        Day(s) Off
+                    </td>
+                    <td>
+                        Notes
+                    </td>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
                     <tr>
-
                         <td>
-                            Type
+                            <label>@item.Type.Title </label>
                         </td>
                         <td>
-                            Day(s) Off
+                            <label>@item.StartsAt.ToString("MM/dd/yyyy") - @item.EndsOn?.ToString("MM/dd/yyyy") </label>
                         </td>
                         <td>
-                            Notes
+                            <label>@item.Note</label>
                         </td>
-                        <th>
-                            Actions
-                        </th>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            <a href="#" data-toggle="modal" data-target="#deleteModal" data-arg-id="@item.Id">Delete</a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
+                }
 
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                <label>@item.Type.Title </label>
-                            </td>
-                            <td>
-                                <label>@item.StartsAt.ToString("MM/dd/yyyy") - @item.EndsOn?.ToString("MM/dd/yyyy") </label>
-                            </td>
-                            <td>
-                                <label>@item.Note</label>
-                            </td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                                <a href="#" data-toggle="modal" data-target="#deleteModal" data-arg-id="@item.Id">Delete</a>
-                            </td>
-                        </tr>
-                    }
+            </tbody>
+        </table>
+    </div>
+}
 
-                </tbody>
-            </table>
-        </div>
-    }
+else
+{
+    <center>No items found</center>
+}
 
-    else
-    {
-        <center>No items found</center>
-    }
+@Html.Partial("_Dialog", new DialogViewModel("deleteModal")
+{
+Content = "Are you sure that you want to delete this request?",
+SubmitAction = "Delete",
+SubmitController = "Request"
+})
+
+
