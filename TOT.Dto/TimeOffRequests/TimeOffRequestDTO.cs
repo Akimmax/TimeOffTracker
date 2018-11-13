@@ -18,7 +18,8 @@ namespace TOT.Dto.TimeOffRequests
         public TimeOffTypeDTO Type { get; set; }
 
         [Display(Name = "Type")]
-        public int TypeId { get; set; }
+        [Required(ErrorMessage = " Request type is required")]
+        public int? TypeId { get; set; }
 
         [Display(Name = "Start")]
         [DateLessThan("EndsOn", ErrorMessage = "Start date must be earlier than End date")]
@@ -30,6 +31,8 @@ namespace TOT.Dto.TimeOffRequests
         public string Note { get; set; }
 
         public ICollection<TimeOffRequestApprovalDTO> Approvals { get; set; }
+        [Required(ErrorMessage = " Request approvals is required")]
+        [RequestApprovalsWithoutRepeatAttribute(ErrorMessage = "Approvals mustn't repeat")]
         public ICollection<string> UsersApproveRequestId { get; set; }
 
     }
