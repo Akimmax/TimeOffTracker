@@ -15,7 +15,18 @@ namespace TOT.Entities.TimeOffPolicies
         public int TypeId { get; set; }
         public TimeOffPolicy Policy { get; set; }
         public int PolicyId { get; set; }
+        public bool IsActive {get;set;}
+        public EmployeePositionTimeOffPolicy NextPolicy { get; set; }
         public EmployeePosition Position { get; set; }
         public ICollection<TimeOffPolicyApproval> Approvals { get; set; }
+
+        public bool IsSameArea(EmployeePositionTimeOffPolicy other)
+        {
+            return other != null
+                && other.Id != Id
+                && other.Position.Id == Position.Id
+                && other.TypeId == TypeId
+                && other.IsActive == true;
+        }
     }
 }
