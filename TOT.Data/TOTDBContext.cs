@@ -21,7 +21,7 @@ namespace TOT.Data
 
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
         public DbSet<EmployeePosition> EmployeePositions { get; }
-        public DbSet<TimeOffPolicyApproval> TimeOffPolicyApprovals { get; }
+        public DbSet<TimeOffPolicyApprover> TimeOffPolicyApprovals { get; }
         public DbSet<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicies { get; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -92,9 +92,9 @@ namespace TOT.Data
             modelBuilder.Entity<TimeOffPolicy>()
                .HasKey(x => x.Id);
 
-            modelBuilder.Entity<TimeOffPolicyApproval>()
+            modelBuilder.Entity<TimeOffPolicyApprover>()
                .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeOffPolicyApproval>()
+            modelBuilder.Entity<TimeOffPolicyApprover>()
                .HasOne(x => x.EmployeePosition)
                .WithMany()
                .HasForeignKey(x=>x.EmployeePositionId)
@@ -158,30 +158,30 @@ namespace TOT.Data
                 }
                 );
 
-            modelBuilder.Entity<TimeOffPolicyApproval>()
+            modelBuilder.Entity<TimeOffPolicyApprover>()
                 .HasData(
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 1,
                     Amount = 1,
                     EmployeePositionId =1,
                     EmployeePositionTimeOffPolicyId =1
                 },
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 2,
                     Amount = 1,
                     EmployeePositionId = 1,
                     EmployeePositionTimeOffPolicyId = 2
                 },
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 3,
                     Amount = 1,
                     EmployeePositionId = 1,
                     EmployeePositionTimeOffPolicyId = 3
                 },
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 4,
                     Amount = 1,

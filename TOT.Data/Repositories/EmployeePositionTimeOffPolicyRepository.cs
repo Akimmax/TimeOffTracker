@@ -34,7 +34,7 @@ namespace TOT.Data.Repositories
             {
                 dbContext.Set<EmployeePositionTimeOffPolicy>().Update(item);
 
-                var ApproversSet = dbContext.Set<TimeOffPolicyApproval>();
+                var ApproversSet = dbContext.Set<TimeOffPolicyApprover>();
                 var oldApprovers = ApproversSet.Where(x=>x.EmployeePositionTimeOffPolicyId == item.Id);
                 var newApprovers = item.Approvals;
 
