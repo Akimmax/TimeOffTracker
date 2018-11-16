@@ -1,22 +1,90 @@
-﻿@model TOT.Dto.TimeOffRequests.TimeOffRequestDTO
+﻿
+@model TOT.Dto.TimeOffRequests.TimeOffRequestDTO
+@using System;
 
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var types = ((IEnumerable<SelectListItem>)ViewData["AvailableTypes"]);
+    var users = ((IEnumerable<SelectListItem>)ViewData["Users"]);
+    int? amountApprovals = (int?)ViewData["AmountRequestApprovalsForRequest"];
 }
 
 <h2>@ViewData["Title"]</h2>
 <hr />
 <div class="row">
     <div class="col-md-6">
+
         <form asp-action="Edit">
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <input asp-for="Id" type="hidden" />
-            <input asp-for="StartsAt" type="hidden" />
-            <input asp-for="EndsOn" type="hidden" />
-            <input asp-for="UsersApproveRequestId" type="hidden" />
+            <input asp-for="User" type="hidden" />
+
+            <div class="form-group">
+
+                <div class="form-group col-md-6">
+                    <label asp-for="StartsAt" class="control-label"></label>
+                    <input asp-for="StartsAt" class="form-control"
+                           type="date" id="start"
+                           min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
+                           max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
+                    <span asp-validation-for="StartsAt" class="text-danger"></span>
+
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="EndsOn" class="control-label"></label>
+                    <input asp-for="EndsOn" class="form-control"
+                           type="date" id="end"
+                           min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
+                           max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
+                    <span asp-validation-for="EndsOn" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Type" class="control-label"></label>
+                <select asp-for="TypeId" asp-items="@types"
+                        class="form-control custom-select" id="selectType">
+                    <option disabled selected>Select a type</option>
+                </select>
+                <span asp-validation-for="TypeId" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group">
+                <div id="partial">
+
+                    @if (users != null && users.Any())
+                    {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Approvals</label>
+
+                                @for (int i = 0; i < amountApprovals; i++)
+                                {
+                                    <div class="form-group">
+                                        @Html.DropDownListFor(model => model.UsersApproveRequestId, @users,
+                                        new { @class = "form-control", @id="selectUser"+ i })
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <center>@ViewData["Eror message"]</center>
+                    }
+
+                </div>
+                <span asp-validation-for="UsersApproveRequestId" class="text-danger"></span>
+            </div>
 
             <div class="form-group">
                 <label asp-for="Note" class="control-label"></label>
@@ -36,3 +104,49 @@
     <a asp-action="List">Back to List</a>
 </div>
 <br />
+
+<script src="~/scripts/jquery-3.3.1.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        var usersId = [];
+
+        @foreach (var id in Model.UsersApproveRequestId)
+        {
+            @:usersId.push("@id");
+        }
+
+        for (var i = 0; i < usersId.length; i++)
+        {
+            idUsersDropdown = "#selectUser" + i;
+            $(idUsersDropdown).val(usersId[i]);
+        }
+    });
+
+    $("#selectType").change(function () {
+
+        var id = $("#selectType").val();
+        LoadApprovals(id);
+
+    });
+
+    function LoadApprovals(id) {
+
+        $('#partial').html("<center>Approvals are loading</center>")
+        $.ajax({
+            type: 'GET',
+            url: '../Request/PartialAsync/' + id,
+            data: { typeId: id },
+            success: function (result) {
+                $('#partial').html(result)
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+    }
+
+</script>

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using TOT.Entities.IdentityEntities;
 using System.Linq;
 using TOT.Entities.TimeOffPolicies;
+using Microsoft.EntityFrameworkCore;
 
 namespace TOT.Business.Services
 {
@@ -36,7 +37,7 @@ namespace TOT.Business.Services
 
             return unitOfWork.SaveAsync();
 
-        }        
+        }
 
         public Task DeleteAsync(int id)
         {
@@ -52,19 +53,47 @@ namespace TOT.Business.Services
                 throw new ArgumentNullException(nameof(requestDTO));
             }
 
+
             var request = unitOfWork.TimeOffRequests.Get(requestDTO.Id);
 
-            if (request != null)
+            if (request == null)
+            {
+                throw new EntityNotFoundException<TimeOffRequest>(requestDTO.Id);
+            }
+
+            if (IfApprovedAtLeastOnce(requestDTO.Id))
             {
                 request.Note = requestDTO.Note;
             }
             else
             {
-                throw new EntityNotFoundException<TimeOffRequest>(requestDTO.Id);
+                request.StartsAt = requestDTO.StartsAt;
+                request.EndsOn = requestDTO.EndsOn;
+                request.Note = requestDTO.Note;
+                request.TypeId = (int)requestDTO.TypeId;
+
+                var currentUsersApproveRequestId = request.Approvals.Select(i => i.UserId);
+                var newUsersApproveRequestId = requestDTO.UsersApproveRequestId;
+
+                bool isEqual = (currentUsersApproveRequestId.Count() == newUsersApproveRequestId.Count()
+                    && (!currentUsersApproveRequestId.Except(newUsersApproveRequestId).Any()
+                    || !newUsersApproveRequestId.Except(currentUsersApproveRequestId).Any()));//equality test 
+
+
+                if (!isEqual)
+                {
+                    foreach (var approval in request.Approvals)
+                    {
+                        unitOfWork.RequestApprovals.Delete(approval.Id);
+                    }
+
+                    CreateTimeOffRequestApprovalsForRequest(request, requestDTO.UsersApproveRequestId);
+
+                }
+
             }
 
             return unitOfWork.SaveAsync();
-
         }
 
         public TimeOffRequestDTO GetById(int requestId)
@@ -77,6 +106,19 @@ namespace TOT.Business.Services
             }
 
             return mapper.Map<TimeOffRequest, TimeOffRequestDTO>(request);
+        }
+
+        public TimeOffRequestDTO GetById(int requestId, bool loadUsersApproveRequestId)
+        {
+            var request = GetById(requestId);
+
+            if (loadUsersApproveRequestId)
+            {
+                var currentApprovalsId = request.Approvals.Select(i => i.UserId).ToList(); ;
+                request.UsersApproveRequestId = currentApprovalsId;
+            }
+
+            return request;
         }
 
         public IEnumerable<TimeOffRequestDTO> GetAll()
@@ -151,7 +193,19 @@ namespace TOT.Business.Services
             {
                 unitOfWork.RequestApprovals.Create(approval);
             }
+        }
 
+
+        public bool IfApprovedAtLeastOnce(int id)
+        {
+            var request = unitOfWork.TimeOffRequests.Get(id);
+
+            if (request == null)
+            {
+                throw new EntityNotFoundException<TimeOffRequest>();
+            }
+
+            return request.Approvals.Any(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Accepted);
         }
 
     }

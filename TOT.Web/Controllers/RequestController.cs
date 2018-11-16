@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TOT.Business.Services;
@@ -9,6 +10,7 @@ using TOT.Entities.IdentityEntities;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using TOT.Business.Exceptions;
+using System.Collections.Generic;
 
 namespace TOT.Web.Controllers
 {
@@ -28,7 +30,7 @@ namespace TOT.Web.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]        
+        [HttpGet]
         public IActionResult Create()
         {
 
@@ -42,7 +44,7 @@ namespace TOT.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Create(TimeOffRequestDTO req)
         {
-            User usr = await _userManager.GetUserAsync(HttpContext.User);            
+            User usr = await _userManager.GetUserAsync(HttpContext.User);
 
             if (ModelState.IsValid)
             {
@@ -57,21 +59,53 @@ namespace TOT.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> EditAsync(int id)
         {
-            var request = requestService.GetById(id);
+            var request = requestService.GetById(id, true);
 
-            return View(request);
+            if (requestService.IfApprovedAtLeastOnce(request.Id))
+            {
+                return View("EditName", request);
+            }
+            else
+            {
+                ViewData["AvailableTypes"] = requestTypeService.GetAll().Select(t =>
+                new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
+
+                User user = await _userManager.GetUserAsync(HttpContext.User);
+
+                try
+                {
+                    var users = requestService.GetUsers((int)request.TypeId, user.PositionId, _userManager);
+                    var usersList = (users.Select(u => new SelectListItem() { Value = u.Id.ToString(), Text = u.Email }));
+
+                    ViewData["Users"] = new List<SelectListItem>(usersList);
+                    ViewData["AmountRequestApprovalsForRequest"] = users.Count();
+                }
+                catch (Exception e)
+                {
+                    if (e is ApprovalsNotFoundException || e is EntityNotFoundException)
+                    {
+                        ViewData["Eror message"] = e.Message;
+                    }
+                }
+                return View("Edit", request);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(TimeOffRequestDTO req)
         {
-            await requestService.UpdateAsync(req);
+            if (ModelState.IsValid)
+            {
+                await requestService.UpdateAsync(req);
 
-            return RedirectToAction(nameof(List));
+                return RedirectToAction(nameof(List));
+
+            }
+
+            return await EditAsync(req.Id);
         }
-
 
         [HttpGet]
         public IActionResult Details(int id)
