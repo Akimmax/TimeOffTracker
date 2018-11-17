@@ -8,6 +8,9 @@
 
     public enum TimeOffTypeEnum : int
     {
-        PayedTimeOff = 1
+        PaidVacation = 1,
+        UnpaidVacation = 2,
+        StudyVacation = 3,
+        SickVacation = 4
     }
 }
