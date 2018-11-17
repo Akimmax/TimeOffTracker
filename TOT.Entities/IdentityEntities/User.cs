@@ -9,5 +9,6 @@ namespace TOT.Entities.IdentityEntities
     {
         public int PositionId { get; set; }
         public EmployeePosition Position { get; set; }
+        public DateTime HireDate { get; set; }
     }
 }

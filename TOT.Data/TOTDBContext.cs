@@ -202,24 +202,28 @@ namespace TOT.Data
                 {
                     Id = 1,
                     TypeId = (int)TimeOffTypeEnum.PaidVacation,
+                    PositionId= (int)EmployeePositionEnum.Employee,
                     PolicyId = 1
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 2,
                     TypeId = (int)TimeOffTypeEnum.UnpaidVacation,
+                    PositionId = (int)EmployeePositionEnum.Employee,
                     PolicyId = 2
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 3,
                     TypeId = (int)TimeOffTypeEnum.StudyVacation,
+                    PositionId = (int)EmployeePositionEnum.Employee,
                     PolicyId = 3
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 4,
                     TypeId = (int)TimeOffTypeEnum.SickVacation,
+                    PositionId = (int)EmployeePositionEnum.Employee,
                     PolicyId = 4
                 }
                 );

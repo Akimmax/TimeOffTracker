@@ -137,6 +137,7 @@ namespace TOT.Data.Migrations
                     b.ToTable("EmployeePositions");
 
                     b.HasData(
+                        new { Id = 2, Title = "Employee" },
                         new { Id = 1, Title = "Admin" }
                     );
                 });
@@ -174,6 +175,8 @@ namespace TOT.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<int>("PositionId");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -189,6 +192,8 @@ namespace TOT.Data.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasName("UserNameIndex");
+
+                    b.HasIndex("PositionId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -215,10 +220,10 @@ namespace TOT.Data.Migrations
                     b.ToTable("EmployeePositionTimeOffPolicies");
 
                     b.HasData(
-                        new { Id = 1, PolicyId = 1, TypeId = 1 },
-                        new { Id = 2, PolicyId = 2, TypeId = 2 },
-                        new { Id = 3, PolicyId = 3, TypeId = 3 },
-                        new { Id = 4, PolicyId = 4, TypeId = 4 }
+                        new { Id = 1, PolicyId = 1, PositionId = 2, TypeId = 1 },
+                        new { Id = 2, PolicyId = 2, PositionId = 2, TypeId = 2 },
+                        new { Id = 3, PolicyId = 3, PositionId = 2, TypeId = 3 },
+                        new { Id = 4, PolicyId = 4, PositionId = 2, TypeId = 4 }
                     );
                 });
 
@@ -290,8 +295,7 @@ namespace TOT.Data.Migrations
 
                     b.Property<DateTime>("StartsAt");
 
-                    b.Property<int?>("TypeId")
-                        .IsRequired();
+                    b.Property<int>("TypeId");
 
                     b.Property<string>("UserId");
 
@@ -413,6 +417,14 @@ namespace TOT.Data.Migrations
                     b.HasOne("TOT.Entities.IdentityEntities.User")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TOT.Entities.IdentityEntities.User", b =>
+                {
+                    b.HasOne("TOT.Entities.EmployeePosition", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

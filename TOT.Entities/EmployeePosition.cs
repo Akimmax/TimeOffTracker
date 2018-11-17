@@ -8,6 +8,7 @@
 
     public enum EmployeePositionEnum : int
     {
-        Employee = 1
+        Admin = 1,
+        Employee = 2
     }
 }

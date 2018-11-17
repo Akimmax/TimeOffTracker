@@ -14,6 +14,13 @@
     <Compile Remove="Migrations\20181029081240_AddedInitializationMigration.cs" />
     <Compile Remove="Migrations\20181029082716_AddedInitializationMigration.cs" />
     <Compile Remove="Migrations\20181029083159_AddedInitializationMigration.cs" />
+    <Compile Remove="Migrations\20181117110007_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117175519_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117181103_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117181631_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117201254_ChangeUser.cs" />
+    <Compile Remove="Migrations\20181117202251_ChangeUser.cs" />
+    <Compile Remove="Migrations\20181117203720_ChangeUser.cs" />
   </ItemGroup>
 
   <ItemGroup>

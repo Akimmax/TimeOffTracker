@@ -29,7 +29,7 @@ namespace TOT.Business.Services
 
             var entry = mapper.Map<TimeOffRequestDTO, TimeOffRequest>(requestDTO);
 
-            entry.User = user.Id;
+            entry.UserId = user.Id;
             entry.Policy = GetEmployeePositionTimeOffPolicyByTypeAndPosition((int)requestDTO.TypeId, user.PositionId);
             unitOfWork.TimeOffRequests.Create(entry);
             CreateTimeOffRequestApprovalsForRequest(entry, requestDTO.ApproversId);
@@ -133,7 +133,7 @@ namespace TOT.Business.Services
 
         public IEnumerable<TimeOffRequestDTO> GetAllForCurrentUser(string userid)
         {
-            var requests = unitOfWork.TimeOffRequests.Filter(r => r.User == userid);
+            var requests = unitOfWork.TimeOffRequests.Filter(r => r.UserId == userid);
             var requestsDTO = mapper.Map<IEnumerable<TimeOffRequest>, IEnumerable<TimeOffRequestDTO>>(requests);
 
             return requestsDTO;

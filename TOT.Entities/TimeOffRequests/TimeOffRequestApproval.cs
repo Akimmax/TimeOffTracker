@@ -6,6 +6,7 @@ namespace TOT.Entities.TimeOffRequests
     public class TimeOffRequestApproval
     {
         public int Id { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }//employee who should accept request
         public DateTime? SolvedDate { get; set; }// date of decision
         public string Reason { get; set; }// reason of decision

@@ -9,8 +9,8 @@ using TOT.Data;
 namespace TOT.Data.Migrations
 {
     [DbContext(typeof(TOTDBContext))]
-    [Migration("20181117110007_ChangesUser")]
-    partial class ChangesUser
+    [Migration("20181117204002_ChangeUser")]
+    partial class ChangeUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -139,7 +139,8 @@ namespace TOT.Data.Migrations
                     b.ToTable("EmployeePositions");
 
                     b.HasData(
-                        new { Id = 1, Title = "Employee" }
+                        new { Id = 2, Title = "Employee" },
+                        new { Id = 1, Title = "Admin" }
                     );
                 });
 
@@ -157,6 +158,8 @@ namespace TOT.Data.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
+
+                    b.Property<DateTime>("HireDate");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -204,7 +207,7 @@ namespace TOT.Data.Migrations
 
                     b.Property<int>("PolicyId");
 
-                    b.Property<int>("PositionId");
+                    b.Property<int?>("PositionId");
 
                     b.Property<int>("TypeId");
 
@@ -217,6 +220,13 @@ namespace TOT.Data.Migrations
                     b.HasIndex("TypeId");
 
                     b.ToTable("EmployeePositionTimeOffPolicies");
+
+                    b.HasData(
+                        new { Id = 1, PolicyId = 1, PositionId = 2, TypeId = 1 },
+                        new { Id = 2, PolicyId = 2, PositionId = 2, TypeId = 2 },
+                        new { Id = 3, PolicyId = 3, PositionId = 2, TypeId = 3 },
+                        new { Id = 4, PolicyId = 4, PositionId = 2, TypeId = 4 }
+                    );
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicy", b =>
@@ -224,15 +234,22 @@ namespace TOT.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<int?>("DelayBeforeAvailable");
 
-                    b.Property<DateTime>("ResetDate");
+                    b.Property<string>("Name");
 
                     b.Property<int>("TimeOffDaysPerYear");
 
                     b.HasKey("Id");
 
                     b.ToTable("TimeOffPolicy");
+
+                    b.HasData(
+                        new { Id = 1, DelayBeforeAvailable = 12, Name = "Paid vacation", TimeOffDaysPerYear = 20 },
+                        new { Id = 2, Name = "Unpaid vacation", TimeOffDaysPerYear = 15 },
+                        new { Id = 3, DelayBeforeAvailable = 6, Name = "Study vacation", TimeOffDaysPerYear = 10 },
+                        new { Id = 4, Name = "Sick vacation", TimeOffDaysPerYear = 30 }
+                    );
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApproval", b =>
@@ -242,20 +259,28 @@ namespace TOT.Data.Migrations
 
                     b.Property<int>("Amount");
 
-                    b.Property<int?>("EmployeePositionTimeOffPolicyId");
+                    b.Property<int>("EmployeePositionId");
 
-                    b.Property<int?>("PositionId")
-                        .IsRequired();
+                    b.Property<int>("EmployeePositionTimeOffPolicyId");
 
                     b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EmployeePositionId");
+
                     b.HasIndex("EmployeePositionTimeOffPolicyId");
 
-                    b.HasIndex("PositionId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TimeOffPolicyApprovals");
+
+                    b.HasData(
+                        new { Id = 1, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 1 },
+                        new { Id = 2, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 2 },
+                        new { Id = 3, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 3 },
+                        new { Id = 4, Amount = 1, EmployeePositionId = 1, EmployeePositionTimeOffPolicyId = 4 }
+                    );
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffRequests.TimeOffRequest", b =>
@@ -274,13 +299,15 @@ namespace TOT.Data.Migrations
 
                     b.Property<int>("TypeId");
 
-                    b.Property<string>("User");
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PolicyId");
 
                     b.HasIndex("TypeId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TimeOffRequests");
                 });
@@ -306,6 +333,8 @@ namespace TOT.Data.Migrations
                     b.HasIndex("StatusId");
 
                     b.HasIndex("TimeOffRequestId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TimeOffRequestApprovals");
                 });
@@ -341,7 +370,10 @@ namespace TOT.Data.Migrations
                     b.ToTable("TimeOffType");
 
                     b.HasData(
-                        new { Id = 1, Title = "PayedTimeOff" }
+                        new { Id = 1, Title = "Paid Holiday" },
+                        new { Id = 2, Title = "Unpaid leave" },
+                        new { Id = 3, Title = "Study Holiday" },
+                        new { Id = 4, Title = "Sick leave" }
                     );
                 });
 
@@ -407,8 +439,7 @@ namespace TOT.Data.Migrations
 
                     b.HasOne("TOT.Entities.EmployeePosition", "Position")
                         .WithMany()
-                        .HasForeignKey("PositionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("PositionId");
 
                     b.HasOne("TOT.Entities.TimeOffRequests.TimeOffType", "Type")
                         .WithMany()
@@ -418,14 +449,19 @@ namespace TOT.Data.Migrations
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApproval", b =>
                 {
+                    b.HasOne("TOT.Entities.EmployeePosition", "EmployeePosition")
+                        .WithMany()
+                        .HasForeignKey("EmployeePositionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy")
                         .WithMany("Approvals")
-                        .HasForeignKey("EmployeePositionTimeOffPolicyId");
-
-                    b.HasOne("TOT.Entities.EmployeePosition", "Position")
-                        .WithMany()
-                        .HasForeignKey("PositionId")
+                        .HasForeignKey("EmployeePositionTimeOffPolicyId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TOT.Entities.IdentityEntities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffRequests.TimeOffRequest", b =>
@@ -439,6 +475,10 @@ namespace TOT.Data.Migrations
                         .WithMany()
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TOT.Entities.IdentityEntities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffRequests.TimeOffRequestApproval", b =>
@@ -452,6 +492,10 @@ namespace TOT.Data.Migrations
                         .WithMany("Approvals")
                         .HasForeignKey("TimeOffRequestId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TOT.Entities.IdentityEntities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }
