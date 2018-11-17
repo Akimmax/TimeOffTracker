@@ -44,14 +44,13 @@ namespace TOT.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Create(TimeOffRequestDTO req)
         {
-            User usr = await _userManager.GetUserAsync(HttpContext.User);
+            User curentUser = await _userManager.GetUserAsync(HttpContext.User);
 
             if (ModelState.IsValid)
             {
-                await requestService.CreateAsync(req, usr);
+                await requestService.CreateAsync(req, curentUser);
 
                 return RedirectToAction(nameof(List));
-
             }
 
             return Create();
@@ -72,11 +71,11 @@ namespace TOT.Web.Controllers
                 ViewData["AvailableTypes"] = requestTypeService.GetAll().Select(t =>
                 new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
 
-                User user = await _userManager.GetUserAsync(HttpContext.User);
+                User curentUser = await _userManager.GetUserAsync(HttpContext.User);
 
                 try
                 {
-                    var users = requestService.GetUsers((int)request.TypeId, user.PositionId, _userManager);
+                    var users = requestService.GetUsers((int)request.TypeId, curentUser.PositionId, _userManager);
                     var usersList = (users.Select(u => new SelectListItem() { Value = u.Id.ToString(), Text = u.Email }));
 
                     ViewData["Users"] = new List<SelectListItem>(usersList);
@@ -98,10 +97,9 @@ namespace TOT.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                User usr = await _userManager.GetUserAsync(HttpContext.User);
-                await requestService.UpdateAsync(req, usr);
+                User curentUser = await _userManager.GetUserAsync(HttpContext.User);
+                await requestService.UpdateAsync(req, curentUser);
                 return RedirectToAction(nameof(List));
-
             }
 
             return await EditAsync(req.Id);
@@ -110,8 +108,8 @@ namespace TOT.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditOnlyName(TimeOffRequestDTO req)
         {            
-                User usr = await _userManager.GetUserAsync(HttpContext.User);
-                await requestService.UpdateAsync(req, usr);
+                User curentUser = await _userManager.GetUserAsync(HttpContext.User);
+                await requestService.UpdateAsync(req, curentUser);
                 return RedirectToAction(nameof(List));            
         }
 
@@ -134,8 +132,8 @@ namespace TOT.Web.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            var currentUserid = _userManager.GetUserId(HttpContext.User);
-            var requests = requestService.GetAllForCurrentUser(currentUserid);
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            var requests = requestService.GetAllForCurrentUser(currentUserId);
 
             return View(requests);
         }
@@ -144,15 +142,15 @@ namespace TOT.Web.Controllers
         public async Task<IActionResult> PartialAsync(int typeId)
         {
 
-            User user = await _userManager.GetUserAsync(HttpContext.User);
+            User curentUser = await _userManager.GetUserAsync(HttpContext.User);
 
             try
             {
-                var users = requestService.GetUsers(typeId, user.PositionId, _userManager);
+                var users = requestService.GetUsers(typeId, curentUser.PositionId, _userManager);
                 ViewData["Users"] = users.Select(u =>
-               new SelectListItem() { Value = u.Id.ToString(), Text = u.Email });
-                ViewData["AmountRequestApprovalsForRequest"] = users.Count();
+                new SelectListItem() { Value = u.Id.ToString(), Text = u.Email });
 
+                ViewData["AmountRequestApprovalsForRequest"] = users.Count();
             }
             catch (Exception e)
             {
@@ -160,7 +158,6 @@ namespace TOT.Web.Controllers
                 {
                     ViewData["Eror message"] = e.Message;
                 }
-
             }
 
             return PartialView("_RequestApprovals");

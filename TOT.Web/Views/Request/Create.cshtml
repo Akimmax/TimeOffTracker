@@ -14,9 +14,7 @@
         <form asp-action="Create">
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <div class="form-group">
-
                 <div class="form-group col-md-6">
                     <label asp-for="StartsAt" class="control-label"></label>
                     <input asp-for="StartsAt" class="form-control"
@@ -24,7 +22,6 @@
                            min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
                            max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
                     <span asp-validation-for="StartsAt" class="text-danger"></span>
-
                 </div>
 
                 <div class="form-group col-md-6">
@@ -35,10 +32,9 @@
                            max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
                     <span asp-validation-for="EndsOn" class="text-danger"></span>
                 </div>
-
             </div>
 
-            <div class="form-group">
+            <div class="form-group col-md-12">
                 <label asp-for="Type" class="control-label"></label>
                 <select asp-for="TypeId" asp-items="@types"
                         class="form-control custom-select" id="selectType">
@@ -49,7 +45,7 @@
 
             <div class="form-group">
                 <div id="partial"></div>
-                <span asp-validation-for="UsersApproveRequestId" class="text-danger"></span>
+                <span asp-validation-for="ApproversId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -57,7 +53,6 @@
                 <label asp-for="Note" class="control-label"></label>
                 <textarea asp-for="Note" class="form-control"></textarea>
                 <span asp-validation-for="Note" class="text-danger"></span>
-
             </div>
 
             <div class="form-group">
@@ -76,27 +71,24 @@
 <script src="~/scripts/jquery-3.3.1.js"></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
 
-
 <script>
 
     $(document).ready(function () {
-
         var id = $("#selectType").val();
 
         if (id != null) {
-            LoadApprovals(id);
+            loadApprovals(id);
         }
     });
 
     $("#selectType").change(function () {
-
         var id = $("#selectType").val();
-        LoadApprovals(id);
+        loadApprovals(id);
     });
 
-    function LoadApprovals(id) {
-
+    function loadApprovals(id) {
         $('#partial').html("<center>Approvals are loading</center>")
+
         $.ajax({
             type: 'GET',
             url: '../Request/PartialAsync/' + id,

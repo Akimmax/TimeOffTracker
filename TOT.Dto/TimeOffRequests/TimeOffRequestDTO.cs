@@ -33,7 +33,7 @@ namespace TOT.Dto.TimeOffRequests
         public ICollection<TimeOffRequestApprovalDTO> Approvals { get; set; }
         [Required(ErrorMessage = " Request approvals is required")]
         [RequestApprovalsWithoutRepeatAttribute(ErrorMessage = "Approvals mustn't repeat")]
-        public ICollection<string> UsersApproveRequestId { get; set; }
+        public ICollection<string> ApproversId { get; set; }
 
     }
 }

@@ -16,7 +16,7 @@
             @for (int i = 0; i < amountApprovals; i++)
             {
                 <div class="form-group">
-                    @Html.DropDownListFor(model => model.UsersApproveRequestId, @users,
+                    @Html.DropDownListFor(model => model.ApproversId, @users,
                     new { @class = "form-control" })
                 </div>
             }

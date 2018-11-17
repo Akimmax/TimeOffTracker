@@ -20,23 +20,21 @@ namespace TOT.Business.Services
         {
         }
 
-        public Task CreateAsync(TimeOffRequestDTO req, User user)
+        public Task CreateAsync(TimeOffRequestDTO requestDTO, User user)
         {
-            if (req == null)
+            if (requestDTO == null)
             {
-                throw new ArgumentNullException(nameof(req));
+                throw new ArgumentNullException(nameof(requestDTO));
             }
 
-            var entry = mapper.Map<TimeOffRequestDTO, TimeOffRequest>(req);
+            var entry = mapper.Map<TimeOffRequestDTO, TimeOffRequest>(requestDTO);
 
             entry.User = user.Id;
-            entry.Policy = GetEmployeePositionTimeOffPolicyByTypeAndPosition((int)req.TypeId, user.PositionId);
+            entry.Policy = GetEmployeePositionTimeOffPolicyByTypeAndPosition((int)requestDTO.TypeId, user.PositionId);
             unitOfWork.TimeOffRequests.Create(entry);
-
-            CreateTimeOffRequestApprovalsForRequest(entry, req.UsersApproveRequestId);
+            CreateTimeOffRequestApprovalsForRequest(entry, requestDTO.ApproversId);
 
             return unitOfWork.SaveAsync();
-
         }
 
         public Task DeleteAsync(int id)
@@ -52,7 +50,6 @@ namespace TOT.Business.Services
             {
                 throw new ArgumentNullException(nameof(requestDTO));
             }
-
 
             var request = unitOfWork.TimeOffRequests.Get(requestDTO.Id);
 
@@ -79,11 +76,11 @@ namespace TOT.Business.Services
                 }                
 
                 var currentUsersApproveRequestId = request.Approvals.Select(i => i.UserId);
-                var newUsersApproveRequestId = requestDTO.UsersApproveRequestId;
+                var newUsersApproveRequestId = requestDTO.ApproversId;
 
                 bool isEqual = (currentUsersApproveRequestId.Count() == newUsersApproveRequestId.Count()
                     && (!currentUsersApproveRequestId.Except(newUsersApproveRequestId).Any()
-                    || !newUsersApproveRequestId.Except(currentUsersApproveRequestId).Any()));//equality test 
+                    || !newUsersApproveRequestId.Except(currentUsersApproveRequestId).Any()));//equality test of current and new approvers
 
 
                 if (!isEqual)
@@ -93,10 +90,9 @@ namespace TOT.Business.Services
                         unitOfWork.RequestApprovals.Delete(approval.Id);
                     }
 
-                    CreateTimeOffRequestApprovalsForRequest(request, requestDTO.UsersApproveRequestId);
+                    CreateTimeOffRequestApprovalsForRequest(request, requestDTO.ApproversId);
 
                 }
-
             }
 
             return unitOfWork.SaveAsync();
@@ -114,14 +110,14 @@ namespace TOT.Business.Services
             return mapper.Map<TimeOffRequest, TimeOffRequestDTO>(request);
         }
 
-        public TimeOffRequestDTO GetById(int requestId, bool loadUsersApproveRequestId)
+        public TimeOffRequestDTO GetById(int requestId, bool loadRequestApprovers)
         {
             var request = GetById(requestId);
 
-            if (loadUsersApproveRequestId)
+            if (loadRequestApprovers)
             {
-                var currentApprovalsId = request.Approvals.Select(i => i.UserId).ToList(); ;
-                request.UsersApproveRequestId = currentApprovalsId;
+                var currentApproversId = request.Approvals.Select(i => i.UserId).ToList(); ;
+                request.ApproversId = currentApproversId;
             }
 
             return request;
@@ -153,17 +149,16 @@ namespace TOT.Business.Services
                 throw new EntityNotFoundException("Appropriate policy");
             }
 
-            var approvals = appropriateEmployeePositionTimeOffPolicy.Approvals;
+            var approvers = appropriateEmployeePositionTimeOffPolicy.Approvals;
+            var aviableUserAsApprovers = userManager.Users.Where(u =>
+            approvers.Any(a => a.UserId == u.Id));//select Users available to approve requests this policy
 
-            var aviableUserAsApprovals = userManager.Users.Where(u =>
-            approvals.Any(a => a.UserId == u.Id));//select Users available to approve requests this policy
-
-            if (aviableUserAsApprovals == null || !aviableUserAsApprovals.Any())
+            if (aviableUserAsApprovers == null || !aviableUserAsApprovers.Any())
             {
                 throw new ApprovalsNotFoundException("Approvals for appropriate policy");
             }
 
-            return aviableUserAsApprovals;
+            return aviableUserAsApprovers;
         }
 
         public EmployeePositionTimeOffPolicy GetEmployeePositionTimeOffPolicyByTypeAndPosition
@@ -174,16 +169,16 @@ namespace TOT.Business.Services
         }
 
         public void CreateTimeOffRequestApprovalsForRequest
-           (TimeOffRequest request, IEnumerable<string> userPolicyApplovalsId)
+           (TimeOffRequest request, IEnumerable<string> userPolicyApproversId)
         {
 
             var approvals = new List<TimeOffRequestApproval>();
 
-            foreach (var userPolicyApprovalId in userPolicyApplovalsId)
+            foreach (var approverId in userPolicyApproversId)
             {
                 var approval = new TimeOffRequestApproval
                 {
-                    UserId = userPolicyApprovalId,
+                    UserId = approverId,
                     TimeOffRequest = request,
                     Status = unitOfWork.RequestApprovalStatuses.Get(
                     (int)TimeOffRequestApprovalStatusesEnum.InProgres)

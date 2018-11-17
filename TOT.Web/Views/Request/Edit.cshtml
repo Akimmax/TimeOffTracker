@@ -17,14 +17,11 @@
     <div class="col-md-6">
 
         <form asp-action="Edit">
-
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <input asp-for="Id" type="hidden" />
             <input asp-for="User" type="hidden" />
 
             <div class="form-group">
-
                 <div class="form-group col-md-6">
                     <label asp-for="StartsAt" class="control-label"></label>
                     <input asp-for="StartsAt" class="form-control"
@@ -43,10 +40,9 @@
                            max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
                     <span asp-validation-for="EndsOn" class="text-danger"></span>
                 </div>
-
             </div>
 
-            <div class="form-group">
+            <div class="form-group col-md-12">
                 <label asp-for="Type" class="control-label"></label>
                 <select asp-for="TypeId" asp-items="@types"
                         class="form-control custom-select" id="selectType">
@@ -54,8 +50,6 @@
                 </select>
                 <span asp-validation-for="TypeId" class="text-danger"></span>
             </div>
-
-
 
             <div class="form-group">
                 <div id="partial">
@@ -69,7 +63,7 @@
                                 @for (int i = 0; i < amountApprovals; i++)
                                 {
                                     <div class="form-group">
-                                        @Html.DropDownListFor(model => model.UsersApproveRequestId, @users,
+                                        @Html.DropDownListFor(model => model.ApproversId, @users,
                                         new { @class = "form-control", @id="selectUser"+ i })
                                     </div>
                                 }
@@ -83,7 +77,7 @@
                     }
 
                 </div>
-                <span asp-validation-for="UsersApproveRequestId" class="text-danger"></span>
+                <span asp-validation-for="ApproversId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -111,31 +105,27 @@
 <script>
 
     $(document).ready(function () {
-
         var usersId = [];
 
-        @foreach (var id in Model.UsersApproveRequestId)
+        @foreach (var id in Model.ApproversId)
         {
             @:usersId.push("@id");
         }
 
-        for (var i = 0; i < usersId.length; i++)
-        {
+        for (var i = 0; i < usersId.length; i++){
             idUsersDropdown = "#selectUser" + i;
             $(idUsersDropdown).val(usersId[i]);
         }
     });
 
     $("#selectType").change(function () {
-
         var id = $("#selectType").val();
-        LoadApprovals(id);
-
+        loadApprovals(id);
     });
 
-    function LoadApprovals(id) {
-
+    function loadApprovals(id) {
         $('#partial').html("<center>Approvals are loading</center>")
+
         $.ajax({
             type: 'GET',
             url: '../Request/PartialAsync/' + id,
