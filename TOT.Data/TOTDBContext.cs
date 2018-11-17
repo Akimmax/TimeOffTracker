@@ -14,7 +14,7 @@ namespace TOT.Data
         {
         }
 
-        public DbSet<TimeOffPolicy> TimeOffTypes { get; }
+        public DbSet<TimeOffType> TimeOffTypes { get; }
         public DbSet<TimeOffRequest> TimeOffRequests { get; }
         public DbSet<TimeOffRequestApproval> TimeOffRequestApprovals { get; }
         public DbSet<TimeOffRequestApprovalStatuses> TimeOffRequestApprovalStatuses { get; }
@@ -111,7 +111,7 @@ namespace TOT.Data
                .HasOne(x => x.Position)
                .WithMany();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
-               .HasMany(x=>x.Approvals)
+               .HasMany(x=>x.Approvers)
                .WithOne()
                .HasForeignKey(x=>x.EmployeePositionTimeOffPolicyId);
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
@@ -196,25 +196,29 @@ namespace TOT.Data
                 {
                     Id = 1,
                     TypeId = (int)TimeOffTypeEnum.PaidVacation,
-                    PolicyId = 1
+                    PolicyId = 1,
+                    IsActive = true
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 2,
                     TypeId = (int)TimeOffTypeEnum.UnpaidVacation,
-                    PolicyId = 2
+                    PolicyId = 2,
+                    IsActive = true
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 3,
                     TypeId = (int)TimeOffTypeEnum.StudyVacation,
-                    PolicyId = 3
+                    PolicyId = 3,
+                    IsActive = true
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 4,
                     TypeId = (int)TimeOffTypeEnum.SickVacation,
-                    PolicyId = 4
+                    PolicyId = 4,
+                    IsActive = true
                 }
                 );
 

@@ -67,8 +67,8 @@ namespace TOT.Business.Services
                 return unitOfWork.SaveAsync();
             }
             else if (Item.PolicyId == template.PolicyId &&
-                Item.Approvals.OrderBy(x=>x.EmployeePositionId)
-                .SequenceEqual(template.Approvals.OrderBy(x=>x.EmployeePositionId), new TimeOffPolicyApproverComparer()))
+                Item.Approvers.OrderBy(x=>x.EmployeePositionId)
+                .SequenceEqual(template.Approvers.OrderBy(x=>x.EmployeePositionId), new TimeOffPolicyApproverComparer()))
             {
                 return Task.CompletedTask;
             }
@@ -97,8 +97,8 @@ namespace TOT.Business.Services
                 if (Item.TypeId == oldItem.TypeId &&
                     Item.PolicyId == oldItem.PolicyId &&
                     Item.Position.Id == oldItem.Position.Id &&
-                    Item.Approvals.OrderBy(x => x.EmployeePositionId)
-                    .SequenceEqual(oldItem.Approvals.OrderBy(x => x.EmployeePositionId), new TimeOffPolicyApproverComparer()))
+                    Item.Approvers.OrderBy(x => x.EmployeePositionId)
+                    .SequenceEqual(oldItem.Approvers.OrderBy(x => x.EmployeePositionId), new TimeOffPolicyApproverComparer()))
                 {
                     return Task.CompletedTask;
                 }
@@ -144,7 +144,7 @@ namespace TOT.Business.Services
             {
                 throw new ArgumentException("Type should be filled");
             }
-            if (!ItemDTO.Approvals.Any())
+            if (!ItemDTO.Approvers.Any())
             {
                 throw new ArgumentException("Policy should contain at least one Approver");
             }

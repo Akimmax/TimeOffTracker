@@ -9,6 +9,7 @@ namespace TOT.Dto
 
         public int Id { get; set; }
         [Display(Name = "Policy Name")]
+        [Required(ErrorMessage = "Policy name should be defined")]
         public string Name { get; set; }
         [Display(Name = "Probation")]
         [Range(MinProbation, MaxProbation, ErrorMessage = "Value out of range")]

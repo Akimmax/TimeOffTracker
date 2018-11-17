@@ -8,7 +8,7 @@ namespace TOT.Entities.TimeOffPolicies
     {
         public EmployeePositionTimeOffPolicy()
         {
-            Approvals = new List<TimeOffPolicyApprover>();
+            Approvers = new List<TimeOffPolicyApprover>();
         }
         public int Id { get; set; }
         public TimeOffType Type { get; set; }
@@ -18,6 +18,6 @@ namespace TOT.Entities.TimeOffPolicies
         public bool IsActive {get;set;}
         public EmployeePositionTimeOffPolicy NextPolicy { get; set; }
         public EmployeePosition Position { get; set; }
-        public ICollection<TimeOffPolicyApprover> Approvals { get; set; }
+        public ICollection<TimeOffPolicyApprover> Approvers { get; set; }
     }
 }

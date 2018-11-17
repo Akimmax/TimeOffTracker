@@ -36,7 +36,7 @@ namespace TOT.Data.Repositories
 
                 var ApproversSet = dbContext.Set<TimeOffPolicyApprover>();
                 var oldApprovers = ApproversSet.Where(x=>x.EmployeePositionTimeOffPolicyId == item.Id);
-                var newApprovers = item.Approvals;
+                var newApprovers = item.Approvers;
 
                 var toAddAprovers = newApprovers.Except(oldApprovers);
                 ApproversSet.AddRangeAsync(toAddAprovers);
@@ -78,7 +78,7 @@ namespace TOT.Data.Repositories
         protected IQueryable<EmployeePositionTimeOffPolicy> GetAllQuery()
         {
             return dbContext.Set<EmployeePositionTimeOffPolicy>()
-                .Include(x => x.Approvals)
+                .Include(x => x.Approvers)
                     .ThenInclude(p=>p.EmployeePosition)
                 .Include(x => x.Policy)
                 .Include(x => x.Position)

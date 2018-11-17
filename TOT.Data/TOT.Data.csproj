@@ -14,6 +14,8 @@
     <Compile Remove="Migrations\20181029081240_AddedInitializationMigration.cs" />
     <Compile Remove="Migrations\20181029082716_AddedInitializationMigration.cs" />
     <Compile Remove="Migrations\20181029083159_AddedInitializationMigration.cs" />
+    <Compile Remove="Migrations\20181116193116_RenameApproversMigration.cs" />
+    <Compile Remove="Migrations\20181116202702_PolicyTableChangesMigration.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,60 @@
+﻿@using TOT.Dto;
+@using TOT.Entities;
+@using TOT.Entities.TimeOffRequests;
+@using TOT.Entities.TimeOffPolicies;
+@model EmployeePositionTimeOffPolicyDTO
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var types = new SelectList((IEnumerable<TimeOffType>)ViewData["Type"], "Id", "Title");
+    var policies = new SelectList((IEnumerable<TimeOffPolicy>)ViewData["Policy"], "Id", "Name");
+    var positions = new SelectList((IEnumerable<EmployeePosition>)ViewData["Position"], "Id", "Title");
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+</head>
+<body>
+    <h4>EmployeePositionTimeOffPolicy</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Position.Title" class="control-label"></label>
+                    <select asp-for="Position.Id" class="form-control" asp-items="@policies">
+                        <option selected="selected" disabled="disabled">Chose employee position</option>
+                    </select>
+                    <span asp-validation-for="Position" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Type.Title" class="control-label"></label>
+                    <select asp-for="Type.Id" class="form-control" asp-items="@types">
+                        <option selected="selected" disabled="disabled">Chose vacation type</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Policy.Name" class="control-label"></label>
+                    <select asp-for="Policy.Id" class="form-control" asp-items="@positions">
+                        <option selected="selected" disabled="disabled">Chose policy</option>
+                    </select>
+                    <span asp-validation-for="Policy" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</body>
+</html>
