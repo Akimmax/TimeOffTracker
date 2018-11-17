@@ -98,13 +98,21 @@ namespace TOT.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await requestService.UpdateAsync(req);
-
+                User usr = await _userManager.GetUserAsync(HttpContext.User);
+                await requestService.UpdateAsync(req, usr);
                 return RedirectToAction(nameof(List));
 
             }
 
             return await EditAsync(req.Id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditOnlyName(TimeOffRequestDTO req)
+        {            
+                User usr = await _userManager.GetUserAsync(HttpContext.User);
+                await requestService.UpdateAsync(req, usr);
+                return RedirectToAction(nameof(List));            
         }
 
         [HttpGet]

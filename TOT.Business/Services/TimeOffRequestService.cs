@@ -46,7 +46,7 @@ namespace TOT.Business.Services
             return unitOfWork.SaveAsync();
         }
 
-        public Task UpdateAsync(TimeOffRequestDTO requestDTO)
+        public Task UpdateAsync(TimeOffRequestDTO requestDTO, User user)
         {
             if (requestDTO == null)
             {
@@ -70,7 +70,13 @@ namespace TOT.Business.Services
                 request.StartsAt = requestDTO.StartsAt;
                 request.EndsOn = requestDTO.EndsOn;
                 request.Note = requestDTO.Note;
-                request.TypeId = (int)requestDTO.TypeId;
+
+                if (request.TypeId != (int)requestDTO.TypeId)
+                {
+                    request.TypeId = (int)requestDTO.TypeId;
+                    request.Policy = GetEmployeePositionTimeOffPolicyByTypeAndPosition(
+                        (int)requestDTO.TypeId, user.PositionId);
+                }                
 
                 var currentUsersApproveRequestId = request.Approvals.Select(i => i.UserId);
                 var newUsersApproveRequestId = requestDTO.UsersApproveRequestId;

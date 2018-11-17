@@ -11,6 +11,11 @@ namespace TOT.Dto.CustomValidationAttributes
         {
             ErrorMessage = ErrorMessageString;
 
+            if (value == null)
+            {
+                return new ValidationResult(ErrorMessage);
+            }
+
             ICollection<string> UserApproveIds = (ICollection<string>)value;
 
             foreach (var apr in UserApproveIds)
