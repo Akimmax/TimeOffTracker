@@ -22,7 +22,7 @@ namespace TOT.Dto
         //public int PolicyId { get; set; }
         [Display(Name = "Status Policy")]
         public bool IsActive { get; set; }
-        //public EmployeePositionTimeOffPolicyDTO NextPolicy { get; set; }
+        public EmployeePositionTimeOffPolicyDTO NextPolicy { get; set; }
         [Required(ErrorMessage = "Employee Position should be defined")]
         [Display(Name = "Employee Position")]
         public EmployeePositionDTO Position { get; set; }

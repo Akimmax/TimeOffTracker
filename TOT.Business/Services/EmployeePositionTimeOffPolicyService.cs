@@ -44,13 +44,21 @@ namespace TOT.Business.Services
                 template.IsActive = false;
                 unitOfWork.EmployeePositionTimeOffPolicies.Update(template);
             }
-            return unitOfWork.SaveAsync();
+            return Task.CompletedTask;
         }
 
         public Task CreateAsync(EmployeePositionTimeOffPolicyDTO ItemDTO)
         {
             EmployeePositionTimeOffPolicyDTOChecker(ItemDTO);
 
+            var policy = unitOfWork.TimeOffPolicies
+                .Find(x=>x.Name == ItemDTO.Policy.Name &&
+                x.TimeOffDaysPerYear == ItemDTO.Policy.TimeOffDaysPerYear &&
+                x.DelayBeforeAvailable == ItemDTO.Policy.DelayBeforeAvailable);
+            if (policy != null)
+            {
+                ItemDTO.Policy.Id = policy.Id;
+            }
             var Item = mapper.Map<EmployeePositionTimeOffPolicyDTO, EmployeePositionTimeOffPolicy>(ItemDTO);
 
             var template = unitOfWork.EmployeePositionTimeOffPolicies
@@ -82,36 +90,53 @@ namespace TOT.Business.Services
         {
             EmployeePositionTimeOffPolicyDTOChecker(ItemDTO);
 
-            var Item = mapper.Map<EmployeePositionTimeOffPolicyDTO, EmployeePositionTimeOffPolicy>(ItemDTO);
+            var policy = unitOfWork.TimeOffPolicies
+                .Find(x => x.Name == ItemDTO.Policy.Name &&
+                x.TimeOffDaysPerYear == ItemDTO.Policy.TimeOffDaysPerYear &&
+                x.DelayBeforeAvailable == ItemDTO.Policy.DelayBeforeAvailable);
+            if (policy != null)
+            {
+                ItemDTO.Policy.Id = policy.Id;
+            }
 
+            var Item = mapper.Map<EmployeePositionTimeOffPolicyDTO, EmployeePositionTimeOffPolicy>(ItemDTO);
+            foreach (var appr in Item.Approvers)
+            {
+                appr.EmployeePositionTimeOffPolicyId = Item.Id;
+            }
             var template = unitOfWork.TimeOffRequests
                 .Find(x => x.Policy.Id == Item.Id);
 
-            if (template == null)
-            {
-                unitOfWork.EmployeePositionTimeOffPolicies.Update(Item);
-                return unitOfWork.SaveAsync();
-            }
-            else if (unitOfWork.EmployeePositionTimeOffPolicies.Get(Item.Id) is EmployeePositionTimeOffPolicy oldItem)
+            if (unitOfWork.EmployeePositionTimeOffPolicies.Get(Item.Id) is EmployeePositionTimeOffPolicy oldItem)
             {
                 if (Item.TypeId == oldItem.TypeId &&
                     Item.PolicyId == oldItem.PolicyId &&
                     Item.Position.Id == oldItem.Position.Id &&
+                    Item.Policy.Name == oldItem.Policy.Name &&
+                    Item.Policy.TimeOffDaysPerYear == oldItem.Policy.TimeOffDaysPerYear &&
+                    Item.Policy.DelayBeforeAvailable == oldItem.Policy.DelayBeforeAvailable &&
                     Item.Approvers.OrderBy(x => x.EmployeePositionId)
                     .SequenceEqual(oldItem.Approvers.OrderBy(x => x.EmployeePositionId), new TimeOffPolicyApproverComparer()))
                 {
                     return Task.CompletedTask;
+                } else
+                if (template == null)
+                {
+                    unitOfWork.EmployeePositionTimeOffPolicies.Update(Item);
+                    return Task.CompletedTask;
                 }
+                else
+                {
+                    Item.Id = 0;
+                    Item.IsActive = true;
 
-                Item.Id = 0;
-                Item.IsActive = true;
+                    oldItem.IsActive = false;
+                    oldItem.NextPolicy = Item;
 
-                oldItem.IsActive = false;
-                oldItem.NextPolicy = Item;
-
-                unitOfWork.EmployeePositionTimeOffPolicies.Update(oldItem);
-                unitOfWork.EmployeePositionTimeOffPolicies.Create(Item);
-                return unitOfWork.SaveAsync();
+                    unitOfWork.EmployeePositionTimeOffPolicies.Update(oldItem);
+                    unitOfWork.EmployeePositionTimeOffPolicies.Create(Item);
+                    return Task.CompletedTask;
+                }
             }
             else
             {
@@ -131,10 +156,6 @@ namespace TOT.Business.Services
             if (ItemDTO == null)
             {
                 throw new ArgumentNullException(nameof(ItemDTO));
-            }
-            if (unitOfWork.TimeOffPolicies.Get(ItemDTO.Policy.Id) == null)
-            {
-                throw new ArgumentException("Policy should be filled");
             }
             if (unitOfWork.EmployeePositions.Get(ItemDTO.Position.Id) == null)
             {

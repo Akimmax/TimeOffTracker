@@ -1,4 +1,4 @@
-﻿@model TOT.Dto.EmployeePositionTimeOffPolicyDTO
+﻿@model TOT.Dto.PolicyCreateModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,7 +12,7 @@
     <title>Edit</title>
 </head>
 <body>
-
+    <script src="~/js/AddApproversScript.js"></script>
     <h4>EmployeePositionTimeOffPolicy</h4>
     <hr />
     <div class="row">
@@ -20,23 +20,57 @@
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="PolicyId" />
+                <input type="hidden" asp-for="IsActive" />
                 <div class="form-group">
-                    <label asp-for="Position.Id" class="control-label"></label>
-                    <select asp-for="Position.Id" class="form-control" asp-items="ViewBag.Position"></select>
-                    <span asp-validation-for="Position.Id" class="text-danger"></span>
+                    <label asp-for="Position.Title" class="control-label"></label>
+                    <select asp-for="Position.Id" class="form-control" asp-items="ViewBag.Position">
+                        <option selected="selected" disabled="disabled">Chose employee position</option>
+                    </select>
+                    <span asp-validation-for="Position" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Type.Id" class="control-label"></label>
-                    <select asp-for="Type.Id" class="form-control" asp-items="ViewBag.Type"></select>
-                    <span asp-validation-for="Type.Id" class="text-danger"></span>
+                    <label asp-for="Type.Title" class="control-label"></label>
+                    <select asp-for="Type.Id" class="form-control" asp-items="ViewBag.Type">
+                        <option selected="selected" disabled="disabled">Chose vacation type</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Policy.Id" class="control-label"></label>
-                    <select asp-for="Policy.Id" class="form-control" asp-items="ViewBag.Policy"></select>
-                    <span asp-validation-for="Policy.Id" class="text-danger"></span>
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TimeOffDaysPerYear" class="control-label"></label>
+                    <input asp-for="TimeOffDaysPerYear" min="1" class="form-control" />
+                    <span asp-validation-for="TimeOffDaysPerYear" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DelayBeforeAvailable" class="control-label"></label>
+                    <input asp-for="DelayBeforeAvailable" min="1" max="12" class="form-control" />
+                    <span asp-validation-for="DelayBeforeAvailable" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Approvers" type="hidden">
+                    <label asp-for="Approvers" class="control-label"></label>
+                    <div id="ApproversList">
+
+                    </div>
+                    <div id="ApproversAddForm">
+                        <label asp-for="Position.Title" class="control-label"></label>
+                        <select id="ApproverPosition" class="form-control" asp-items="ViewBag.Position"></select>
+                        <input id="ApproversAmoun" value="1" min="1" type="number" />
+                        <input type="button" value="Add new Approver" onclick="AddApprover()" />
+                    </div>
+                    <span asp-validation-for="Approvers" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Save" class="btn btn-default" />
+                    @if (ViewBag.Error != null || ViewBag.Error != "")
+                    {
+                        <h5>@(ViewBag.Error)</h5>
+                    }
                 </div>
             </form>
         </div>

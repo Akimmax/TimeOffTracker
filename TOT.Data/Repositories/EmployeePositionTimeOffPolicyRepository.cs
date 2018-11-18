@@ -25,34 +25,73 @@ namespace TOT.Data.Repositories
 
         public void Create(EmployeePositionTimeOffPolicy item)
         {
-            dbContext.Set<EmployeePositionTimeOffPolicy>().Add(item);
+            using (var transaction = dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    dbContext.Set<EmployeePositionTimeOffPolicy>().Add(item);
+                    dbContext.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                }
+            }
         }
 
         public void Update(EmployeePositionTimeOffPolicy item)
         {
             using (var transaction = dbContext.Database.BeginTransaction())
             {
-                dbContext.Set<EmployeePositionTimeOffPolicy>().Update(item);
+                try
+                {
+                    var newItem = dbContext.Set<EmployeePositionTimeOffPolicy>().First(x => x.Id == item.Id);
+                    newItem.Policy.Name = item.Policy.Name;
+                    newItem.Policy.TimeOffDaysPerYear = item.Policy.TimeOffDaysPerYear;
+                    newItem.Policy.DelayBeforeAvailable = item.Policy.DelayBeforeAvailable;
+                    newItem.IsActive = item.IsActive;
+                    newItem.PolicyId = item.Policy.Id;
+                    newItem.TypeId = item.Type.Id;
 
-                var ApproversSet = dbContext.Set<TimeOffPolicyApprover>();
-                var oldApprovers = ApproversSet.Where(x=>x.EmployeePositionTimeOffPolicyId == item.Id);
-                var newApprovers = item.Approvers;
+                    var ApproversSet = dbContext.Set<TimeOffPolicyApprover>();
+                    var oldApprovers = ApproversSet.Where(x => x.EmployeePositionTimeOffPolicyId == item.Id);
+                    var newApprovers = item.Approvers;
 
-                var toAddAprovers = newApprovers.Except(oldApprovers);
-                ApproversSet.AddRangeAsync(toAddAprovers);
-                var toRemoveApprovers = oldApprovers.Except(newApprovers);
-                ApproversSet.RemoveRange(toRemoveApprovers);
+                    var toAddAprovers = newApprovers.Except(oldApprovers);
+                    ApproversSet.AddRangeAsync(toAddAprovers);
+                    var toRemoveApprovers = oldApprovers.Except(newApprovers);
+                    ApproversSet.RemoveRange(toRemoveApprovers);
 
-                transaction.Commit();
+                    dbContext.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                }
             }
         }
 
         public void Delete(int id)
         {
-            var item = dbContext.Set<EmployeePositionTimeOffPolicy>().Find(id);
-            if (item != null)
+            using (var transaction = dbContext.Database.BeginTransaction())
             {
-                dbContext.Set<EmployeePositionTimeOffPolicy>().Remove(item);
+                try
+                {
+                    var set = dbContext.Set<EmployeePositionTimeOffPolicy>();
+                    var item = set.Find(id);
+                    if (item != null)
+                    {
+                        set.Remove(item);
+                    }
+                    dbContext.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                }
             }
         }
 

@@ -4,7 +4,6 @@ using TOT.Entities.IdentityEntities;
 using TOT.Entities;
 using TOT.Entities.TimeOffRequests;
 using TOT.Entities.TimeOffPolicies;
-using System.Collections.Generic;
 
 namespace TOT.Data
 {
@@ -109,7 +108,8 @@ namespace TOT.Data
                .IsRequired();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x => x.Position)
-               .WithMany();
+               .WithMany()
+               .HasForeignKey(x=>x.PositionId);
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasMany(x=>x.Approvers)
                .WithOne()

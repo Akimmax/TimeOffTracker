@@ -9,7 +9,7 @@ using TOT.Data;
 namespace TOT.Data.Migrations
 {
     [DbContext(typeof(TOTDBContext))]
-    [Migration("20181117094244_PolicyChangesMigration")]
+    [Migration("20181118183355_PolicyChangesMigration")]
     partial class PolicyChangesMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -449,7 +449,7 @@ namespace TOT.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy")
-                        .WithMany("Approvals")
+                        .WithMany("Approvers")
                         .HasForeignKey("EmployeePositionTimeOffPolicyId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

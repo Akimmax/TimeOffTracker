@@ -447,7 +447,7 @@ namespace TOT.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy")
-                        .WithMany("Approvals")
+                        .WithMany("Approvers")
                         .HasForeignKey("EmployeePositionTimeOffPolicyId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

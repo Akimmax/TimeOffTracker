@@ -1,14 +1,8 @@
 ﻿@using TOT.Dto;
-@using TOT.Entities;
-@using TOT.Entities.TimeOffRequests;
-@using TOT.Entities.TimeOffPolicies;
-@model EmployeePositionTimeOffPolicyDTO
+@model PolicyCreateModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var types = new SelectList((IEnumerable<TimeOffType>)ViewData["Type"], "Id", "Title");
-    var policies = new SelectList((IEnumerable<TimeOffPolicy>)ViewData["Policy"], "Id", "Name");
-    var positions = new SelectList((IEnumerable<EmployeePosition>)ViewData["Position"], "Id", "Title");
 }
 
 <!DOCTYPE html>
@@ -19,6 +13,7 @@
     <title>Create</title>
 </head>
 <body>
+    <script src="~/js/AddApproversScript.js"></script>
     <h4>EmployeePositionTimeOffPolicy</h4>
     <hr />
     <div class="row">
@@ -27,27 +22,53 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Position.Title" class="control-label"></label>
-                    <select asp-for="Position.Id" class="form-control" asp-items="@policies">
+                    <select asp-for="Position.Id" class="form-control" asp-items="ViewBag.Position">
                         <option selected="selected" disabled="disabled">Chose employee position</option>
                     </select>
                     <span asp-validation-for="Position" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Type.Title" class="control-label"></label>
-                    <select asp-for="Type.Id" class="form-control" asp-items="@types">
+                    <select asp-for="Type.Id" class="form-control" asp-items="ViewBag.Type">
                         <option selected="selected" disabled="disabled">Chose vacation type</option>
                     </select>
                     <span asp-validation-for="Type" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Policy.Name" class="control-label"></label>
-                    <select asp-for="Policy.Id" class="form-control" asp-items="@positions">
-                        <option selected="selected" disabled="disabled">Chose policy</option>
-                    </select>
-                    <span asp-validation-for="Policy" class="text-danger"></span>
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TimeOffDaysPerYear" class="control-label"></label>
+                    <input asp-for="TimeOffDaysPerYear" min="1" class="form-control" />
+                    <span asp-validation-for="TimeOffDaysPerYear" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DelayBeforeAvailable" class="control-label"></label>
+                    <input asp-for="DelayBeforeAvailable" min="1" max="12" class="form-control" />
+                    <span asp-validation-for="DelayBeforeAvailable" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Approvers" type="hidden">
+                    <label asp-for="Approvers" class="control-label"></label>
+                        <div id="ApproversList">
+
+                        </div>
+                        <div id="ApproversAddForm">
+                            <label asp-for="Position.Title" class="control-label"></label>
+                            <select id="ApproverPosition" class="form-control" asp-items="ViewBag.Position"></select>
+                            <input id="ApproversAmoun" value="1" min="1" type="number" />
+                            <input type="button" value="Add new Approver" onclick="AddApprover()"/>
+                        </div>
+                    <span asp-validation-for="Approvers" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-default" />
+                    @if (ViewBag.Error !=null || ViewBag.Error != "")
+                    {
+                        <h5>@(ViewBag.Error)</h5>
+                    }
                 </div>
             </form>
         </div>

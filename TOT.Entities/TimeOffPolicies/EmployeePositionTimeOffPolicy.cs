@@ -18,6 +18,7 @@ namespace TOT.Entities.TimeOffPolicies
         public bool IsActive {get;set;}
         public EmployeePositionTimeOffPolicy NextPolicy { get; set; }
         public EmployeePosition Position { get; set; }
+        public int? PositionId { get; set; }
         public ICollection<TimeOffPolicyApprover> Approvers { get; set; }
     }
 }
