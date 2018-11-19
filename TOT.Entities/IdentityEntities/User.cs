@@ -7,6 +7,8 @@ namespace TOT.Entities.IdentityEntities
 {
     public class User : IdentityUser
     {
+        public int PositionId { get; set; }
+        public EmployeePosition Position { get; set; }
         public DateTime HireDate { get; set; }
     }
 }

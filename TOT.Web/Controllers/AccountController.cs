@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using TOT.Entities;
 using TOT.Entities.IdentityEntities;
 using TOT.Web.ViewModels;
 
@@ -28,7 +29,7 @@ namespace TOT.Web.Controllers
         {
             if(ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email };
+                User user = new User { Email = model.Email, UserName = model.Email, PositionId = (int)EmployeePositionEnum.Employee };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 
