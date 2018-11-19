@@ -7,8 +7,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var types = ((IEnumerable<SelectListItem>)ViewData["AvailableTypes"]);
-    var users = ((IEnumerable<SelectListItem>)ViewData["Users"]);
-    int? amountApprovals = (int?)ViewData["AmountRequestApprovalsForRequest"];
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -54,31 +52,11 @@
             <div class="form-group">
                 <div id="partial">
 
-                    @if (users != null && users.Any())
-                    {
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="control-label">Approvals</label>
-
-                                @for (int i = 0; i < amountApprovals; i++)
-                                {
-                                    <div class="form-group">
-                                        @Html.DropDownListFor(model => model.ApproversId, @users,
-                                        new { @class = "form-control", @id="selectUser"+ i })
-                                    </div>
-                                }
-
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <center>@ViewData["Eror message"]</center>
-                    }
-
                 </div>
                 <span asp-validation-for="ApproversId" class="text-danger"></span>
             </div>
+
+
 
             <div class="form-group">
                 <label asp-for="Note" class="control-label"></label>
@@ -104,7 +82,12 @@
 
 <script>
 
-    $(document).ready(function () {
+    function fillPartial(result) {
+        $('#partial').html(result);
+    }
+
+    function fillPartialAndSetCurrentApproversInDropdown(result) {
+        $('#partial').html(result)
         var usersId = [];
 
         @foreach (var id in Model.ApproversId)
@@ -112,18 +95,26 @@
             @:usersId.push("@id");
         }
 
-        for (var i = 0; i < usersId.length; i++){
+        for (var i = 0; i < usersId.length; i++) {
             idUsersDropdown = "#selectUser" + i;
             $(idUsersDropdown).val(usersId[i]);
+        }
+    }
+
+    $(document).ready(function () {
+        var id = $("#selectType").val();
+
+        if (id != null) {
+            loadApprovals(id, fillPartialAndSetCurrentApproversInDropdown);
         }
     });
 
     $("#selectType").change(function () {
         var id = $("#selectType").val();
-        loadApprovals(id);
+        loadApprovals(id, fillPartial);
     });
 
-    function loadApprovals(id) {
+    function loadApprovals(id, successFunction) {
         $('#partial').html("<center>Approvals are loading</center>")
 
         $.ajax({
@@ -131,7 +122,7 @@
             url: '../Request/PartialAsync/' + id,
             data: { typeId: id },
             success: function (result) {
-                $('#partial').html(result)
+                successFunction(result);
             },
             error: function (x, y, z) {
                 alert(x + '\n' + y + '\n' + z);

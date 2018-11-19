@@ -17,7 +17,7 @@
             {
                 <div class="form-group">
                     @Html.DropDownListFor(model => model.ApproversId, @users,
-                    new { @class = "form-control" })
+                    new { @class = "form-control", @id = "selectUser" + i })
                 </div>
             }
 

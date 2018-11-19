@@ -21,6 +21,8 @@ namespace TOT.Web.Controllers
         private readonly TimeOffTypeService requestTypeService;
         private readonly Interfaces.IMapper dtoMapper;
         private readonly UserManager<User> _userManager;
+      
+        private static TimeOffRequestDTO TransferringRequestToEdit;
 
         public RequestController(UserManager<User> userManager, TimeOffRequestService requests, TimeOffTypeService requestTypes, Interfaces.IMapper mapper)
         {
@@ -54,13 +56,20 @@ namespace TOT.Web.Controllers
             }
 
             return Create();
-
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditAsync(int id)
+        public IActionResult EditGetRequest(int id)
         {
-            var request = requestService.GetById(id, true);
+            TransferringRequestToEdit = requestService.GetById(id, true);
+
+            return RedirectToAction("Edit");
+        }
+
+        [HttpGet]
+        public IActionResult Edit()
+        {           
+            var request = TransferringRequestToEdit;
 
             if (requestService.IfApprovedAtLeastOnce(request.Id))
             {
@@ -71,24 +80,7 @@ namespace TOT.Web.Controllers
                 ViewData["AvailableTypes"] = requestTypeService.GetAll().Select(t =>
                 new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
 
-                User curentUser = await _userManager.GetUserAsync(HttpContext.User);
-
-                try
-                {
-                    var users = requestService.GetUsers((int)request.TypeId, curentUser.PositionId, _userManager);
-                    var usersList = (users.Select(u => new SelectListItem() { Value = u.Id.ToString(), Text = u.Email }));
-
-                    ViewData["Users"] = new List<SelectListItem>(usersList);
-                    ViewData["AmountRequestApprovalsForRequest"] = users.Count();
-                }
-                catch (Exception e)
-                {
-                    if (e is ApprovalsNotFoundException || e is EntityNotFoundException)
-                    {
-                        ViewData["Eror message"] = e.Message;
-                    }
-                }
-                return View("Edit", request);
+                return View(request);
             }
         }
 
@@ -102,7 +94,7 @@ namespace TOT.Web.Controllers
                 return RedirectToAction(nameof(List));
             }
 
-            return await EditAsync(req.Id);
+            return Edit();
         }
 
         [HttpPost]
