@@ -122,6 +122,15 @@ namespace TOT.Web.Controllers
             }
             if (ModelState.IsValid)
             {
+                if (_UnitOfWork.EmployeePositionTimeOffPolicies
+                    .Find(x=>x.PositionId == ItemCreateModel.Position.Id &&
+                    x.TypeId == ItemCreateModel.Type.Id) != null)
+                {
+                    ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
+                    ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+                    ViewData["Error"] = "Policy for this Position and Type alredy exist.";
+                    return View(ItemCreateModel);
+                }
                 var ApproversJson = JObject.Parse(ItemCreateModel.Approvers);
                 var Approvers = new List<TimeOffPolicyApproverDTO>();
                 foreach (var item in ApproversJson)

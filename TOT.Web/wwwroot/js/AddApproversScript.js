@@ -16,6 +16,17 @@ function AddApprover() {
         "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle(" + AprPost.val() + ")' />" + "</div>");
 }
 
+function ShowApr(){
+    AprArray = JSON.parse($("#Approvers").val());
+    var AprList = $("#ApproversList");
+    PositionList = $("#ApproverPosition");
+    for (var key in AprArray) {
+        var AprText = $("#ApproverPosition").find('option[value="' + key + '"]').text();
+        AprList.append("<div class='text - danger' id='appr" +key+"'>"+AprText+" : " + AprArray[key] +
+            "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle("+key+")' /></div>");
+    }
+}
+
 function DeliteEle(id) {
     delete AprArray[id];
     $("#Approvers").val(JSON.stringify(AprArray));
