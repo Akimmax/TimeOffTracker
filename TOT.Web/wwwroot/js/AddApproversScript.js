@@ -12,8 +12,8 @@ function AddApprover() {
     var AprText = $("#ApproverPosition").find('option[value="' + AprPost.val() + '"]').text();
     AprArray[AprPost.val()] = AprAmoun;
     $("#Approvers").val(JSON.stringify(AprArray));
-    AprList.append("<div class='text - danger' id='appr" + AprPost.val() + "'>" + AprText + " : " + AprAmoun +
-        "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle(" + AprPost.val() + ")' />" + "</div>");
+    AprList.append("<li class='list-group-item' id='appr" + AprPost.val() + "'>" + AprText + " : " + AprAmoun +
+        "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle(" + AprPost.val() + ")' />" + "</li>");
 }
 
 function ShowApr(){
@@ -22,7 +22,7 @@ function ShowApr(){
     PositionList = $("#ApproverPosition");
     for (var key in AprArray) {
         var AprText = $("#ApproverPosition").find('option[value="' + key + '"]').text();
-        AprList.append("<div class='text - danger' id='appr" +key+"'>"+AprText+" : " + AprArray[key] +
+        AprList.append("<div class='list-group-item' id='appr" +key+"'>"+AprText+" : " + AprArray[key] +
             "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle("+key+")' /></div>");
     }
 }
