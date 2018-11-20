@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TOT.Dto.TimeOffPolicies;
 
-namespace TOT.Dto
+namespace TOT.Dto.TimeOffPolicies
 {
     public class TimeOffPolicyApproverDTO
     {
@@ -9,7 +10,6 @@ namespace TOT.Dto
         public int Amount { get; set; }
         [Display(Name = "Approvals position")]
         public EmployeePositionDTO EmployeePosition { get; set; }
-        //public int EmployeePositionId { get; set; }
 
         public int EmployeePositionTimeOffPolicyId { get; set; }
     }

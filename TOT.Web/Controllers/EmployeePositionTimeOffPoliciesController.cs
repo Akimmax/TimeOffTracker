@@ -10,6 +10,7 @@ using TOT.Entities.TimeOffPolicies;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using TOT.Entities;
+using TOT.Dto.TimeOffPolicies;
 
 namespace TOT.Web.Controllers
 {

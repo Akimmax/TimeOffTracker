@@ -5,9 +5,8 @@ using TOT.Dto.SelectLists;
 using TOT.Entities;
 using TOT.Entities.TimeOffPolicies;
 using TOT.Entities.TimeOffRequests;
-using AutoMapper;
 using TOT.Dto.TimeOffRequests;
-using TOT.Entities.TimeOffRequests;
+using TOT.Dto.TimeOffPolicies;
 
 namespace TOT.Bootstrap.Mapping
 {

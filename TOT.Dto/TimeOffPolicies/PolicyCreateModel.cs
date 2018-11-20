@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using TOT.Dto.TimeOffRequests;
 
-namespace TOT.Dto
+namespace TOT.Dto.TimeOffPolicies
 {
     public class PolicyCreateModel
     {

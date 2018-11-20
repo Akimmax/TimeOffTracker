@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TOT.Dto
+namespace TOT.Dto.TimeOffPolicies
 {
     public class EmployeePositionDTO
     {
