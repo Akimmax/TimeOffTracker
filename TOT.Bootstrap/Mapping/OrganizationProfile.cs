@@ -5,6 +5,9 @@ using TOT.Dto.SelectLists;
 using TOT.Entities;
 using TOT.Entities.TimeOffPolicies;
 using TOT.Entities.TimeOffRequests;
+using AutoMapper;
+using TOT.Dto.TimeOffRequests;
+using TOT.Entities.TimeOffRequests;
 
 namespace TOT.Bootstrap.Mapping
 {
@@ -14,6 +17,17 @@ namespace TOT.Bootstrap.Mapping
         {
             CreateMap<TimeOffType, TimeOffTypeDTO>();
             CreateMap<TimeOffTypeDTO, TimeOffType>();
+
+            CreateMap<TimeOffRequestApprovalStatuses, TimeOffRequestApprovalStatusesDTO>();
+            CreateMap<TimeOffRequestApprovalStatusesDTO, TimeOffRequestApprovalStatuses>();
+
+            CreateMap<TimeOffRequestApproval, TimeOffRequestApprovalDTO>();
+            CreateMap<TimeOffRequestApprovalDTO, TimeOffRequestApproval>();
+
+            CreateMap<TimeOffRequest, TimeOffRequestDTO>();
+            CreateMap<TimeOffRequestDTO, TimeOffRequest>();
+
+            //-----------------Policy---------------
 
             CreateMap<EmployeePosition, EmployeePositionDTO>();
             CreateMap<EmployeePositionDTO, EmployeePosition>();
@@ -64,30 +78,6 @@ namespace TOT.Bootstrap.Mapping
             CreateMap<TimeOffPolicyApprover, ApproversSelectList>()
                 .ForMember(x => x.Title,
                 m => m.ResolveUsing(src => $"{src.EmployeePosition.Title} : {src.Amount}"));
-        }
-    }
-}
-using AutoMapper;
-using TOT.Dto.TimeOffRequests;
-using TOT.Entities.TimeOffRequests;
-
-namespace TOT.Bootstrap.Mapping
-{
-    public class OrganizationProfile : Profile
-    {
-        public OrganizationProfile()
-        {
-            CreateMap<TimeOffType, TimeOffTypeDTO>();
-            CreateMap<TimeOffTypeDTO, TimeOffType>();
-
-            CreateMap<TimeOffRequestApprovalStatuses, TimeOffRequestApprovalStatusesDTO>();
-            CreateMap<TimeOffRequestApprovalStatusesDTO, TimeOffRequestApprovalStatuses>();
-
-            CreateMap<TimeOffRequestApproval, TimeOffRequestApprovalDTO>();
-            CreateMap<TimeOffRequestApprovalDTO, TimeOffRequestApproval>();
-
-            CreateMap<TimeOffRequest, TimeOffRequestDTO>();
-            CreateMap<TimeOffRequestDTO, TimeOffRequest>();
         }
     }
 }
