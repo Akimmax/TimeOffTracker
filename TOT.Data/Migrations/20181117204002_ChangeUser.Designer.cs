@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TOT.Data;
 
 namespace TOT.Data.Migrations
 {
     [DbContext(typeof(TOTDBContext))]
-    partial class TOTDBContextModelSnapshot : ModelSnapshot
+    [Migration("20181117204002_ChangeUser")]
+    partial class ChangeUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,10 +205,6 @@ namespace TOT.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("IsActive");
-
-                    b.Property<int?>("NextPolicyId");
-
                     b.Property<int>("PolicyId");
 
                     b.Property<int?>("PositionId");
@@ -214,8 +212,6 @@ namespace TOT.Data.Migrations
                     b.Property<int>("TypeId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NextPolicyId");
 
                     b.HasIndex("PolicyId");
 
@@ -226,10 +222,10 @@ namespace TOT.Data.Migrations
                     b.ToTable("EmployeePositionTimeOffPolicies");
 
                     b.HasData(
-                        new { Id = 1, IsActive = true, PolicyId = 1, TypeId = 1 },
-                        new { Id = 2, IsActive = true, PolicyId = 2, TypeId = 2 },
-                        new { Id = 3, IsActive = true, PolicyId = 3, TypeId = 3 },
-                        new { Id = 4, IsActive = true, PolicyId = 4, TypeId = 4 }
+                        new { Id = 1, PolicyId = 1, PositionId = 2, TypeId = 1 },
+                        new { Id = 2, PolicyId = 2, PositionId = 2, TypeId = 2 },
+                        new { Id = 3, PolicyId = 3, PositionId = 2, TypeId = 3 },
+                        new { Id = 4, PolicyId = 4, PositionId = 2, TypeId = 4 }
                     );
                 });
 
@@ -246,7 +242,7 @@ namespace TOT.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TimeOffPolicies");
+                    b.ToTable("TimeOffPolicy");
 
                     b.HasData(
                         new { Id = 1, DelayBeforeAvailable = 12, Name = "Paid vacation", TimeOffDaysPerYear = 20 },
@@ -256,7 +252,7 @@ namespace TOT.Data.Migrations
                     );
                 });
 
-            modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApprover", b =>
+            modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApproval", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -267,11 +263,15 @@ namespace TOT.Data.Migrations
 
                     b.Property<int>("EmployeePositionTimeOffPolicyId");
 
+                    b.Property<string>("UserId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeePositionId");
 
                     b.HasIndex("EmployeePositionTimeOffPolicyId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TimeOffPolicyApprovals");
 
@@ -367,7 +367,7 @@ namespace TOT.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TimeOffTypes");
+                    b.ToTable("TimeOffType");
 
                     b.HasData(
                         new { Id = 1, Title = "Paid Holiday" },
@@ -432,10 +432,6 @@ namespace TOT.Data.Migrations
 
             modelBuilder.Entity("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy", b =>
                 {
-                    b.HasOne("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy", "NextPolicy")
-                        .WithMany()
-                        .HasForeignKey("NextPolicyId");
-
                     b.HasOne("TOT.Entities.TimeOffPolicies.TimeOffPolicy", "Policy")
                         .WithMany()
                         .HasForeignKey("PolicyId")
@@ -451,7 +447,7 @@ namespace TOT.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApprover", b =>
+            modelBuilder.Entity("TOT.Entities.TimeOffPolicies.TimeOffPolicyApproval", b =>
                 {
                     b.HasOne("TOT.Entities.EmployeePosition", "EmployeePosition")
                         .WithMany()
@@ -459,9 +455,13 @@ namespace TOT.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TOT.Entities.TimeOffPolicies.EmployeePositionTimeOffPolicy")
-                        .WithMany("Approvers")
+                        .WithMany("Approvals")
                         .HasForeignKey("EmployeePositionTimeOffPolicyId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TOT.Entities.IdentityEntities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("TOT.Entities.TimeOffRequests.TimeOffRequest", b =>

@@ -18,6 +18,9 @@ namespace TOT.Interfaces
         IRepository<TimeOffPolicyApprover> TimeOffPolicyApprovers { get;}
         IRepository<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicies { get; }
 
+        IRepository<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicy { get; }
+        IRepository<EmployeePosition> EmployeePositions { get; }
+
         Task SaveAsync();
     }
 }

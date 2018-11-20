@@ -31,6 +31,12 @@ namespace TOT.Data
             modelBuilder.Entity<EmployeePosition>()
                 .Property(x => x.Title)
                 .IsRequired();
+            modelBuilder.Entity<TimeOffType>()
+                .Property(x => x.Id)
+                .ValueGeneratedNever();
+            modelBuilder.Entity<EmployeePosition>()
+               .HasData(
+               new EmployeePosition() { Title = "Employee", Id = (int)EmployeePositionEnum.Employee });
 
             modelBuilder.Entity<TimeOffType>()
                 .HasKey(x => x.Id);

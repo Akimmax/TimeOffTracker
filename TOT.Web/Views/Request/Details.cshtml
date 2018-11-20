@@ -1,0 +1,88 @@
+﻿@model TOT.Dto.TimeOffRequests.TimeOffRequestDTO
+
+@{
+    ViewData["Title"] = "Details";
+
+    int counter = 0;
+}
+
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 ">
+            <div class="col-md-4 col-md-pull-4">
+                <dl class="dl-horizontal ">
+                    <dt>
+                        Type
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => Model.Type.Title)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.StartsAt)
+                    </dt>
+                    <dd>
+                        @Model.StartsAt.ToString("MM/dd/yyyy")
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.EndsOn)
+                    </dt>
+                    <dd>
+                        @Model.EndsOn?.ToString("MM/dd/yyyy")
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.Note)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => Model.Note)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 ">
+            @if (Model.Approvals.Any())
+            {
+                <div class="display-label"><b>Approvals</b></div>
+                <div class="table-responsive">
+                    <table class="table ">
+                        <tbody>
+
+                            @foreach (var approval in Model.Approvals)
+                            {
+                                counter++;
+
+                                <tr>
+                                    <td>
+                                        Approve @counter
+                                    </td>
+                                    <td>
+                                        @approval.Status.Title
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            else
+            {
+                <center>No items found</center>
+            }
+
+        </div>
+    </div>
+</div>
+
+<br />
+<div>
+    <a asp-action="List">Back to List</a>
+</div>
+<br />

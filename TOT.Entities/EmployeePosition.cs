@@ -10,4 +10,10 @@
             return Title.Equals(other.Title);
         }
     }
+
+    public enum EmployeePositionEnum : int
+    {
+        Admin = 1,
+        Employee = 2
+    }
 }

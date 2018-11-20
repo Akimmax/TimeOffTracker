@@ -14,14 +14,15 @@ namespace TOT.Bootstrap
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<Mapping.AutoMapper>()
-                .As<IMapper>()
-                .InstancePerLifetimeScope();
+            .As<IMapper>()
+            .InstancePerLifetimeScope();            
 
             builder.RegisterAssemblyTypes(typeof(BaseService).Assembly)
                .Where(type => type.Name.EndsWith("Service"))
                .AsSelf()
                .AsImplementedInterfaces()
                .InstancePerLifetimeScope();
+
         }
     }
 }
