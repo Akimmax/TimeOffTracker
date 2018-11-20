@@ -28,6 +28,25 @@ namespace TOT.Business.Services
             return mapper.Map<EmployeePositionTimeOffPolicy, EmployeePositionTimeOffPolicyDTO>(template);
         }
 
+        public EmployeePositionTimeOffPolicyDTO GetByTypeIdAndPositionId(int Typeid, int PositionId)
+        {
+                var item = unitOfWork.EmployeePositionTimeOffPolicies
+                    .Find(x => x.TypeId == Typeid &&
+                        x.PositionId == PositionId &&
+                        x.IsActive == true);
+                if (item == null)
+                {
+                    item = unitOfWork.EmployeePositionTimeOffPolicies
+                    .Find(x => x.TypeId == Typeid &&
+                        x.IsActive == true);
+                }
+                if (item == null)
+                {
+                    throw new EntityNotFoundException("Policy");
+                }
+                return mapper.Map<EmployeePositionTimeOffPolicy, EmployeePositionTimeOffPolicyDTO>(item);
+        }
+
         public Task DeleteByIdAsync(int id)
         {
             var template = unitOfWork.EmployeePositionTimeOffPolicies.Get(id);
@@ -38,6 +57,11 @@ namespace TOT.Business.Services
             var requsts = unitOfWork.TimeOffRequests.Find(x=>x.Policy.Id == id);
             if (requsts == null)
             {
+                var previous = unitOfWork.EmployeePositionTimeOffPolicies.Find(x => x.NextPolicy.Id == id);
+                if (previous !=null)
+                {
+                    previous.NextPolicy = null;
+                }
                 unitOfWork.EmployeePositionTimeOffPolicies.Delete(id);
             }
             else
@@ -45,6 +69,7 @@ namespace TOT.Business.Services
                 template.IsActive = false;
                 unitOfWork.EmployeePositionTimeOffPolicies.Update(template);
             }
+            unitOfWork.SaveAsync();
             return Task.CompletedTask;
         }
 
@@ -70,9 +95,22 @@ namespace TOT.Business.Services
                     );
             if (template == null)
             {
+                var previous = unitOfWork.EmployeePositionTimeOffPolicies
+                .Find(x =>
+                    x.IsActive == false &&
+                    x.Position.Id == Item.Position.Id &&
+                    x.TypeId == Item.TypeId &&
+                    x.NextPolicy == null
+                    );
+
                 Item.Id = 0;
                 Item.IsActive = true;
                 unitOfWork.EmployeePositionTimeOffPolicies.Create(Item);
+                if (previous != null)
+                {
+                    previous.NextPolicy = Item;
+                    unitOfWork.EmployeePositionTimeOffPolicies.Update(previous);
+                }
                 return unitOfWork.SaveAsync();
             }
             else if (Item.PolicyId == template.PolicyId &&

@@ -5,7 +5,7 @@ function ToDelete(id) {
 }
 
 function DeletePolicy() {
-    $.get("EmployeePositionTimeOffPolicies/Delete/" + PolicyToDelete)
+    $.get("Policies/Delete/" + PolicyToDelete)
         .done(function () {
             alert("Delete successful");
             var elem = "element" + PolicyToDelete;

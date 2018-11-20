@@ -17,6 +17,7 @@ namespace TOT.Web.Controllers
     [Authorize]
     public class RequestController : Controller
     {
+        private readonly EmployeePositionTimeOffPolicyService employeePositionTimeOffPolicyService;
         private readonly TimeOffRequestService requestService;
         private readonly TimeOffTypeService requestTypeService;
         private readonly Interfaces.IMapper dtoMapper;
@@ -24,11 +25,13 @@ namespace TOT.Web.Controllers
       
         private static TimeOffRequestDTO TransferringRequestToEdit;
 
-        public RequestController(UserManager<User> userManager, TimeOffRequestService requests, TimeOffTypeService requestTypes, Interfaces.IMapper mapper)
+        public RequestController(UserManager<User> userManager, TimeOffRequestService requests, TimeOffTypeService requestTypes,
+            EmployeePositionTimeOffPolicyService _employeePositionTimeOffPolicyService ,Interfaces.IMapper mapper)
         {
             requestService = requests;
             dtoMapper = mapper;
             requestTypeService = requestTypes;
+            employeePositionTimeOffPolicyService = _employeePositionTimeOffPolicyService;
             _userManager = userManager;
         }
 
@@ -142,7 +145,14 @@ namespace TOT.Web.Controllers
                 ViewData["Users"] = users.Select(u =>
                 new SelectListItem() { Value = u.Id.ToString(), Text = u.Email });
 
-                ViewData["AmountRequestApprovalsForRequest"] = users.Count();
+                var employeePolicy = employeePositionTimeOffPolicyService
+                    .GetByTypeIdAndPositionId(typeId, curentUser.PositionId);
+                var amount = 0;
+                foreach (var item in employeePolicy.Approvers)
+                {
+                    amount += item.Amount;
+                }
+                ViewData["AmountRequestApprovalsForRequest"] = amount;
             }
             catch (Exception e)
             {

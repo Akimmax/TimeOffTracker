@@ -1,16 +1,15 @@
-﻿using TOT.Dto;
-using TOT.Data;
-using TOT.Dto.SelectLists;
+﻿using System;
 using System.Linq;
-using TOT.Interfaces;
-using TOT.Business.Services;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using TOT.Entities.TimeOffPolicies;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 using TOT.Entities;
+using TOT.Interfaces;
+using TOT.Business.Services;
 using TOT.Dto.TimeOffPolicies;
+using TOT.Business.Exceptions;
+using Newtonsoft.Json.Linq;
 
 namespace TOT.Web.Controllers
 {
@@ -53,26 +52,13 @@ namespace TOT.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([FromForm]PolicyCreateModel ItemCreateModel)
+        public async Task<IActionResult> Create([FromForm]PolicyCreateModel ItemCreateModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var ApproversJson = JObject.Parse(ItemCreateModel.Approvers);
-                    var Approvers = new List<TimeOffPolicyApproverDTO>();
-                    foreach (var item in ApproversJson)
-                    {
-                        var AprPosition = _UnitOfWork.EmployeePositions.Get(int.Parse(item.Key));
-                        var AprAmount = item.Value.Value<int>();
-                    if (AprPosition == null)
-                        {
-                            continue;
-                        }
-                        Approvers.Add(new TimeOffPolicyApproverDTO() {
-                            EmployeePosition = _mapper.Map<EmployeePosition, EmployeePositionDTO>(AprPosition),
-                            Amount = AprAmount});
-                    }
+                    var Approvers = GetApproversFromJson(ItemCreateModel.Approvers);
                     if (Approvers.Count < 1)
                     {
                         ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
@@ -82,7 +68,7 @@ namespace TOT.Web.Controllers
                     }
                     var ItemDTO = _mapper.Map<PolicyCreateModel, EmployeePositionTimeOffPolicyDTO>(ItemCreateModel);
                     ItemDTO.Approvers = Approvers;
-                    _EmployeePositionTimeOffPolicyService.CreateAsync(ItemDTO);
+                    await _EmployeePositionTimeOffPolicyService.CreateAsync(ItemDTO);
                     return RedirectToAction(nameof(Index));
                 }
                 ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
@@ -91,11 +77,18 @@ namespace TOT.Web.Controllers
 
                 return View(ItemCreateModel);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                 ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
-                ViewData["Error"] = ex.Message;
+                if (ex is ArgumentException || ex is ArgumentNullException || ex is EntityNotFoundException)
+                {
+                    ViewData["Error"] = ex.Message;
+                }
+                else
+                {
+                    ViewData["Error"] = "Unexpected error";
+                }
                 return View(ItemCreateModel);
             }
         }
@@ -115,70 +108,94 @@ namespace TOT.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, PolicyCreateModel ItemCreateModel)
-        {
-            if (id != ItemCreateModel.Id)
-            {
-                return NotFound();
-            }
-            if (ModelState.IsValid)
-            {
-                if (_UnitOfWork.EmployeePositionTimeOffPolicies
-                    .Find(x=>x.PositionId == ItemCreateModel.Position.Id &&
-                    x.TypeId == ItemCreateModel.Type.Id &&
-                    x.Id != ItemCreateModel.Id) != null)
-                {
-                    ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
-                    ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
-                    ViewData["Error"] = "Policy for this Position and Type alredy exist.";
-                    return View(ItemCreateModel);
-                }
-                var ApproversJson = JObject.Parse(ItemCreateModel.Approvers);
-                var Approvers = new List<TimeOffPolicyApproverDTO>();
-                foreach (var item in ApproversJson)
-                {
-                    var AprPosition = _UnitOfWork.EmployeePositions.Get(int.Parse(item.Key));
-                    var AprAmount = item.Value.Value<int>();
-                    if (AprPosition == null)
-                    {
-                        continue;
-                    }
-                    Approvers.Add(new TimeOffPolicyApproverDTO()
-                    {
-                        EmployeePosition = _mapper.Map<EmployeePosition, EmployeePositionDTO>(AprPosition),
-                        Amount = AprAmount
-                    });
-                }
-                if (Approvers.Count < 1)
-                {
-                    ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
-                    ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
-                    ViewData["Error"] = "There should be at least 1 approver";
-                    return View(ItemCreateModel);
-                }
-                var ItemDTO = _mapper.Map<PolicyCreateModel, EmployeePositionTimeOffPolicyDTO>(ItemCreateModel);
-                ItemDTO.Approvers = Approvers;
-                _EmployeePositionTimeOffPolicyService.UpdateAsync(ItemDTO);
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
-            ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
-            ViewData["Error"] = "Invalid model";
-
-            return View(ItemCreateModel);
-        }
-
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Edit(int id, PolicyCreateModel ItemCreateModel)
         {
             try
             {
-                _EmployeePositionTimeOffPolicyService.DeleteByIdAsync(id);
+                if (id != ItemCreateModel.Id)
+                {
+                    return NotFound();
+                }
+                if (ModelState.IsValid)
+                {
+                    if (_UnitOfWork.EmployeePositionTimeOffPolicies
+                        .Find(x => x.PositionId == ItemCreateModel.Position.Id &&
+                        x.TypeId == ItemCreateModel.Type.Id &&
+                        x.IsActive ==true &&
+                        x.Id != ItemCreateModel.Id) != null)
+                    {
+                        ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
+                        ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+                        ViewData["Error"] = "Policy for this Position and Type alredy exist.";
+                        return View(ItemCreateModel);
+                    }
+                    var Approvers = GetApproversFromJson(ItemCreateModel.Approvers);
+                    if (Approvers.Count < 1)
+                    {
+                        ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
+                        ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+                        ViewData["Error"] = "There should be at least 1 approver";
+                        return View(ItemCreateModel);
+                    }
+                    var ItemDTO = _mapper.Map<PolicyCreateModel, EmployeePositionTimeOffPolicyDTO>(ItemCreateModel);
+                    ItemDTO.Approvers = Approvers;
+                    await _EmployeePositionTimeOffPolicyService.UpdateAsync(ItemDTO);
+                    return RedirectToAction(nameof(Index));
+                }
+                ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
+                ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+                ViewData["Error"] = "Invalid model";
+
+                return View(ItemCreateModel);
+            }
+            catch (Exception ex)
+            {
+                ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
+                ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+                if (ex is ArgumentException || ex is ArgumentNullException || ex is EntityNotFoundException)
+                {
+                    ViewData["Error"] = ex.Message;
+                }
+                else
+                {
+                    ViewData["Error"] = "Unexpected error";
+                }
+                return View(ItemCreateModel);
+            }
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _EmployeePositionTimeOffPolicyService.DeleteByIdAsync(id);
                 return Ok();
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return BadRequest();
             }
+        }
+
+        protected List<TimeOffPolicyApproverDTO> GetApproversFromJson(string JsonString)
+        {
+            var ApproversJson = JObject.Parse(JsonString);
+            var Approvers = new List<TimeOffPolicyApproverDTO>();
+            foreach (var item in ApproversJson)
+            {
+                var AprPosition = _UnitOfWork.EmployeePositions.Get(int.Parse(item.Key));
+                var AprAmount = item.Value.Value<int>();
+                if (AprPosition == null)
+                {
+                    continue;
+                }
+                Approvers.Add(new TimeOffPolicyApproverDTO()
+                {
+                    EmployeePosition = _mapper.Map<EmployeePosition, EmployeePositionDTO>(AprPosition),
+                    Amount = AprAmount
+                });
+            }
+            return Approvers;
         }
     }
 }
