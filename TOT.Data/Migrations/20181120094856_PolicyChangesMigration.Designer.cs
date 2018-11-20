@@ -9,7 +9,7 @@ using TOT.Data;
 namespace TOT.Data.Migrations
 {
     [DbContext(typeof(TOTDBContext))]
-    [Migration("20181118183355_PolicyChangesMigration")]
+    [Migration("20181120094856_PolicyChangesMigration")]
     partial class PolicyChangesMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,6 +139,7 @@ namespace TOT.Data.Migrations
                     b.ToTable("EmployeePositions");
 
                     b.HasData(
+                        new { Id = 2, Title = "Employee" },
                         new { Id = 1, Title = "Admin" }
                     );
                 });
@@ -176,6 +177,8 @@ namespace TOT.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<int>("PositionId");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -191,6 +194,8 @@ namespace TOT.Data.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasName("UserNameIndex");
+
+                    b.HasIndex("PositionId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -294,8 +299,7 @@ namespace TOT.Data.Migrations
 
                     b.Property<DateTime>("StartsAt");
 
-                    b.Property<int?>("TypeId")
-                        .IsRequired();
+                    b.Property<int>("TypeId");
 
                     b.Property<string>("UserId");
 
@@ -417,6 +421,14 @@ namespace TOT.Data.Migrations
                     b.HasOne("TOT.Entities.IdentityEntities.User")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TOT.Entities.IdentityEntities.User", b =>
+                {
+                    b.HasOne("TOT.Entities.EmployeePosition", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

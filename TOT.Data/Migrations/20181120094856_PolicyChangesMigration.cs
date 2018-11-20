@@ -71,29 +71,29 @@ namespace TOT.Data.Migrations
                 table: "EmployeePositionTimeOffPolicies",
                 keyColumn: "Id",
                 keyValue: 1,
-                column: "IsActive",
-                value: true);
+                columns: new[] { "IsActive", "PositionId" },
+                values: new object[] { true, null });
 
             migrationBuilder.UpdateData(
                 table: "EmployeePositionTimeOffPolicies",
                 keyColumn: "Id",
                 keyValue: 2,
-                column: "IsActive",
-                value: true);
+                columns: new[] { "IsActive", "PositionId" },
+                values: new object[] { true, null });
 
             migrationBuilder.UpdateData(
                 table: "EmployeePositionTimeOffPolicies",
                 keyColumn: "Id",
                 keyValue: 3,
-                column: "IsActive",
-                value: true);
+                columns: new[] { "IsActive", "PositionId" },
+                values: new object[] { true, null });
 
             migrationBuilder.UpdateData(
                 table: "EmployeePositionTimeOffPolicies",
                 keyColumn: "Id",
                 keyValue: 4,
-                column: "IsActive",
-                value: true);
+                columns: new[] { "IsActive", "PositionId" },
+                values: new object[] { true, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeePositionTimeOffPolicies_NextPolicyId",
@@ -193,6 +193,34 @@ namespace TOT.Data.Migrations
                 name: "PK_TimeOffPolicy",
                 table: "TimeOffPolicy",
                 column: "Id");
+
+            migrationBuilder.UpdateData(
+                table: "EmployeePositionTimeOffPolicies",
+                keyColumn: "Id",
+                keyValue: 1,
+                column: "PositionId",
+                value: 2);
+
+            migrationBuilder.UpdateData(
+                table: "EmployeePositionTimeOffPolicies",
+                keyColumn: "Id",
+                keyValue: 2,
+                column: "PositionId",
+                value: 2);
+
+            migrationBuilder.UpdateData(
+                table: "EmployeePositionTimeOffPolicies",
+                keyColumn: "Id",
+                keyValue: 3,
+                column: "PositionId",
+                value: 2);
+
+            migrationBuilder.UpdateData(
+                table: "EmployeePositionTimeOffPolicies",
+                keyColumn: "Id",
+                keyValue: 4,
+                column: "PositionId",
+                value: 2);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TimeOffPolicyApprovals_UserId",

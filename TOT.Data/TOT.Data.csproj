@@ -21,6 +21,7 @@
     <Compile Remove="Migrations\20181117201254_ChangeUser.cs" />
     <Compile Remove="Migrations\20181117202251_ChangeUser.cs" />
     <Compile Remove="Migrations\20181117203720_ChangeUser.cs" />
+    <Compile Remove="Migrations\20181118183355_PolicyChangesMigration.cs" />
   </ItemGroup>
 
   <ItemGroup>

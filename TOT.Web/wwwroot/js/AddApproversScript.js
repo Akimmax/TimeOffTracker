@@ -9,10 +9,10 @@ function AddApprover() {
         alert("It is not posible to add approvers whith same Positions");
         return;
     }
-
+    var AprText = $("#ApproverPosition").find('option[value="' + AprPost.val() + '"]').text();
     AprArray[AprPost.val()] = AprAmoun;
     $("#Approvers").val(JSON.stringify(AprArray));
-    AprList.append("<div class='text - danger' id='appr" + AprPost.val() + "'>" + AprPost.text() + " : " + AprAmoun +
+    AprList.append("<div class='text - danger' id='appr" + AprPost.val() + "'>" + AprText + " : " + AprAmoun +
         "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle(" + AprPost.val() + ")' />" + "</div>");
 }
 

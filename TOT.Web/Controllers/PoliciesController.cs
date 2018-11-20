@@ -14,13 +14,13 @@ using TOT.Dto.TimeOffPolicies;
 
 namespace TOT.Web.Controllers
 {
-    public class EmployeePositionTimeOffPoliciesController : Controller
+    public class PoliciesController : Controller
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _UnitOfWork;
         private readonly EmployeePositionTimeOffPolicyService _EmployeePositionTimeOffPolicyService;
 
-        public EmployeePositionTimeOffPoliciesController(IUnitOfWork UnitOfWork, IMapper mapper,
+        public PoliciesController(IUnitOfWork UnitOfWork, IMapper mapper,
             EmployeePositionTimeOffPolicyService EmployeePositionTimeOffPolicyService)
         {
             _mapper = mapper;
@@ -125,7 +125,8 @@ namespace TOT.Web.Controllers
             {
                 if (_UnitOfWork.EmployeePositionTimeOffPolicies
                     .Find(x=>x.PositionId == ItemCreateModel.Position.Id &&
-                    x.TypeId == ItemCreateModel.Type.Id) != null)
+                    x.TypeId == ItemCreateModel.Type.Id &&
+                    x.Id != ItemCreateModel.Id) != null)
                 {
                     ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                     ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
