@@ -164,8 +164,22 @@ namespace TOT.Business.Services
         public EmployeePositionTimeOffPolicy GetEmployeePositionTimeOffPolicyByTypeAndPosition
             (int typeId, int positionId)
         {
-            return unitOfWork.EmployeePositionTimeOffPolicies.Find(
-              emtp => emtp.TypeId == typeId && emtp.PositionId == positionId);
+            var policy = unitOfWork.EmployeePositionTimeOffPolicies.Find(
+              emtp => emtp.TypeId == typeId &&
+              emtp.PositionId == positionId &&
+              emtp.IsActive == true);
+            if (policy != null)
+            {
+                return policy;
+            }
+            else
+            {
+                policy = unitOfWork.EmployeePositionTimeOffPolicies.Find(
+                    emtp => emtp.TypeId == typeId &&
+                    emtp.PositionId == null &&
+                    emtp.IsActive == true);
+                return policy;
+            }
         }
 
         public void CreateTimeOffRequestApprovalsForRequest
