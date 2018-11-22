@@ -4,7 +4,6 @@ using TOT.Entities.IdentityEntities;
 using TOT.Entities;
 using TOT.Entities.TimeOffRequests;
 using TOT.Entities.TimeOffPolicies;
-using System.Collections.Generic;
 
 namespace TOT.Data
 {
@@ -14,14 +13,14 @@ namespace TOT.Data
         {
         }
 
-        public DbSet<TimeOffPolicy> TimeOffTypes { get; }
+        public DbSet<TimeOffType> TimeOffTypes { get; }
         public DbSet<TimeOffRequest> TimeOffRequests { get; }
         public DbSet<TimeOffRequestApproval> TimeOffRequestApprovals { get; }
         public DbSet<TimeOffRequestApprovalStatuses> TimeOffRequestApprovalStatuses { get; }
 
         public DbSet<TimeOffPolicy> TimeOffPolicies { get; }
         public DbSet<EmployeePosition> EmployeePositions { get; }
-        public DbSet<TimeOffPolicyApproval> TimeOffPolicyApprovals { get; }
+        public DbSet<TimeOffPolicyApprover> TimeOffPolicyApprovals { get; }
         public DbSet<EmployeePositionTimeOffPolicy> EmployeePositionTimeOffPolicies { get; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -98,9 +97,9 @@ namespace TOT.Data
             modelBuilder.Entity<TimeOffPolicy>()
                .HasKey(x => x.Id);
 
-            modelBuilder.Entity<TimeOffPolicyApproval>()
+            modelBuilder.Entity<TimeOffPolicyApprover>()
                .HasKey(x => x.Id);
-            modelBuilder.Entity<TimeOffPolicyApproval>()
+            modelBuilder.Entity<TimeOffPolicyApprover>()
                .HasOne(x => x.EmployeePosition)
                .WithMany()
                .HasForeignKey(x=>x.EmployeePositionId)
@@ -115,9 +114,10 @@ namespace TOT.Data
                .IsRequired();
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
                .HasOne(x => x.Position)
-               .WithMany();
+               .WithMany()
+               .HasForeignKey(x=>x.PositionId);
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
-               .HasMany(x=>x.Approvals)
+               .HasMany(x=>x.Approvers)
                .WithOne()
                .HasForeignKey(x=>x.EmployeePositionTimeOffPolicyId);
             modelBuilder.Entity<EmployeePositionTimeOffPolicy>()
@@ -164,30 +164,30 @@ namespace TOT.Data
                 }
                 );
 
-            modelBuilder.Entity<TimeOffPolicyApproval>()
+            modelBuilder.Entity<TimeOffPolicyApprover>()
                 .HasData(
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 1,
                     Amount = 1,
                     EmployeePositionId =1,
                     EmployeePositionTimeOffPolicyId =1
                 },
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 2,
                     Amount = 1,
                     EmployeePositionId = 1,
                     EmployeePositionTimeOffPolicyId = 2
                 },
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 3,
                     Amount = 1,
                     EmployeePositionId = 1,
                     EmployeePositionTimeOffPolicyId = 3
                 },
-                new TimeOffPolicyApproval()
+                new TimeOffPolicyApprover()
                 {
                     Id = 4,
                     Amount = 1,
@@ -202,29 +202,29 @@ namespace TOT.Data
                 {
                     Id = 1,
                     TypeId = (int)TimeOffTypeEnum.PaidVacation,
-                    PositionId= (int)EmployeePositionEnum.Employee,
-                    PolicyId = 1
+                    PolicyId = 1,
+                    IsActive = true
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 2,
                     TypeId = (int)TimeOffTypeEnum.UnpaidVacation,
-                    PositionId = (int)EmployeePositionEnum.Employee,
-                    PolicyId = 2
+                    PolicyId = 2,
+                    IsActive = true
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 3,
                     TypeId = (int)TimeOffTypeEnum.StudyVacation,
-                    PositionId = (int)EmployeePositionEnum.Employee,
-                    PolicyId = 3
+                    PolicyId = 3,
+                    IsActive = true
                 },
                 new EmployeePositionTimeOffPolicy()
                 {
                     Id = 4,
                     TypeId = (int)TimeOffTypeEnum.SickVacation,
-                    PositionId = (int)EmployeePositionEnum.Employee,
-                    PolicyId = 4
+                    PolicyId = 4,
+                    IsActive = true
                 }
                 );
 

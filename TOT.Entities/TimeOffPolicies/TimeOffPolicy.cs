@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TOT.Entities.TimeOffPolicies
+﻿namespace TOT.Entities.TimeOffPolicies
 {
     public class TimeOffPolicy
     {

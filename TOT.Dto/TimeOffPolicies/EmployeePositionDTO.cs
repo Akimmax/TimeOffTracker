@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TOT.Dto.TimeOffRequests
+namespace TOT.Dto.TimeOffPolicies
 {
-    public class TimeOffTypeDTO
+    public class EmployeePositionDTO
     {
         public int Id { get; set; }
-        [Display(Name ="Vacation Type")]
+        [Display(Name ="Employee Position")]
         public string Title { get; set; }
     }
 }

@@ -149,9 +149,9 @@ namespace TOT.Business.Services
                 throw new EntityNotFoundException("Appropriate policy");
             }
 
-            var approvers = appropriateEmployeePositionTimeOffPolicy.Approvals;
+            var approvers = appropriateEmployeePositionTimeOffPolicy.Approvers;
             var aviableUserAsApprovers = userManager.Users.Where(u =>
-            approvers.Any(a => a.UserId == u.Id));//select Users available to approve requests this policy
+            approvers.Any(a => a.EmployeePositionId == u.PositionId));//select Users available to approve requests this policy
 
             if (aviableUserAsApprovers == null || !aviableUserAsApprovers.Any())
             {
@@ -164,8 +164,22 @@ namespace TOT.Business.Services
         public EmployeePositionTimeOffPolicy GetEmployeePositionTimeOffPolicyByTypeAndPosition
             (int typeId, int positionId)
         {
-            return unitOfWork.EmployeePositionTimeOffPolicy.Find(
-              emtp => emtp.TypeId == typeId && emtp.PositionId == positionId);
+            var policy = unitOfWork.EmployeePositionTimeOffPolicies.Find(
+              emtp => emtp.TypeId == typeId &&
+              emtp.PositionId == positionId &&
+              emtp.IsActive == true);
+            if (policy != null)
+            {
+                return policy;
+            }
+            else
+            {
+                policy = unitOfWork.EmployeePositionTimeOffPolicies.Find(
+                    emtp => emtp.TypeId == typeId &&
+                    emtp.PositionId == null &&
+                    emtp.IsActive == true);
+                return policy;
+            }
         }
 
         public void CreateTimeOffRequestApprovalsForRequest
