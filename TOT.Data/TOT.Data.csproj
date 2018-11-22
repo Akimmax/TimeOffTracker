@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20181015080909_BaseMigration.cs" />
+    <Compile Remove="Migrations\20181015085148_BaseMigratin.cs" />
+    <Compile Remove="Migrations\20181026131201_AddedBasicMigration.cs" />
+    <Compile Remove="Migrations\20181027170803_AddedInitialization.cs" />
+    <Compile Remove="Migrations\20181027171828_AddedInitialization.cs" />
+    <Compile Remove="Migrations\20181027182248_AddedInitializationMigration.cs" />
+    <Compile Remove="Migrations\20181029081240_AddedInitializationMigration.cs" />
+    <Compile Remove="Migrations\20181029082716_AddedInitializationMigration.cs" />
+    <Compile Remove="Migrations\20181029083159_AddedInitializationMigration.cs" />
+    <Compile Remove="Migrations\20181117110007_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117175519_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117181103_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117181631_ChangesUser.cs" />
+    <Compile Remove="Migrations\20181117201254_ChangeUser.cs" />
+    <Compile Remove="Migrations\20181117202251_ChangeUser.cs" />
+    <Compile Remove="Migrations\20181117203720_ChangeUser.cs" />
+    <Compile Remove="Migrations\20181118183355_PolicyChangesMigration.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TOT.Entities\TOT.Entities.csproj" />
+    <ProjectReference Include="..\TOT.Interfaces\TOT.Interfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.identity.entityframeworkcore\2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
