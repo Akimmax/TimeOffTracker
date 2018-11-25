@@ -1,0 +1,55 @@
+﻿@using TOT.Dto.TimeOffRequests
+@using TOT.Web.ViewModels;
+@model IEnumerable<TimeOffRequestApprovalDTO>
+
+@{
+    ViewData["Title"] = " Approvals list";
+}
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label">Select list</label>
+            <select class="form-control" id="selectList">
+                <option selected value="@((int)TypeOfApprovalsList.RequestedApprovals)">Need my approve</option>
+                <option value="@((int)TypeOfApprovalsList.RefusedApprovals)">My rejected approvals</option>
+                <option value="@((int)TypeOfApprovalsList.AllMyApprovals)">All my approvals</option>
+                <option value="@((int)TypeOfApprovalsList.AllApprovals)">All approvals </option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="partial"></div>
+</div>
+
+@Html.Partial("_ConfirmDialog", new DialogViewModel("refuseModal")
+{
+Content = "Are you sure that you want to refuse this request?",
+SubmitAction = "Refuse",
+SubmitController = "RequestApproval"
+})
+
+@Html.Partial("_ConfirmDialog", new DialogViewModel("approveModal")
+{
+Content = "Are you sure that you want to approve this request?",
+SubmitAction = "Approve",
+SubmitController = "RequestApproval"
+})
+
+@Html.Partial("_ConfirmDialog", new DialogViewModel("editModal")
+{
+Content = "Are you sure that you want to edit comment this request?",
+SubmitAction = "EditComment",
+SubmitController = "RequestApproval"
+})
+
+<script src="~/scripts/jquery-3.3.1.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/RequestApprovalListScript.js"></script>
+
+
+
+
+

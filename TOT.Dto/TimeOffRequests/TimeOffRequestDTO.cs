@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TOT.Dto.CustomValidationAttributes;
+using TOT.Entities.IdentityEntities;
 
 namespace TOT.Dto.TimeOffRequests
 {
@@ -13,7 +14,9 @@ namespace TOT.Dto.TimeOffRequests
         }
         public int Id { get; set; }
 
-        public string User { get; set; }
+
+        public string UserId { get; set; }
+        public User User { get; set; }
 
         public TimeOffTypeDTO Type { get; set; }
 
