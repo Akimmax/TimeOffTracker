@@ -17,7 +17,7 @@ namespace TOT.Data
             TimeOffRequests = new TimeOffRequestRepository(context);
             TimeOffTypes = new BasicRepository<TimeOffType>(context);
             EmployeePositions = new BasicRepository<EmployeePosition>(context);
-            RequestApprovals = new BasicRepository<TimeOffRequestApproval>(context);
+            RequestApprovals = new TimeOffRequestApprovalRepository(context);
             RequestApprovalStatuses = new BasicRepository<TimeOffRequestApprovalStatuses>(context);
 
             TimeOffPolicies = new TimeOffPolicyRepository(context);

@@ -54,6 +54,8 @@ namespace TOT.Data.Repositories
                 .Include(t => t.Type)
                 .Include(t => t.Approvals)
                 .ThenInclude(t => t.Status)
+                .Include(t => t.Approvals)
+                .ThenInclude(t => t.User)
                 .FirstOrDefault(t => t.Id == id);
         }
 
