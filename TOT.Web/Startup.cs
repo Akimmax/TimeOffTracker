@@ -34,7 +34,7 @@ namespace TOT.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            string connectionString = Configuration.GetConnectionString("DefaultConnection2");
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<TOTDBContext>(options =>
             options.UseMySql(connectionString));
