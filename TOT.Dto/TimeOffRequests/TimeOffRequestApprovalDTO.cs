@@ -22,4 +22,12 @@ namespace TOT.Dto.TimeOffRequests
 
         public int TimeOffRequestId { get; set; }
     }
+
+    public enum TypeOfApprovalsList : int
+    {
+        RequestedApprovals = 1,
+        RefusedApprovals = 2,
+        AllMyApprovals = 3,
+        AllApprovals = 4
+    }
 }

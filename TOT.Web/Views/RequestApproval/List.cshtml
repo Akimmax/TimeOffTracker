@@ -2,85 +2,52 @@
 @using TOT.Web.ViewModels;
 @model IEnumerable<TimeOffRequestApprovalDTO>
 
-    @{
-        ViewData["Title"] = " Approvals list";
-    }
-    <h2>@ViewData["Title"]</h2>
+@{
+    ViewData["Title"] = " Approvals list";
+}
+<h2>@ViewData["Title"]</h2>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label class="control-label">Select list</label>
-                <select class="form-control custom-select" id="selectList">
-                    <option selected value="1">Need my approve</option>
-                    <option value="2">My rejected approvals</option>
-                    <option value="3">All my approvals</option>
-                    <option value="4">All approvals </option>
-                </select>
-            </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label">Select list</label>
+            <select class="form-control" id="selectList">
+                <option selected value="@((int)TypeOfApprovalsList.RequestedApprovals)">Need my approve</option>
+                <option value="@((int)TypeOfApprovalsList.RefusedApprovals)">My rejected approvals</option>
+                <option value="@((int)TypeOfApprovalsList.AllMyApprovals)">All my approvals</option>
+                <option value="@((int)TypeOfApprovalsList.AllApprovals)">All approvals </option>
+            </select>
         </div>
     </div>
-    <div class="row">
-        <div id="partial"></div>
-    </div>
+</div>
+<div class="row">
+    <div id="partial"></div>
+</div>
 
-    @Html.Partial("_DialogApprovals", new DialogViewModel("refuseModal")
-    {
-    Content = "Are you sure that you want to refuse this request?",
-    SubmitAction = "Refuse",
-    SubmitController = "RequestApproval"
-    })
+@Html.Partial("_ConfirmDialog", new DialogViewModel("refuseModal")
+{
+Content = "Are you sure that you want to refuse this request?",
+SubmitAction = "Refuse",
+SubmitController = "RequestApproval"
+})
 
-    @Html.Partial("_DialogApprovals", new DialogViewModel("approveModal")
-    {
-    Content = "Are you sure that you want to approve this request?",
-    SubmitAction = "Approve",
-    SubmitController = "RequestApproval"
-    })
+@Html.Partial("_ConfirmDialog", new DialogViewModel("approveModal")
+{
+Content = "Are you sure that you want to approve this request?",
+SubmitAction = "Approve",
+SubmitController = "RequestApproval"
+})
 
-    @Html.Partial("_DialogApprovals", new DialogViewModel("editModal")
-    {
-    Content = "Are you sure that you want to edit comment this request?",
-    SubmitAction = "EditComment",
-    SubmitController = "RequestApproval"
-    })
+@Html.Partial("_ConfirmDialog", new DialogViewModel("editModal")
+{
+Content = "Are you sure that you want to edit comment this request?",
+SubmitAction = "EditComment",
+SubmitController = "RequestApproval"
+})
 
-    <script src="~/scripts/jquery-3.3.1.js"></script>
-    <script src="~/lib/jquery/dist/jquery.js"></script>
-
-    <script>
-
-    $(document).ready(function () {
-        var id = $("#selectList").val();
-
-        if (id != null) {
-            loadApprovalsList(id);
-        }
-    });
-
-    $("#selectList").change(function () {
-        var id = $("#selectList").val();
-        loadApprovalsList(id);
-    });
-
-    function loadApprovalsList(id) {
-        $('#partial').html("<center>Approvals are loading</center>")
-
-        $.ajax({
-            type: 'GET',
-            url: '../RequestApproval/PartialAsync/' + id,
-            data: { listId: id },
-            success: function (result) {
-                $('#partial').html(result)
-            },
-            error: function (x, y, z) {
-                alert(x + '\n' + y + '\n' + z);
-            }
-        });
-    }
-
-    </script>
-
+<script src="~/scripts/jquery-3.3.1.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/RequestApprovalListScript.js"></script>
 
 
 

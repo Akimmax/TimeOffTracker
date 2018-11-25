@@ -64,7 +64,7 @@ namespace TOT.Business.Services
             return mapper.Map<TimeOffRequestApproval, TimeOffRequestApprovalDTO>(approval);
         }
 
-        public TimeOffRequestDTO GetRequest(int approvalId)
+        public TimeOffRequestDTO GetRequestForApproval(int approvalId)
         {
             var approval = unitOfWork.RequestApprovals.Get(approvalId);
 
@@ -134,7 +134,6 @@ namespace TOT.Business.Services
                 throw new UnauthorizedAccessException();
             }
 
-
             approval.Status = unitOfWork.RequestApprovalStatuses.Get(
             (int)TimeOffRequestApprovalStatusesEnum.Accepted);
             approval.Reason = reason;
@@ -178,9 +177,7 @@ namespace TOT.Business.Services
             string mailRequesting = request.User.Email;
            
             SendMail(mailAddressee, mailRequesting);
-
         }
-
 
         void SendMail(string mailAddressee, string usernameRequesting)
         {
@@ -195,7 +192,8 @@ namespace TOT.Business.Services
                 "  <a href=\"https://tot-apriorit.azurewebsites.net\"> View it on Time Off Tracker</a>.</p>";
             message.IsBodyHtml = true;
 
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); //In the case of access arror check that "Unsafe applications allowed" in account 
+            //In the case of access arror check that "Unsafe applications allowed" in account 
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); 
             smtp.Credentials = new NetworkCredential("totapriorit2018@gmail.com", "Password-TOT1");
             smtp.EnableSsl = true;
 

@@ -36,7 +36,7 @@ namespace TOT.Web.Controllers
         [HttpGet]
         public IActionResult Details(int id)
         {
-            var request = approvalService.GetRequest(id);
+            var request = approvalService.GetRequestForApproval(id);
 
             return View(request);
         }
@@ -91,24 +91,24 @@ namespace TOT.Web.Controllers
 
             switch (listId)
             {
-                case 1:
+                case (int)TypeOfApprovalsList.RequestedApprovals:
                     approvals = approvalService.GetRequestedForCurrentUser(currentUserId);
-                    return PartialView("_Approvals", approvals);
-                case 2:
+                    return PartialView("_RequestedApprovals", approvals);
+                case (int)TypeOfApprovalsList.RefusedApprovals:
                     approvals = approvalService.GetRefusedForCurrentUser(currentUserId);
-                    return PartialView("_ApprovalsRefused", approvals);
-                case 3:
+                    return PartialView("_RefusedApprovals", approvals);
+                case (int)TypeOfApprovalsList.AllMyApprovals:
                     approvals = approvalService.GetAllForCurrentUser(currentUserId);
-                    return PartialView("_ApprovalsAll", approvals);
-                case 4:
+                    return PartialView("_AllApprovals", approvals);
+                case (int)TypeOfApprovalsList.AllApprovals:
                     approvals = approvalService.GetAll();
-                    return PartialView("_ApprovalsAll", approvals);
+                    return PartialView("_AllApprovals", approvals);
                 default:
                     approvals = null;
                     break;
             }
 
-            return PartialView("_ApprovalsAll", approvals);
+            return PartialView("_AllApprovals", approvals);
         }
     }
 }
