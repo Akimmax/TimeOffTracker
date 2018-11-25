@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using TOT.Business.Exceptions;
 using System.Collections.Generic;
+using TOT.Data.RoleInitializer;
 
 namespace TOT.Web.Controllers
 {
@@ -131,6 +132,15 @@ namespace TOT.Web.Controllers
             var requests = requestService.GetAllForCurrentUser(currentUserId);
 
             return View(requests);
+        }
+
+        [HttpGet]
+        [ActionName(name:"UserRequsts")]
+        [Authorize(Roles = Roles.Admin)]
+        public IActionResult UserRequstsList(string id)
+        {
+            var requests = requestService.GetAllForCurrentUser(id);
+            return View(nameof(List),requests);
         }
 
         [HttpGet]

@@ -1,0 +1,102 @@
+﻿@using TOT.Web.ViewModels;
+@model IEnumerable<TOT.Dto.Identity.UserDTO>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Users</title>
+</head>
+<body>
+    <p>
+        <a asp-action="Register">Register New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Surname)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Patronymic)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Position)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HireDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fired)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Roles)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Surname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Patronymic)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Position.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HireDate)
+                    </td>
+                    <td>
+                        @(item.Fired ? "Fired" : "Working")
+                    </td>
+                    <td>
+                        <ul>
+                            @foreach (var role in item.Roles)
+                            {
+                                <li>
+                                    @role
+                                </li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <a asp-action="Update" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a href="#" data-toggle="modal" data-target="#deleteUser" data-arg-id="@item.Id"> Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.Partial("_Dialog", new DialogViewModel("deleteUser")
+        {
+            Content = "Are you sure that you want to fire this Employee?",
+            SubmitAction = "Delete",
+            SubmitController = "Account"
+        })
+</body>
+</html>
+
+

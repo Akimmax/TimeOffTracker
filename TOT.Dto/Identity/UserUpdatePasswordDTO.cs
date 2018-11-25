@@ -1,12 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
-namespace TOT.Web.ViewModels
+namespace TOT.Dto.Identity
 {
-    public class RegisterViewModel
+    public class UserUpdatePasswordDTO
     {
+        public string Id { get; set; }
+
         [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        public string NewPassword { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

@@ -9,7 +9,7 @@ using TOT.Data;
 namespace TOT.Data.Migrations
 {
     [DbContext(typeof(TOTDBContext))]
-    [Migration("20181124160627_RolesInitializerMigration")]
+    [Migration("20181124180401_RolesInitializerMigration")]
     partial class RolesInitializerMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,8 @@ namespace TOT.Data.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
+
+                    b.Property<bool>("Fired");
 
                     b.Property<DateTime>("HireDate");
 

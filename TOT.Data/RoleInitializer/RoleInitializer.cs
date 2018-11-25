@@ -30,6 +30,7 @@ namespace TOT.Data.RoleInitializer
                 User admin = new User {
                     UserName = "Admin",
                     Email = adminEmail,
+                    Fired = false,
                     Name = "Admin",
                     Surname = "Admin",
                     Patronymic = "Admin",

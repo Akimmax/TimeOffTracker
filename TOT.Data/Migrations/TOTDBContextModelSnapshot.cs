@@ -157,6 +157,8 @@ namespace TOT.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<bool>("Fired");
+
                     b.Property<DateTime>("HireDate");
 
                     b.Property<bool>("LockoutEnabled");

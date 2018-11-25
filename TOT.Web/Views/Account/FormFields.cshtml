@@ -1,0 +1,64 @@
+﻿@model TOT.Dto.Identity.UserDTO
+@{
+    ViewData["Title"] = "Register";
+}
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label><br />
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Surname" class="control-label"></label><br />
+        <input asp-for="Surname" class="form-control" />
+        <span asp-validation-for="Surname" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Patronymic" class="control-label"></label><br />
+        <input asp-for="Patronymic" class="form-control" />
+        <span asp-validation-for="Patronymic" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label><br />
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Position" class="control-label"></label><br />
+        <select asp-for="Position.Id" class="form-control" asp-items="ViewBag.Position">
+        </select>
+        <span asp-validation-for="Position" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="HireDate" class="control-label"></label><br />
+        <input asp-for="HireDate" class="form-control" />
+        <span asp-validation-for="HireDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="control-label"></label><br />
+        <input asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PasswordConfirm" class="control-label"></label><br />
+        <input asp-for="PasswordConfirm" class="form-control" />
+        <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+    </div><br />
+
+    <div class="form-group">
+        <label asp-for="Roles" class="control-label"></label><br />
+        <select asp-for="Roles" multiple="multiple" size="@(((IEnumerable<dynamic>)ViewBag.Roles).Count())" class="form-control" asp-items="ViewBag.Roles"></select>
+        <span asp-validation-for="Roles" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+        @if (ViewBag.Error != null || ViewBag.Error != "")
+        {
+            <div class="alert alert-warning" role="alert">
+                <h5>@(ViewBag.Error)</h5>
+            </div>
+        }
+    </div>
+
