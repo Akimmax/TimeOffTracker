@@ -6,7 +6,8 @@ using TOT.Entities.TimeOffRequests;
 using TOT.Interfaces;
 using TOT.Dto.TimeOffRequests;
 using System.Linq;
-
+using System.Net.Mail;
+using System.Net;
 
 namespace TOT.Business.Services
 {
@@ -139,7 +140,8 @@ namespace TOT.Business.Services
             approval.Reason = reason;
             approval.SolvedDate = DateTime.Now;
 
-            var nextapproval = SetNextAsRequested(approval);           
+            var nextapproval = SetNextAsRequested(approval);
+            SendNotification(nextapproval);
 
             return unitOfWork.SaveAsync();
         }
@@ -162,6 +164,42 @@ namespace TOT.Business.Services
             approval.SolvedDate = DateTime.Now;
 
             return unitOfWork.SaveAsync();
-        }                        
+        }
+
+        void SendNotification(TimeOffRequestApproval approval)
+        {
+            if (approval == null)
+            {
+                return;
+            }
+
+            var request = unitOfWork.TimeOffRequests.Get(approval.TimeOffRequest.Id);
+            string mailAddressee = approval.User.Email;
+            string mailRequesting = request.User.Email;
+           
+            SendMail(mailAddressee, mailRequesting);
+
+        }
+
+
+        void SendMail(string mailAddressee, string usernameRequesting)
+        {
+            MailAddress sender = new MailAddress("totapriorit2018@gmail.com", "Time Off Tracker");
+
+            MailAddress addressee = new MailAddress(mailAddressee);
+
+            MailMessage message = new MailMessage(sender, addressee);
+
+            message.Subject = "There are requests that need your approvement.";
+            message.Body = "<p> User " + usernameRequesting + " requested your to approve request </br>" +
+                "  <a href=\"https://tot-apriorit.azurewebsites.net\"> View it on Time Off Tracker</a>.</p>";
+            message.IsBodyHtml = true;
+
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); //In the case of access arror check that "Unsafe applications allowed" in account 
+            smtp.Credentials = new NetworkCredential("totapriorit2018@gmail.com", "Password-TOT1");
+            smtp.EnableSsl = true;
+
+            smtp.Send(message);
+        }
     }
 }
