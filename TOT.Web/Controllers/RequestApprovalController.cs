@@ -82,33 +82,35 @@ namespace TOT.Web.Controllers
 
             return RedirectToAction(nameof(List));
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> PartialAsync(int listId)
-        {            
+        {
             var currentUserId = _userManager.GetUserId(HttpContext.User);
             IEnumerable<TimeOffRequestApprovalDTO> approvals;
+
+            ViewData["TypeOfList"] = listId;
 
             switch (listId)
             {
                 case (int)TypeOfApprovalsList.RequestedApprovals:
                     approvals = approvalService.GetRequestedForCurrentUser(currentUserId);
-                    return PartialView("_RequestedApprovals", approvals);
+                    return PartialView("_Approvals", approvals);
                 case (int)TypeOfApprovalsList.RefusedApprovals:
                     approvals = approvalService.GetRefusedForCurrentUser(currentUserId);
-                    return PartialView("_RefusedApprovals", approvals);
+                    return PartialView("_Approvals", approvals);
                 case (int)TypeOfApprovalsList.AllMyApprovals:
                     approvals = approvalService.GetAllForCurrentUser(currentUserId);
-                    return PartialView("_AllApprovals", approvals);
+                    return PartialView("_Approvals", approvals);
                 case (int)TypeOfApprovalsList.AllApprovals:
                     approvals = approvalService.GetAll();
-                    return PartialView("_AllApprovals", approvals);
+                    return PartialView("_Approvals", approvals);
                 default:
                     approvals = null;
                     break;
             }
 
-            return PartialView("_AllApprovals", approvals);
+            return PartialView("_Approvals", approvals);
         }
     }
 }

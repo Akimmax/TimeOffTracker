@@ -5,9 +5,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">@Model.Title</h4>
             </div>
             <div class="modal-body">
                 <h3 class="modal-title">@Model.Content</h3>
@@ -15,7 +14,7 @@
 
                     <div class="form-group">
                         <label class="control-label">Specify the reason: </label>
-                        <textarea name='reason' class="form-control"></textarea>
+                        <textarea name='reason' class="form-control" maxlength="20" style="resize: none"></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary">@Model.SubmitAction</button>
