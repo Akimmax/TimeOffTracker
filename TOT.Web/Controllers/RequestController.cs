@@ -140,6 +140,7 @@ namespace TOT.Web.Controllers
         public IActionResult UserRequstsList(string id)
         {
             var requests = requestService.GetAllForCurrentUser(id);
+            ViewData["OnlyShow"] = true;
             return View(nameof(List),requests);
         }
 
