@@ -169,11 +169,12 @@ namespace TOT.Web.Controllers
             try
             {
                 await _EmployeePositionTimeOffPolicyService.DeleteByIdAsync(id);
-                return Ok();
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return RedirectToAction(nameof(Index));
             }
         }
 

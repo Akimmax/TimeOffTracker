@@ -1,0 +1,116 @@
+﻿@using TOT.Dto.TimeOffPolicies;
+@model PolicyCreateModel
+
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="form-group">
+    <label asp-for="Position.Title" class="col-md-offset-3 col-sm-2 col-md-1 control-label"></label>
+    <div class="col-sm-10 col-md-4">
+        <select asp-for="Position.Id" class="form-control" asp-items="ViewBag.Position">
+            <option selected="selected" disabled="disabled">Chose employee position</option>
+        </select>
+        <span asp-validation-for="Position" class="text-danger"></span>
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="Type.Title" class="col-md-offset-3 col-sm-2 col-md-1 control-label"></label>
+    <div class="col-sm-10 col-md-4">
+        <select asp-for="Type.Id" class="form-control" asp-items="ViewBag.Type">
+            <option selected="selected" disabled="disabled">Chose vacation type</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-2 col-md-offset-3 col-sm-8 col-md-5">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Policy configurations
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="text-center">
+                        <label asp-for="Name" class="control-label"></label>
+                    </div>
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <label asp-for="TimeOffDaysPerYear" class="control-label"></label>
+                    </div>
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <input asp-for="TimeOffDaysPerYear" min="1" class="form-control" />
+                        <span asp-validation-for="TimeOffDaysPerYear" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <label asp-for="DelayBeforeAvailable" class="control-label"></label>
+                    </div>
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <input asp-for="DelayBeforeAvailable" min="1" max="12" class="form-control" />
+                        <span asp-validation-for="DelayBeforeAvailable" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-2 col-md-offset-3 col-sm-8 col-md-5">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Approvers configurations
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <input asp-for="Approvers" type="hidden">
+                    <div id="ApproversAddForm">
+                        <div class="row">
+                            <div class="text-center">
+                                <label asp-for="Position.Title" class="control-label"></label>
+                            </div>
+                            <div class="col-xs-offset-1 col-xs-10">
+                                <select id="ApproverPosition" class="form-control" asp-items="ViewBag.Position"></select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="text-center">
+                                <label class="control-label">Amoun of approvers</label>
+                            </div>
+                            <div class="col-xs-offset-1 col-xs-10">
+                                <input id="ApproversAmoun" value="1" min="1" type="number" class="form-control" />
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="text-center">
+                                <input type="button" value="Add new Approver" onclick="AddApprover()" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Approvers" class="text-danger"></span>
+                </div>
+                <div class="text-center">
+                    <label asp-for="Approvers" class="control-label"></label>
+                </div>
+                <div id="ApproversList" class="list-group"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-offset-4 col-md-3">
+        <div class="text-center">
+            <input type="submit" value="Accept" class="btn btn-primary btn-lg" />
+            @if (ViewBag.Error != null && ViewBag.Error != "")
+            {
+                <div class="alert alert-danger" role="alert">
+                    <h5>@(ViewBag.Error)</h5>
+                </div>
+            }
+        </div>
+    </div>

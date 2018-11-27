@@ -72,7 +72,7 @@ namespace TOT.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     await _identityService.RegisterAsync(model);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 ViewData["Position"] = new SelectList(_unitOfWork.EmployeePositions.GetAll(), "Id", "Title");
@@ -106,7 +106,7 @@ namespace TOT.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     await _identityService.UpdatePasswordAsync(model);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction(nameof(Index));
                 }
                 return View(model);
             }
@@ -139,7 +139,7 @@ namespace TOT.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     await _identityService.UpdateAsync(mapper.Map<UserUpdateDTO,UserDTO>(model));
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 ViewData["Position"] = new SelectList(_unitOfWork.EmployeePositions.GetAll(), "Id", "Title");
