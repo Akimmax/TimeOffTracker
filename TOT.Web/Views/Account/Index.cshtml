@@ -1,5 +1,5 @@
 ﻿@using TOT.Web.ViewModels;
-@model IEnumerable<TOT.Dto.Identity.UserDTO>
+@model IEnumerable<TOT.Dto.Identity.UserUpdateDTO>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -10,10 +10,17 @@
     <title>Users</title>
 </head>
 <body>
+    <div class="row text-center">
+        <h4>
+            <strong>
+            Accounts List
+            </strong>
+        </h4>
+    </div>
     <div class="row">
-    <p>
-        <a asp-action="Register">Register New</a>
-    </p>
+        <p>
+            <a asp-action="Register">Register New</a>
+        </p>
     </div>
     <div class="row table-responsive">
         <table class="table table-bordered table-hover">
@@ -83,24 +90,24 @@
                                         </th>
                                     </tr>
                                 }
-                             </table>
+                            </table>
                         </td>
-                        <td >
+                        <td>
                             <input type="button" class="btn btn-warning btn-block" onclick="location.href='@Url.Action("Update", "Account", new {id=item.Id})'" value="Edit">
-                            <input type ="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Account", new {id=item.Id})'" value="Details">
+                            <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Account", new {id=item.Id})'" value="Details">
                             <input type="button" class="btn btn-danger btn-block" href="#" data-toggle="modal" data-target="#deleteUser" data-arg-id="@item.Id" value="Delete">
                         </td>
-                        </tr>
-}
-</tbody>
+                    </tr>
+                }
+            </tbody>
         </table>
     </div>
-        @Html.Partial("_Dialog", new DialogViewModel("deleteUser")
-            {
-                Content = "Are you sure that you want to fire this Employee?",
-                SubmitAction = "Delete",
-                SubmitController = "Account"
-            })
+    @Html.Partial("_Dialog", new DialogViewModel("deleteUser")
+        {
+            Content = "Are you sure that you want to fire this Employee?",
+            SubmitAction = "Delete",
+            SubmitController = "Account"
+        })
 </body>
 </html>
 

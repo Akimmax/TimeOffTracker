@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TOT.Interfaces;
 using TOT.Dto.Identity;
 using TOT.Entities.IdentityEntities;
+using TOT.Dto.Identity.Models;
 
 namespace TOT.Business.Services
 {
@@ -46,6 +47,40 @@ namespace TOT.Business.Services
 
             return result;
         }
+
+        //public async Task<IEnumerable<UserDTO>> GetFilteredUsersAsync(UserFilterModel model)
+        //{
+        //    IQueryable<User> userQuery = _userManager.Users.Include(x => x.Position);
+        //    if (!String.IsNullOrEmpty(model.Email))
+        //    {
+        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Email));
+        //    }
+        //    if (!String.IsNullOrEmpty(model.Name))
+        //    {
+        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Name));
+        //    }
+        //    if (!String.IsNullOrEmpty(model.Surname))
+        //    {
+        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Surname));
+        //    }
+        //    if (!String.IsNullOrEmpty(model.Patronymic))
+        //    {
+        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Patronymic));
+        //    }
+        //    if (model.toHireDate != null)
+        //    {
+        //        if (model.fromHireDate != null)
+        //        {
+        //            userQuery = userQuery.Where(x => 
+        //                DateTime.Compare(x.HireDate, model.fromHireDate) >= 0 &&
+        //                DateTime.Compare(x.HireDate, model.toHireDate) <= 0);
+        //        }
+        //        else
+        //        {
+        //            userQuery = userQuery.Where(x => x.Email.Contains(model.Email));
+        //        }
+        //    }
+        //}
 
         public async Task RegisterAsync(UserDTO model)
         {

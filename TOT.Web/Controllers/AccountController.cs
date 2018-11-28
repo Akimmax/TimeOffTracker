@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TOT.Business.Services;
 using TOT.Dto.Identity;
@@ -33,7 +34,7 @@ namespace TOT.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var Users = await _identityService.GetAllUsersAsync();
-            return View(Users);
+            return View(mapper.Map<IEnumerable<UserDTO>,IEnumerable<UserUpdateDTO>>(Users));
         }
 
         public async Task<IActionResult> Delete(string id)
