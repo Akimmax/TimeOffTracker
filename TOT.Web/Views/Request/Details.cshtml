@@ -5,77 +5,85 @@
 
     int counter = 0;
 }
-
-
-<h2>@ViewData["Title"]</h2>
 <hr />
+<h4>@ViewData["Title"]</h4>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 ">
-            <div class="col-md-4 col-md-pull-4">
-                <dl class="dl-horizontal ">
-                    <dt>
-                        Type
-                    </dt>
-                    <dd>
-                        @Html.DisplayFor(model => Model.Type.Title)
-                    </dd>
-                    <dt>
-                        @Html.DisplayNameFor(model => Model.StartsAt)
-                    </dt>
-                    <dd>
-                        @Model.StartsAt.ToString("MM/dd/yyyy")
-                    </dd>
+        <div class="col-md-8 ">
+            <dl class="dl-horizontal ">
+                <dt>
+                    Type
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => Model.Type.Title)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => Model.StartsAt)
+                </dt>
+                <dd>
+                    @Model.StartsAt.ToString("MM/dd/yyyy")
+                </dd>
 
-                    <dt>
-                        @Html.DisplayNameFor(model => Model.EndsOn)
-                    </dt>
-                    <dd>
-                        @Model.EndsOn?.ToString("MM/dd/yyyy")
-                    </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => Model.EndsOn)
+                </dt>
+                <dd>
+                    @Model.EndsOn?.ToString("MM/dd/yyyy")
+                </dd>
 
-                    <dt>
-                        @Html.DisplayNameFor(model => Model.Note)
-                    </dt>
-                    <dd>
-                        @Html.DisplayFor(model => Model.Note)
-                    </dd>
-                </dl>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 ">
-            @if (Model.Approvals.Any())
-            {
-                <div class="display-label"><b>Approvals</b></div>
-                <div class="table-responsive">
-                    <table class="table ">
-                        <tbody>
+                <dt>
+                    @Html.DisplayNameFor(model => Model.Note)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => Model.Note)
+                </dd>
 
-                            @foreach (var approval in Model.Approvals)
-                            {
-                                counter++;
-
+                <dt>
+                    @Html.DisplayNameFor(model => Model.Approvals)
+                </dt>
+                <dd>
+                    @if (Model.Approvals.Any())
+                    {
+                        <table class="table">
+                            <tbody>
                                 <tr>
-                                    <td>
-                                        Approve @counter
-                                    </td>
-                                    <td>
-                                        @approval.Status.Title
-                                    </td>
+                                    <td>#</td>
+                                    <td>Approver</td>
+                                    <td>Status</td>
+                                    <td>Comment</td>
                                 </tr>
-                            }
 
-                        </tbody>
-                    </table>
-                </div>
-            }
+                                @foreach (var approval in Model.Approvals)
+                                {
+                                    counter++;
 
-            else
-            {
-                <center>No items found</center>
-            }
+                                    <tr>
+                                        <td>
+                                            @counter
+                                        </td>
+                                        <td>
+                                            @approval.User.Email
+                                        </td>
+                                        <td>
+                                            @approval.Status.Title
+                                        </td>
+                                        <td>
+                                            @approval.Reason
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    }
+
+                    else
+                    {
+                        <center>No items found</center>
+                    }
+                </dd>
+
+            </dl>
 
         </div>
     </div>
@@ -83,6 +91,10 @@
 
 <br />
 <div>
+    <a asp-action="EditGetRequest" asp-route-id="@Model.Id">Edit</a>
+</div>
+<div>
     <a asp-action="List">Back to List</a>
 </div>
+
 <br />

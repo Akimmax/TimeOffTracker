@@ -75,6 +75,8 @@ namespace TOT.Business.Services
 
             var request = unitOfWork.TimeOffRequests.Get(approval.TimeOffRequest.Id);
 
+            request.Approvals=request.Approvals.OrderBy(a => a.Id).ToList();
+
             if (request == null)
             {
                 throw new EntityNotFoundException<TimeOffRequest>(approval.TimeOffRequest.Id);
@@ -114,8 +116,12 @@ namespace TOT.Business.Services
 
             approval.Status = unitOfWork.RequestApprovalStatuses.Get(
                  (int)TimeOffRequestApprovalStatusesEnum.Denied);
-            approval.Reason = reason;
             approval.SolvedDate = DateTime.Now;
+
+            if (approval.Reason != reason && reason!=null)
+            {
+                approval.Reason = reason;
+            }
 
             return unitOfWork.SaveAsync();
         }
@@ -136,8 +142,12 @@ namespace TOT.Business.Services
 
             approval.Status = unitOfWork.RequestApprovalStatuses.Get(
             (int)TimeOffRequestApprovalStatusesEnum.Accepted);
-            approval.Reason = reason;
             approval.SolvedDate = DateTime.Now;
+
+            if (approval.Reason != reason && reason != null)
+            {
+                approval.Reason = reason;
+            }
 
             var nextapproval = SetNextAsRequested(approval);
             SendNotification(nextapproval);
@@ -159,7 +169,11 @@ namespace TOT.Business.Services
                 throw new UnauthorizedAccessException();
             }
 
-            approval.Reason = reason;
+            if (approval.Reason != reason && reason != null)
+            {
+                approval.Reason = reason;
+            }
+            
             approval.SolvedDate = DateTime.Now;
 
             return unitOfWork.SaveAsync();
@@ -176,7 +190,7 @@ namespace TOT.Business.Services
             string mailAddressee = approval.User.Email;
             string mailRequesting = request.User.Email;
            
-            SendMail(mailAddressee, mailRequesting);
+            //SendMail(mailAddressee, mailRequesting);
         }
 
         void SendMail(string mailAddressee, string usernameRequesting)
