@@ -33,6 +33,11 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Request" asp-action="List">My requests</a></li>
                     <li><a asp-area="" asp-controller="Policies" asp-action="Index">Policies</a></li>
+                    <li><a asp-area="" asp-controller="Account" asp-action="Index">Accounts</a></li>
+                    @if (User.Claims.Any())
+                    {
+                        <li><a asp-area="" asp-controller="Account" asp-action="UpdatePassword">Change Password</a></li>
+                    }
                     <li><a asp-area="" asp-controller="RequestApproval" asp-action="List">Approvals</a></li>
                 </ul>
 

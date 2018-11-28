@@ -7,6 +7,8 @@ using TOT.Entities.TimeOffPolicies;
 using TOT.Entities.TimeOffRequests;
 using TOT.Dto.TimeOffRequests;
 using TOT.Dto.TimeOffPolicies;
+using TOT.Entities.IdentityEntities;
+using TOT.Dto.Identity;
 
 namespace TOT.Bootstrap.Mapping
 {
@@ -77,6 +79,18 @@ namespace TOT.Bootstrap.Mapping
             CreateMap<TimeOffPolicyApprover, ApproversSelectList>()
                 .ForMember(x => x.Title,
                 m => m.ResolveUsing(src => $"{src.EmployeePosition.Title} : {src.Amount}"));
+
+            //-----------User--------------------------------
+
+            CreateMap<User, UserDTO>()
+                .ForMember(x => x.Roles, m => m.Ignore())
+                .ForMember(x=>x.Password, m=>m.Ignore())
+                .ForMember(x => x.PasswordConfirm, m => m.Ignore());
+            CreateMap<UserDTO, User>()
+                .ForMember(x => x.UserName, m => m.ResolveUsing(src => src.Email))
+                .ForMember(x=>x.Position, m=>m.Ignore());
+
+            CreateMap<UserUpdateDTO, UserDTO>().ReverseMap();
         }
     }
 }
