@@ -22,7 +22,12 @@ namespace TOT.Dto.CustomValidationAttributes
             if (property == null)
                 throw new ArgumentException("Property with this name not found");
 
-            var comparisonValue = (DateTime)property.GetValue(validationContext.ObjectInstance);
+            var propertyValue = property.GetValue(validationContext.ObjectInstance);
+
+            if (propertyValue == null)
+                return new ValidationResult(ErrorMessage);
+
+            var comparisonValue = (DateTime)propertyValue;
 
             if (currentValue > comparisonValue)
                 return new ValidationResult(ErrorMessage);

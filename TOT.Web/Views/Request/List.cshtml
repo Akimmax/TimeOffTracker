@@ -2,75 +2,85 @@
 @using TOT.Web.ViewModels;
 @model IEnumerable<TimeOffRequestDTO>
 
-@{
+    @{
     ViewData["Title"] = "List";
-}
-<h2>@ViewData["Title"]</h2>
-
-@if (ViewBag.OnlyShow != true)
-{
+    }
+    <h2>Requests</h2>
+    @if (ViewBag.OnlyShow != true)
+    {
     <p>
         <a asp-action="Create">Create New</a>
     </p>
-}
+    }
     @if (Model.Any())
     {
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
+    <div class="table">
+        <table class="table table-hover" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    <td class="col-md-2">
+                        <b>Type</b>
+                    </td>
+                    <td class="col-md-2">
+                        <b>Day(s) Off</b>
+                    </td>
+                    <td class="col-md-5">
+                        <b>Notes</b>
+                    </td>
+                    <th class="col-md-3">
+                        <b>Actions</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
                     <tr>
+                        <td>
+                            @item.Type.Title
+                        </td>
+                        <td>
+                            @item.StartsAt.ToString("MM/dd/yyyy") - @item.EndsOn?.ToString("MM/dd/yyyy")
+                        </td>
+                        <td style="overflow:hidden">
+                            @item.Note
+                        </td>
+                        <td>
+                            @if (ViewBag.OnlyShow == true)
+                            {
+                            <button type="button" class="btn btn-info btn-sm"
+                                    onclick="location.href='@Url.Action(" Details", "Request" )?id='+@item.Id">
+                                Details
+                            </button>
+                            }else{
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    onclick="location.href='@Url.Action(" EditGetRequest", "Request" )?id='+@item.Id">
+                                Edit
+                            </button>
 
-                        <td>
-                            Type
+                            <button type="button" class="btn btn-info btn-sm"
+                                    onclick="location.href='@Url.Action(" Details", "Request" )?id='+@item.Id">
+                                Details
+                            </button>
+
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    data-toggle="modal" data-target="#deleteModal" data-arg-id="@item.Id">
+                                Delete
+                            </button>
+                            }
                         </td>
-                        <td>
-                            Day(s) Off
-                        </td>
-                        <td>
-                            Notes
-                        </td>
-                        <th>
-                            Actions
-                        </th>
                     </tr>
-                </thead>
-                <tbody>
+                }
 
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                <label>@item.Type.Title </label>
-                            </td>
-                            <td>
-                                <label>@item.StartsAt.ToString("MM/dd/yyyy") - @item.EndsOn?.ToString("MM/dd/yyyy") </label>
-                            </td>
-                            <td>
-                                <label>@item.Note</label>
-                            </td>
-                            <td>
-                                @if (ViewBag.OnlyShow == true)
-                                {
-                                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                                }
-                                else
-                                {
-                                    <a asp-action="EditGetRequest" asp-route-id="@item.Id">Edit</a>
-                                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                                    <a href="#" data-toggle="modal" data-target="#deleteModal" data-arg-id="@item.Id">Delete</a>
-                                }
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
+    </div>
     }
 
     else
     {
-        <center>No items found</center>
+    <center>No items found</center>
     }
 
     @Html.Partial("_Dialog", new DialogViewModel("deleteModal")
