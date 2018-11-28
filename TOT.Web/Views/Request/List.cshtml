@@ -2,15 +2,18 @@
 @using TOT.Web.ViewModels;
 @model IEnumerable<TimeOffRequestDTO>
 
-@{
+    @{
     ViewData["Title"] = "List";
-}
-<h2>Requests</h2>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-@if (Model.Any())
-{
+    }
+    <h2>Requests</h2>
+    @if (ViewBag.OnlyShow != true)
+    {
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    }
+    @if (Model.Any())
+    {
     <div class="table">
         <table class="table table-hover" style="table-layout: fixed;">
             <thead>
@@ -44,14 +47,20 @@
                             @item.Note
                         </td>
                         <td>
-
+                            @if (ViewBag.OnlyShow == true)
+                            {
+                            <button type="button" class="btn btn-info btn-sm"
+                                    onclick="location.href='@Url.Action(" Details", "Request" )?id='+@item.Id">
+                                Details
+                            </button>
+                            }else{
                             <button type="button" class="btn btn-secondary btn-sm"
-                                    onclick="location.href='@Url.Action("EditGetRequest", "Request")?id='+@item.Id">
+                                    onclick="location.href='@Url.Action(" EditGetRequest", "Request" )?id='+@item.Id">
                                 Edit
                             </button>
 
                             <button type="button" class="btn btn-info btn-sm"
-                                    onclick="location.href='@Url.Action("Details", "Request")?id='+@item.Id">
+                                    onclick="location.href='@Url.Action(" Details", "Request" )?id='+@item.Id">
                                 Details
                             </button>
 
@@ -59,7 +68,7 @@
                                     data-toggle="modal" data-target="#deleteModal" data-arg-id="@item.Id">
                                 Delete
                             </button>
-                           
+                            }
                         </td>
                     </tr>
                 }
@@ -67,18 +76,18 @@
             </tbody>
         </table>
     </div>
-}
+    }
 
-else
-{
+    else
+    {
     <center>No items found</center>
-}
+    }
 
-@Html.Partial("_Dialog", new DialogViewModel("deleteModal")
-{
-Content = "Are you sure that you want to delete this request?",
-SubmitAction = "Delete",
-SubmitController = "Request"
-})
+    @Html.Partial("_Dialog", new DialogViewModel("deleteModal")
+    {
+    Content = "Are you sure that you want to delete this request?",
+    SubmitAction = "Delete",
+    SubmitController = "Request"
+    })
 
 

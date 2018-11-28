@@ -12,8 +12,8 @@ function AddApprover() {
     var AprText = $("#ApproverPosition").find('option[value="' + AprPost.val() + '"]').text();
     AprArray[AprPost.val()] = AprAmoun;
     $("#Approvers").val(JSON.stringify(AprArray));
-    AprList.append("<li class='list-group-item' id='appr" + AprPost.val() + "'>" + AprText + " : " + AprAmoun +
-        "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle(" + AprPost.val() + ")' />" + "</li>");
+    AprList.append(`<div class="row list-group-item" id="appr${ AprPost.val()}"><div class="col-xs-11"><h4>${ AprText } : ${ AprAmoun }<h4></div>
+        <input type="button" value="X" class="col-xs-1 btn btn-danger" onclick="DeliteEle(${ AprPost.val() })" /></div>`);
 }
 
 function ShowApr(){
@@ -22,8 +22,8 @@ function ShowApr(){
     PositionList = $("#ApproverPosition");
     for (var key in AprArray) {
         var AprText = $("#ApproverPosition").find('option[value="' + key + '"]').text();
-        AprList.append("<div class='list-group-item' id='appr" +key+"'>"+AprText+" : " + AprArray[key] +
-            "<input type='button' value='X' class='btn btn -default' onclick='DeliteEle("+key+")' /></div>");
+        AprList.append(`<div class="row list-group-item" id="appr${ key }"><div class="col-xs-11"><h4>${ AprText } : ${ AprArray[key] }</h4></div>
+            <input type="button" value="X" class="col-xs-1 btn btn-danger" onclick="DeliteEle(${ key })" /></div>`);
     }
 }
 
