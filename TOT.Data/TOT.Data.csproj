@@ -22,6 +22,7 @@
     <Compile Remove="Migrations\20181117202251_ChangeUser.cs" />
     <Compile Remove="Migrations\20181117203720_ChangeUser.cs" />
     <Compile Remove="Migrations\20181118183355_PolicyChangesMigration.cs" />
+    <Compile Remove="Migrations\20181124160627_RolesInitializerMigration.cs" />
   </ItemGroup>
 
   <ItemGroup>

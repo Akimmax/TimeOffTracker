@@ -14,11 +14,9 @@ namespace TOT.Dto.TimeOffPolicies
         [Required(ErrorMessage = "Vacation Type should be defined")]
         [Display(Name = "Vacation Type")]
         public TimeOffTypeDTO Type { get; set; }
-        //public int TypeId { get; set; }
         [Required(ErrorMessage = "Policy should be defined")]
         [Display(Name = "Vacation Policy")]
         public TimeOffPolicyDTO Policy { get; set; }
-        //public int PolicyId { get; set; }
         [Display(Name = "Status Policy")]
         public bool IsActive { get; set; }
         public EmployeePositionTimeOffPolicyDTO NextPolicy { get; set; }

@@ -6,9 +6,12 @@
     ViewData["Title"] = "List";
 }
 <h2>Requests</h2>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (ViewBag.OnlyShow != true)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 @if (Model.Any())
 {
     <div class="table">
@@ -34,6 +37,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+
                         <td>
                             @item.Type.Title
                         </td>
@@ -61,24 +65,55 @@
                             </button>
                            
                         </td>
+                        <th>
+                            Actions
+                        </th>
                     </tr>
-                }
+                </thead>
+                <tbody>
 
-            </tbody>
-        </table>
-    </div>
-}
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <label>@item.Type.Title </label>
+                            </td>
+                            <td>
+                                <label>@item.StartsAt.ToString("MM/dd/yyyy") - @item.EndsOn?.ToString("MM/dd/yyyy") </label>
+                            </td>
+                            <td>
+                                <label>@item.Note</label>
+                            </td>
+                            <td>
+                                @if (ViewBag.OnlyShow == true)
+                                {
+                                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                }
+                                else
+                                {
+                                    <a asp-action="EditGetRequest" asp-route-id="@item.Id">Edit</a>
+                                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                    <a href="#" data-toggle="modal" data-target="#deleteModal" data-arg-id="@item.Id">Delete</a>
+                                }
+                            </td>
+                        </tr>
+                    }
 
-else
-{
-    <center>No items found</center>
-}
+                </tbody>
+            </table>
+        </div>
+    }
 
-@Html.Partial("_Dialog", new DialogViewModel("deleteModal")
-{
-Content = "Are you sure that you want to delete this request?",
-SubmitAction = "Delete",
-SubmitController = "Request"
-})
+    else
+    {
+        <center>No items found</center>
+    }
+
+    @Html.Partial("_Dialog", new DialogViewModel("deleteModal")
+    {
+    Content = "Are you sure that you want to delete this request?",
+    SubmitAction = "Delete",
+    SubmitController = "Request"
+    })
 
 
