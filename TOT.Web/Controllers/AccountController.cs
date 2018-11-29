@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,10 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TOT.Business.Services;
+using TOT.Data.RoleInitializer;
 using TOT.Dto.Identity;
+using TOT.Dto.Identity.Models;
 using TOT.Entities;
 using TOT.Entities.IdentityEntities;
 using TOT.Interfaces;
+using TOT.Web.TagHelpers;
 using TOT.Web.ViewModels;
 
 namespace TOT.Web.Controllers
@@ -30,13 +34,26 @@ namespace TOT.Web.Controllers
             _signInManager = signInManager;
             _identityService = identityService;
         }
-
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Index(UserFilterModel model, UserSortState sortOrder)
         {
-            var Users = await _identityService.GetAllUsersAsync();
-            return View(mapper.Map<IEnumerable<UserDTO>,IEnumerable<UserUpdateDTO>>(Users));
+            ViewData["Position"] = new SelectList(_unitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+            ViewData["Roles"] = new SelectList(_identityService.GetAllRoles(), "Name", "Name");
+            var fireState = new Dictionary<string, bool>();
+            fireState.Add("Fired",true);
+            fireState.Add("Working", false);
+            ViewData["FiredState"] = new SelectList(fireState,"Value","Key");
+
+            var Users = await _identityService.GetFilteredUsersAsync(model);
+            Users = _identityService.SortUsers(Users, sortOrder);
+            return View(new UserShowModel(){
+                UserFilter = new UserFilterModel(),
+                Users = mapper.Map<IEnumerable<UserDTO>,IEnumerable<UserUpdateDTO>>(Users),
+                UserSortView = new UserSortViewModel(sortOrder)
+            });
         }
 
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(string id)
         {
             try
@@ -52,12 +69,14 @@ namespace TOT.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Details(string id)
         {
             return RedirectToAction("UserRequsts", "Request", new { id });
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Register()
         {
             ViewData["Position"] = new SelectList(_unitOfWork.EmployeePositions.GetAll(), "Id", "Title");
@@ -66,6 +85,7 @@ namespace TOT.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Register([FromForm]UserDTO model)
         {
             try
@@ -93,6 +113,7 @@ namespace TOT.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> UpdatePassword()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -100,6 +121,7 @@ namespace TOT.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> UpdatePassword([FromForm]UserUpdatePasswordDTO model)
         {
             try
@@ -107,7 +129,7 @@ namespace TOT.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     await _identityService.UpdatePasswordAsync(model);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("List","Request",new { });
                 }
                 return View(model);
             }
@@ -119,6 +141,7 @@ namespace TOT.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Update(string id)
         {
             var user = await _identityService.GetByIdAsync(id);
@@ -133,6 +156,7 @@ namespace TOT.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Update([FromForm]UserUpdateDTO model)
         {
             try
@@ -162,6 +186,10 @@ namespace TOT.Web.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
+            if (returnUrl == null)
+            {
+                return View(new LoginViewModel { ReturnUrl = Url.Action("List", "Requst", new { }) });
+            }
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -194,11 +222,12 @@ namespace TOT.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> LogOff()
         {
             await _signInManager.SignOutAsync();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("List","Request");
         }
     }
 }

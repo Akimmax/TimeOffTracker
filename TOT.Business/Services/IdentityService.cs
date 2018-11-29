@@ -48,41 +48,146 @@ namespace TOT.Business.Services
             return result;
         }
 
-        //public async Task<IEnumerable<UserDTO>> GetFilteredUsersAsync(UserFilterModel model)
-        //{
-        //    IQueryable<User> userQuery = _userManager.Users.Include(x => x.Position);
-        //    if (!String.IsNullOrEmpty(model.Email))
-        //    {
-        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Email));
-        //    }
-        //    if (!String.IsNullOrEmpty(model.Name))
-        //    {
-        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Name));
-        //    }
-        //    if (!String.IsNullOrEmpty(model.Surname))
-        //    {
-        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Surname));
-        //    }
-        //    if (!String.IsNullOrEmpty(model.Patronymic))
-        //    {
-        //        userQuery = userQuery.Where(x => x.Email.Contains(model.Patronymic));
-        //    }
-        //    if (model.toHireDate != null)
-        //    {
-        //        if (model.fromHireDate != null)
-        //        {
-        //            userQuery = userQuery.Where(x => 
-        //                DateTime.Compare(x.HireDate, model.fromHireDate) >= 0 &&
-        //                DateTime.Compare(x.HireDate, model.toHireDate) <= 0);
-        //        }
-        //        else
-        //        {
-        //            userQuery = userQuery.Where(x => x.Email.Contains(model.Email));
-        //        }
-        //    }
-        //}
+        public async Task<IEnumerable<UserDTO>> GetFilteredUsersAsync(UserFilterModel model)
+        {
+            if (model == null)
+            {
+                return await GetAllUsersAsync();
+            }
+            IQueryable<User> userQuery = _userManager.Users.Include(x => x.Position);
+            if (!String.IsNullOrEmpty(model.Email))
+            {
+                userQuery = userQuery.Where(x => x.Email.Contains(model.Email));
+            }
+            if (!String.IsNullOrEmpty(model.Name))
+            {
+                userQuery = userQuery.Where(x => x.Name.Contains(model.Name));
+            }
+            if (!String.IsNullOrEmpty(model.Surname))
+            {
+                userQuery = userQuery.Where(x => x.Surname.Contains(model.Surname));
+            }
+            if (!String.IsNullOrEmpty(model.Patronymic))
+            {
+                userQuery = userQuery.Where(x => x.Patronymic.Contains(model.Patronymic));
+            }
+            if (model.toHireDate != null)
+            {
+                if (model.fromHireDate != null)
+                {
+                    userQuery = userQuery.Where(x =>
+                        DateTime.Compare(x.HireDate, (DateTime)model.fromHireDate) >= 0 &&
+                        DateTime.Compare(x.HireDate, (DateTime)model.toHireDate) <= 0);
+                }
+                else
+                {
+                    userQuery = userQuery.Where(x =>
+                        DateTime.Compare(x.HireDate, (DateTime)model.toHireDate) <= 0);
+                }
+            }
+            else
+            {
+                if (model.fromHireDate != null)
+                {
+                    userQuery = userQuery.Where(x =>
+                        DateTime.Compare(x.HireDate, (DateTime)model.fromHireDate) >= 0);
+                }
+            }
+            if (model.Fired != null)
+            {
+                userQuery = userQuery.Where(x => x.Fired == model.Fired);
+            }
+            if (model.Position!=null && model.Position.Any())
+            {
+                userQuery = userQuery.Where(x => model.Position.Any(c=>c == x.PositionId));
+            }
 
-        public async Task RegisterAsync(UserDTO model)
+            var result = await userQuery.Select(x => mapper.Map<User, UserDTO>(x)).ToListAsync();
+            var roles = await Task.WhenAll(result.Select(u => GetUserRolesAsync(u.Id)));
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                result[i].Roles = roles[i];
+            }
+
+            if (model.Roles != null && model.Roles.Any())
+            {
+                model.Roles.Remove(null);
+                if (model.Roles.Count != 0)
+                {
+                    result = result.Where(x => model.Roles.Any(c => x.Roles.Any(z => z.Equals(c)))).ToList();
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<UserDTO> SortUsers(IEnumerable<UserDTO> Users, UserSortState sortOrder = UserSortState.NameAsc)
+        {
+            switch (sortOrder)
+            {
+                case UserSortState.NameDesc:
+                    Users = Users.OrderByDescending(s => s.Name);
+                    break;
+
+                case UserSortState.SurnameAsc:
+                    Users = Users.OrderBy(s => s.Surname);
+                    break;
+                case UserSortState.SurnameDesc:
+                    Users = Users.OrderByDescending(s => s.Surname);
+                    break;
+
+                case UserSortState.PatronymicAsc:
+                    Users = Users.OrderBy(s => s.Patronymic);
+                    break;
+                case UserSortState.PatronymicDesc:
+                    Users = Users.OrderByDescending(s => s.Patronymic);
+                    break;
+
+                case UserSortState.EmailAsc:
+                    Users = Users.OrderBy(s => s.Email);
+                    break;
+                case UserSortState.EmailDesc:
+                    Users = Users.OrderByDescending(s => s.Email);
+                    break;
+
+                case UserSortState.PositionAsc:
+                    Users = Users.OrderBy(s => s.Position.Title);
+                    break;
+                case UserSortState.PositionDesc:
+                    Users = Users.OrderByDescending(s => s.Position.Title);
+                    break;
+
+                case UserSortState.HireDateAsc:
+                    Users = Users.OrderBy(s => s.HireDate);
+                    break;
+                case UserSortState.HireDateDesc:
+                    Users = Users.OrderByDescending(s => s.HireDate);
+                    break;
+
+                case UserSortState.RolesAsc:
+                    Users = Users.OrderBy(s => s.Roles);
+                    break;
+                case UserSortState.RolesDesc:
+                    Users = Users.OrderByDescending(s => s.Roles);
+                    break;
+
+                case UserSortState.FiredAsc:
+                    Users = Users.OrderBy(s => s.Fired);
+                    break;
+                case UserSortState.FiredDesc:
+                    Users = Users.OrderByDescending(s => s.Fired);
+                    break;
+
+                default:
+                    Users = Users.OrderBy(s => s.Name);
+                    break;
+            }
+
+            return Users;
+        }
+
+            public async Task RegisterAsync(UserDTO model)
         {
             var user = _mapper.Map<UserDTO, User>(model);
             var result = await _userManager.CreateAsync(user, model.Password);

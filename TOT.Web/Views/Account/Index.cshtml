@@ -1,5 +1,7 @@
 ﻿@using TOT.Web.ViewModels;
-@model IEnumerable<TOT.Dto.Identity.UserUpdateDTO>
+@using TOT.Dto.Identity;
+@addTagHelper " *, TOT.Web"
+@model TOT.Dto.Identity.Models.UserShowModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -13,10 +15,90 @@
     <div class="row text-center">
         <h4>
             <strong>
-            Accounts List
+                Accounts List
             </strong>
         </h4>
     </div>
+    <div class="row">
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title text-center">
+                    <a data-toggle="collapse" href="#collapse1">Filtration form</a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+                <form method="get" class="form-horizontal">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label asp-for="UserFilter.Name" class="col-md-offset-3 col-sm-2 col-md-1 control-label"></label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.TextBox("name", Model.UserFilter.Name, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="UserFilter.Surname" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.TextBox("surname", Model.UserFilter.Surname, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="UserFilter.Patronymic" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.TextBox("patronymic", Model.UserFilter.Patronymic, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="UserFilter.Email" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.TextBox("email", Model.UserFilter.Email, htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="UserFilter.Position" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.DropDownList("position", ViewBag.Position as SelectList,"All positions",
+                                htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-offset-3 col-sm-2 col-md-1  control-label">From</label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.TextBox("fromhiredate", Model.UserFilter.fromHireDate, htmlAttributes: new { @class = "form-control", @type = "Date" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-offset-3 col-sm-2 col-md-1  control-label">To</label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.TextBox("tohiredate", Model.UserFilter.toHireDate, htmlAttributes: new { @class = "form-control", @type = "Date" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="UserFilter.Roles" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.DropDownList("roles", ViewBag.Roles as SelectList, "All roles",
+                                htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-offset-3 col-sm-2 col-md-1  control-label">State</label>
+                            <div class="col-sm-10 col-md-4">
+                                @Html.DropDownList("fired", ViewBag.FiredState , "All",
+                                htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="form-group text-center">
+                            <input type="submit" value="Filter" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        </div>
+
     <div class="row">
         <p>
             <a asp-action="Register">Register New</a>
@@ -27,28 +109,50 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Name)
+                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.NameSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Name)
+                         </sort-header>
+
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Surname)
+                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.SurnameSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Surname)
+                        </sort-header>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Patronymic)
+                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.PatronymicSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Patronymic)
+                            </sort-header>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Email)
+                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.EmailSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Email)
+                        </sort-header>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Position)
+                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.PositionSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Position)
+                        </sort-header>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.HireDate)
+                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.HireDateSort">
+                            @Html.DisplayNameFor(model => model.Users.First().HireDate)
+                         </sort-header>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Fired)
+                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.FiredSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Fired)
+                            </sort-header>
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Roles)
+                            @Html.DisplayNameFor(model => model.Users.First().Roles)
                     </th>
                     <th>
                         Actions
@@ -56,7 +160,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Users)
                 {
                     <tr class="@(item.Fired ? "alert-danger":"alert-info")">
                         <td style="vertical-align:middle">

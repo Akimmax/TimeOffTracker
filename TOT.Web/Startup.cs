@@ -79,7 +79,8 @@ namespace TOT.Web
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Request}/{action=List}/{id?}");
+                //template: "{controller=Home}/{action=Index}/{id?}");
             });
             RoleInitializer.InitializeAsync(serviceProvider).GetAwaiter().GetResult();
         }

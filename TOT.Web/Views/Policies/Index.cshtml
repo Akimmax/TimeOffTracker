@@ -20,11 +20,14 @@
             </strong>
         </h4>
     </div>
-    <div class="row">
-        <p>
-            <a asp-action="Create">Create New</a>
-        </p>
-    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="row">
+            <p>
+                <a asp-action="Create">Create New</a>
+            </p>
+        </div>
+    }
     <div class="row table-responsive">
         <table class="table table-bordered table-hover">
             <thead>
@@ -80,9 +83,16 @@
                             </table>
                         </td>
                         <td style="vertical-align:middle">
-                            <input type="button" class="btn btn-warning btn-block" onclick="location.href='@Url.Action("Edit", "Policies", new {id=item.Id})'" value="Edit">
-                            <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Policies", new {id=item.Id})'" value="Details">
-                            <input type="button" class="btn btn-danger btn-block" href="#" data-toggle="modal" data-target="#deletePolicy" data-arg-id="@item.Id" value="Delete">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <input type="button" class="btn btn-warning btn-block" onclick="location.href='@Url.Action("Edit", "Policies", new { id = item.Id })'" value="Edit">
+                                <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Policies", new { id = item.Id })'" value="Details">
+                                <input type="button" class="btn btn-danger btn-block" href="#" data-toggle="modal" data-target="#deletePolicy" data-arg-id="@item.Id" value="Delete">
+                            }
+                            else
+                            {
+                                <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Policies", new { id = item.Id })'" value="Details">
+                            }
                         </td>
                     </tr>
                 }
