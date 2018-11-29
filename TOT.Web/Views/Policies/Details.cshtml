@@ -42,10 +42,10 @@
                 @Html.DisplayFor(model => model.Policy.TimeOffDaysPerYear)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.IsActive)
+                @Html.DisplayNameFor(model=>model.IsActive)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.IsActive)
+                @(Model.IsActive ? "Active" : "In Archive")
             </dd>
             <dt>
                 @Html.DisplayNameFor(model => model.Approvers)
@@ -68,14 +68,6 @@
                              </tr>
                          }
                      </table>
-                     @*<ul>
-                         @foreach (var item in Model.Approvers)
-                         {
-                             <li>
-                                 @(item.EmployeePosition.Title) : @(item.Amount)
-                             </li>
-                         }
-                     </ul>*@
                  </dd>
         </dl>
     </div>

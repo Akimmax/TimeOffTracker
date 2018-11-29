@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using TOT.Data;
 using TOT.Entities.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
+using TOT.Data.RoleInitializer;
 
 namespace TOT.Web
 {
@@ -59,7 +60,7 @@ namespace TOT.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -80,6 +81,7 @@ namespace TOT.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            RoleInitializer.InitializeAsync(serviceProvider).GetAwaiter().GetResult();
         }
     }
 }
