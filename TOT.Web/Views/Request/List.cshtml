@@ -47,20 +47,21 @@
                             @item.Note
                         </td>
                         <td>
-                            @if (ViewBag.OnlyShow == true)
-                            {
+                            @*  @if (ViewBag.OnlyShow == true)
+        {
                             <button type="button" class="btn btn-info btn-sm"
-                                    onclick="location.href='@Url.Action(" Details", "Request" )?id='+@item.Id">
+                                    onclick="location.href='@Url.Action("Details", "Request", new {id=item.Id})'">
                                 Details
                             </button>
-                            }else{
+                             }else{
+                                *@
                             <button type="button" class="btn btn-secondary btn-sm"
-                                    onclick="location.href='@Url.Action(" EditGetRequest", "Request" )?id='+@item.Id">
+                                    onclick="location.href='@Url.Action("EditGetRequest", "Request", new {id=item.Id})'">
                                 Edit
                             </button>
 
                             <button type="button" class="btn btn-info btn-sm"
-                                    onclick="location.href='@Url.Action(" Details", "Request" )?id='+@item.Id">
+                                    onclick="location.href='@Url.Action("Details", "Request", new {id=item.Id})'">
                                 Details
                             </button>
 
@@ -68,7 +69,7 @@
                                     data-toggle="modal" data-target="#deleteModal" data-arg-id="@item.Id">
                                 Delete
                             </button>
-                            }
+                            @*}*@
                         </td>
                     </tr>
                 }
