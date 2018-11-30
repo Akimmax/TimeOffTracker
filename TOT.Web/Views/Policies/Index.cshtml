@@ -20,6 +20,13 @@
             </strong>
         </h4>
     </div>
+    <div class="row text-center">
+        <h4>
+            <strong class="text-danger">
+                @ViewBag.Error
+            </strong>
+        </h4>
+    </div>
     @if (User.IsInRole("Admin"))
     {
         <div class="row">
@@ -83,7 +90,7 @@
                             </table>
                         </td>
                         <td style="vertical-align:middle">
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("Admin") && item.Position !=null && item.IsActive)
                             {
                                 <input type="button" class="btn btn-warning btn-block" onclick="location.href='@Url.Action("Edit", "Policies", new { id = item.Id })'" value="Edit">
                                 <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Policies", new { id = item.Id })'" value="Details">

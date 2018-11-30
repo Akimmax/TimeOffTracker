@@ -54,6 +54,10 @@ namespace TOT.Business.Services
             {
                 throw new EntityNotFoundException<EmployeePositionTimeOffPolicy>(id);
             }
+            if (template.Position == null)
+            {
+                throw new Exception("It is not posible to delete default Policy.");
+            }
             var requsts = unitOfWork.TimeOffRequests.Find(x=>x.Policy.Id == id);
             if (requsts == null)
             {
@@ -66,6 +70,10 @@ namespace TOT.Business.Services
             }
             else
             {
+                if (template.IsActive == false)
+                {
+                    return Task.CompletedTask;
+                }
                 template.IsActive = false;
                 unitOfWork.EmployeePositionTimeOffPolicies.Update(template);
             }
@@ -78,7 +86,8 @@ namespace TOT.Business.Services
             EmployeePositionTimeOffPolicyDTOChecker(ItemDTO);
 
             var policy = unitOfWork.TimeOffPolicies
-                .Find(x=>x.Name == ItemDTO.Policy.Name &&
+                .Find(x=>
+                x.Name == ItemDTO.Policy.Name &&
                 x.TimeOffDaysPerYear == ItemDTO.Policy.TimeOffDaysPerYear &&
                 x.DelayBeforeAvailable == ItemDTO.Policy.DelayBeforeAvailable);
             if (policy != null)
@@ -130,7 +139,8 @@ namespace TOT.Business.Services
             EmployeePositionTimeOffPolicyDTOChecker(ItemDTO);
 
             var policy = unitOfWork.TimeOffPolicies
-                .Find(x => x.Name == ItemDTO.Policy.Name &&
+                .Find(x =>
+                x.Name == ItemDTO.Policy.Name &&
                 x.TimeOffDaysPerYear == ItemDTO.Policy.TimeOffDaysPerYear &&
                 x.DelayBeforeAvailable == ItemDTO.Policy.DelayBeforeAvailable);
             if (policy != null)
@@ -148,6 +158,10 @@ namespace TOT.Business.Services
 
             if (unitOfWork.EmployeePositionTimeOffPolicies.Get(Item.Id) is EmployeePositionTimeOffPolicy oldItem)
             {
+                if (oldItem.IsActive == false)
+                {
+                    throw new Exception("It is not posible to change Policy in Archive");
+                }
                 if (Item.TypeId == oldItem.TypeId &&
                     Item.PolicyId == oldItem.PolicyId &&
                     Item.Position.Id == oldItem.Position.Id &&
@@ -161,6 +175,14 @@ namespace TOT.Business.Services
                 } else
                 if (template == null)
                 {
+                    Item.IsActive = true;
+                    if (unitOfWork.EmployeePositionTimeOffPolicies.Filter(x => x.IsActive && x.PolicyId == Item.PolicyId).Count() > 1 &&
+                        (oldItem.Policy.Name != Item.Policy.Name
+                        || oldItem.Policy.TimeOffDaysPerYear != Item.Policy.TimeOffDaysPerYear
+                        || oldItem.Policy.DelayBeforeAvailable != Item.Policy.DelayBeforeAvailable))
+                    {
+                        Item.Policy.Id = 0;
+                    }
                     unitOfWork.EmployeePositionTimeOffPolicies.Update(Item);
                     return Task.CompletedTask;
                 }
@@ -169,10 +191,7 @@ namespace TOT.Business.Services
                     Item.Id = 0;
                     Item.IsActive = true;
 
-                    oldItem.IsActive = false;
-                    oldItem.NextPolicy = Item;
-
-                    unitOfWork.EmployeePositionTimeOffPolicies.Update(oldItem);
+                    DeleteByIdAsync(oldItem.Id);
                     unitOfWork.EmployeePositionTimeOffPolicies.Create(Item);
                     return Task.CompletedTask;
                 }

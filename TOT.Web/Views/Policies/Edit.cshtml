@@ -2,6 +2,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["TypeOfPage"] = "Edit";
 }
 
 <!DOCTYPE html>
@@ -25,7 +26,7 @@
         </div>
         <div class="panel-body">
             <form asp-action="Edit" class="form-horizontal">
-                @Html.Partial("_FieldForm", Model)
+                @Html.Partial("_FieldForm", Model, ViewData)
             </form>
         </div>
     </div>

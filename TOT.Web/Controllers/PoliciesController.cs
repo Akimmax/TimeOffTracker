@@ -30,8 +30,9 @@ namespace TOT.Web.Controllers
             _EmployeePositionTimeOffPolicyService = EmployeePositionTimeOffPolicyService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string Error = "")
         {
+            ViewData.Add("Error", Error);
             var PoliciesList = _EmployeePositionTimeOffPolicyService.GetAll().ToList();
             return View(PoliciesList);
         }
@@ -84,6 +85,7 @@ namespace TOT.Web.Controllers
             }
             catch (Exception ex)
             {
+                ModelState.AddModelError(string.Empty, ex.Message);
                 ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                 ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
                 if (ex is ArgumentException || ex is ArgumentNullException || ex is EntityNotFoundException)
@@ -126,10 +128,11 @@ namespace TOT.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     if (_UnitOfWork.EmployeePositionTimeOffPolicies
-                        .Find(x => x.PositionId == ItemCreateModel.Position.Id &&
+                        .Find(x =>
+                        x.Id != ItemCreateModel.Id &&
+                        x.PositionId == ItemCreateModel.Position.Id &&
                         x.TypeId == ItemCreateModel.Type.Id &&
-                        x.IsActive ==true &&
-                        x.Id != ItemCreateModel.Id) != null)
+                        x.IsActive ==true) != null)
                     {
                         ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                         ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
@@ -157,6 +160,7 @@ namespace TOT.Web.Controllers
             }
             catch (Exception ex)
             {
+                ModelState.AddModelError(string.Empty, ex.Message);
                 ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                 ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
                 if (ex is ArgumentException || ex is ArgumentNullException || ex is EntityNotFoundException)
@@ -181,8 +185,7 @@ namespace TOT.Web.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index),new { Error = ex.Message});
             }
         }
 
