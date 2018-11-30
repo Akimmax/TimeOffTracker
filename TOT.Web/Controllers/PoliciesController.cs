@@ -10,9 +10,12 @@ using TOT.Business.Services;
 using TOT.Dto.TimeOffPolicies;
 using TOT.Business.Exceptions;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
+using TOT.Data.RoleInitializer;
 
 namespace TOT.Web.Controllers
 {
+    [Authorize]
     public class PoliciesController : Controller
     {
         private readonly IMapper _mapper;
@@ -43,6 +46,7 @@ namespace TOT.Web.Controllers
             return View(Policy);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Create()
         {
             ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
@@ -52,6 +56,7 @@ namespace TOT.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromForm]PolicyCreateModel ItemCreateModel)
         {
             try
@@ -93,6 +98,7 @@ namespace TOT.Web.Controllers
             }
         }
 
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Edit(int id)
         {
             var ItemDTO = _EmployeePositionTimeOffPolicyService.GetById(id);
@@ -108,6 +114,7 @@ namespace TOT.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Edit(int id, PolicyCreateModel ItemCreateModel)
         {
             try
@@ -164,6 +171,7 @@ namespace TOT.Web.Controllers
             }
         }
 
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             try
