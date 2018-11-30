@@ -9,7 +9,7 @@
     public enum TimeOffRequestApprovalStatusesEnum : int
     {
         Requested = 1,
-        InProgres = 2,
+        Queued = 2,
         Denied = 3,
         Accepted = 4
     }
