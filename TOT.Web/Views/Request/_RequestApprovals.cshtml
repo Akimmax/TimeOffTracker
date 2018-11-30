@@ -2,23 +2,25 @@
 
 @{
 
-    var users = ((IEnumerable<SelectListItem>)ViewData["Users"]);
+    var userslists = ((List<IEnumerable<SelectListItem>>)ViewData["Users"]);
 
     int? amountApprovals = (int?)ViewData["AmountRequestApprovalsForRequest"];
+    int counter = 0;
 }
 
-@if (users != null && users.Any())
+@if (userslists != null && userslists.Any())
 {
     <div class="row">
         <div class="col-md-6">
             <label class="control-label">Approvals</label>
 
-            @for (int i = 0; i < amountApprovals; i++)
+            @foreach (var users in userslists)
             {
                 <div class="form-group">
-                    @Html.DropDownListFor(model => model.ApproversId, @users,
-                    new { @class = "form-control", @id = "selectUser" + i })
+                    @Html.DropDownListFor(model => model.ApproversId, users,
+                    new { @class = "form-control", @id = "selectUser" + counter })
                 </div>
+                counter++;
             }
 
         </div>

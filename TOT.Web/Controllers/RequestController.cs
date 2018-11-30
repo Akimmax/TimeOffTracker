@@ -147,23 +147,24 @@ namespace TOT.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PartialAsync(int typeId)
         {
-
             User curentUser = await _userManager.GetUserAsync(HttpContext.User);
 
             try
             {
-                var users = requestService.GetUsers(typeId, curentUser.PositionId, _userManager);
-                ViewData["Users"] = users.Select(u =>
-                new SelectListItem() { Value = u.Id.ToString(), Text = u.Email });
+                var userslists = await requestService.GetUsersAsync(typeId, curentUser.PositionId, _userManager);
 
-                var employeePolicy = employeePositionTimeOffPolicyService
-                    .GetByTypeIdAndPositionId(typeId, curentUser.PositionId);
-                var amount = 0;
-                foreach (var item in employeePolicy.Approvers)
+                List<IEnumerable<SelectListItem>> listOfUserSelectLists = new List<IEnumerable<SelectListItem>>();
+
+                foreach (var users in userslists)
                 {
-                    amount += item.Amount;
+                    listOfUserSelectLists.Add(users.Select(u =>
+                    new SelectListItem() { Value = u.Id.ToString(), Text = u.Email }));
                 }
-                ViewData["AmountRequestApprovalsForRequest"] = amount;
+
+                ViewData["Users"] = listOfUserSelectLists;
+
+                ViewData["AmountRequestApprovalsForRequest"] = listOfUserSelectLists.Count();
+
             }
             catch (Exception e)
             {
