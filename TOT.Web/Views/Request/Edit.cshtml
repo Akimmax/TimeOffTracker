@@ -9,74 +9,88 @@
     var types = ((IEnumerable<SelectListItem>)ViewData["AvailableTypes"]);
 }
 
-<hr />
-<h4>@ViewData["Title"]</h4>
-<div class="row">
-    <div class="col-md-6">
-
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="Id" type="hidden" />
-            <input asp-for="UserId" type="hidden" />
-
-            <div class="form-group">
-                <div class="form-group col-md-6">
-                    <label asp-for="StartsAt" class="control-label"></label>
-                    <input asp-for="StartsAt" class="form-control"
-                           type="date" id="start"
-                           min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
-                           max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
-                    <span asp-validation-for="StartsAt" class="text-danger"></span>
-
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label asp-for="EndsOn" class="control-label"></label>
-                    <input asp-for="EndsOn" class="form-control"
-                           type="date" id="end"
-                           min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
-                           max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
-                    <span asp-validation-for="EndsOn" class="text-danger"></span>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="text-center">
+                <div class="col-md-offset-4 col-md-3">
+                    <h2>Edit request</h2>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="Id" type="hidden" />
+                    <input asp-for="UserId" type="hidden" />
 
-            <div class="form-group col-md-12">
-                <label asp-for="Type" class="control-label"></label>
-                <select asp-for="TypeId" asp-items="@types"
-                        class="form-control custom-select" id="selectType">
-                    <option disabled selected>Select a type</option>
-                </select>
-                <span asp-validation-for="TypeId" class="text-danger"></span>
+                    <div class="form-group">
+                        <div class="form-group col-md-6">
+                            <label asp-for="StartsAt" class="control-label"></label>
+                            <input asp-for="StartsAt" class="form-control"
+                                   type="date" id="start"
+                                   min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
+                                   max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
+                            <span asp-validation-for="StartsAt" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label asp-for="EndsOn" class="control-label"></label>
+                            <input asp-for="EndsOn" class="form-control"
+                                   type="date" id="end"
+                                   min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
+                                   max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
+                            <span asp-validation-for="EndsOn" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label asp-for="Type" class="control-label"></label>
+                        <select asp-for="TypeId" asp-items="@types"
+                                class="form-control custom-select" id="selectType">
+                            <option disabled selected>Select a type</option>
+                        </select>
+                        <span asp-validation-for="TypeId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <div id="partial">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label asp-for="Note" class="control-label"></label>
+                        <textarea asp-for="Note" class="form-control" rows="4" cols="50" maxlength="70" style="resize: none"></textarea>
+                        <span asp-validation-for="Note" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <span asp-validation-for="ApproversId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <div class="text-center">
+                            <input type="submit" value="Save" class="btn btn-primary btn-lg" />
+                        </div>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group col-md-12">
-                <div id="partial">
-
-                </div>
-            </div>
-
-            <div class="form-group col-md-12">
-                <label asp-for="Note" class="control-label"></label>
-                <textarea asp-for="Note" class="form-control" rows="4" cols="50" maxlength="70" style="resize: none"></textarea>
-                <span asp-validation-for="Note" class="text-danger"></span>
-            </div>
-
-            <div class="form-group col-md-12">
-                <span asp-validation-for="ApproversId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group col-md-12">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<br />
-<div>
-    <a asp-action="List">Back to List</a>
+<div class="row">
+    <div class="col-md-offset-4 col-md-4">
+        <div class="text-center">
+            <input type="button" class="btn btn-danger" onclick="location.href='@Url.Action("List", "Request")'" value="Back to List">
+        </div>
+    </div>
 </div>
-<br />
 
 <script src="~/scripts/jquery-3.3.1.js"></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>

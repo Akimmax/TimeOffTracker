@@ -12,6 +12,7 @@ using TOT.Entities.TimeOffPolicies;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Net;
+using TOT.Dto.Identity.Models;
 
 namespace TOT.Business.Services
 {
@@ -81,10 +82,13 @@ namespace TOT.Business.Services
                     var deniedApproval = request.Approvals.FirstOrDefault(a =>
                     a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Denied);
 
-                    deniedApproval.Status = unitOfWork.RequestApprovalStatuses.Get(
-                    (int)TimeOffRequestApprovalStatusesEnum.Requested);
+                    if (deniedApproval != null)
+                    {
+                        deniedApproval.Status = unitOfWork.RequestApprovalStatuses.Get(
+                        (int)TimeOffRequestApprovalStatusesEnum.Requested);
 
-                    await SendNotificationAsync(deniedApproval, request, " changed the request that was denied by you");
+                        await SendNotificationAsync(deniedApproval, request, " changed the request that was denied by you");
+                    }
                 }
 
                 request.StartsAt = requestDTO.StartsAt;
@@ -278,13 +282,18 @@ namespace TOT.Business.Services
 
         async Task SendNotificationAsync(TimeOffRequestApproval approval, TimeOffRequest request, string descriptionOfReason)
         {
-            if (approval == null)
+            if (approval == null|| request == null)
             {
                 return;
             }
 
             var addressee = await _userManager.FindByIdAsync(approval.UserId);
             var requesting = await _userManager.FindByIdAsync(request.UserId);
+
+              if (addressee == null || requesting == null)
+            {
+                return;
+            }
 
             string mailAddressee = addressee.Email;
             string mailRequesting = requesting.Email;
@@ -314,6 +323,58 @@ namespace TOT.Business.Services
 
             //smtp.Send(message);
         }
+
+        public IEnumerable<TimeOffRequestDTO> GetAllForCurrentUserFilter(string userid, TimeOffRequestFilterModel model)
+        {
+            var requests = unitOfWork.TimeOffRequests.Filter(r => r.UserId == userid);
+
+            if (model == null)
+            {
+                return mapper.Map<IEnumerable<TimeOffRequest>, IEnumerable<TimeOffRequestDTO>>(requests);
+            }
+
+            if (model.StartsAt != null)
+            {
+                requests = requests.Where(r => r.StartsAt > model.StartsAt);
+            }
+
+            if (model.EndsOn != null)
+            {
+                requests = requests.Where(r => r.EndsOn < model.EndsOn);
+            }
+
+            if (model.TypeId != null)
+            {
+                requests = requests.Where(r => r.TypeId == model.TypeId);
+            }
+
+            if (!String.IsNullOrEmpty(model.Note))
+            {
+                requests = requests.Where(r => r.Note.Contains(model.Note));
+            }
+
+            if (model.RequestStatuses != null)
+            {
+                switch (model.RequestStatuses)
+                {
+                    case (int)RequestStatuses.InProcess:
+                        requests = requests.Where(r => r.Approvals.Any(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Requested));
+                        break;
+                    case (int)RequestStatuses.Denied:
+                        requests = requests.Where(r => r.Approvals.Any(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Denied));
+                        break;
+                    case (int)RequestStatuses.Accepted:
+                        requests = requests.Where(r => r.Approvals.All(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Accepted));
+                        break;
+                }
+            }
+
+            var requestsDTO = mapper.Map<IEnumerable<TimeOffRequest>, IEnumerable<TimeOffRequestDTO>>(requests);
+
+            return requestsDTO;
+        }
+
+
 
     }
 }
