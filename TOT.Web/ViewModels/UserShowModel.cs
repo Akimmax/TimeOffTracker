@@ -10,5 +10,6 @@ namespace TOT.Dto.Identity.Models
         public IEnumerable<UserUpdateDTO> Users { get; set; }
         public UserFilterModel UserFilter { get; set; }
         public UserSortViewModel UserSortView { get; set; }
+        public UserPageViewModel UserPageView { get; set; }
     }
 }

@@ -109,44 +109,44 @@
             <thead>
                 <tr>
                     <th>
-                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
                                      current="@Model.UserSortView.Current" property="@Model.UserSortView.NameSort">
                             @Html.DisplayNameFor(model => model.Users.First().Name)
                          </sort-header>
 
                     </th>
                     <th>
-                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
                                      current="@Model.UserSortView.Current" property="@Model.UserSortView.SurnameSort">
                             @Html.DisplayNameFor(model => model.Users.First().Surname)
                         </sort-header>
                     </th>
                     <th>
-                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
                                      current="@Model.UserSortView.Current" property="@Model.UserSortView.PatronymicSort">
                             @Html.DisplayNameFor(model => model.Users.First().Patronymic)
                             </sort-header>
                     </th>
                     <th>
-                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
                                      current="@Model.UserSortView.Current" property="@Model.UserSortView.EmailSort">
                             @Html.DisplayNameFor(model => model.Users.First().Email)
                         </sort-header>
                     </th>
                     <th>
-                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
                                      current="@Model.UserSortView.Current" property="@Model.UserSortView.PositionSort">
                             @Html.DisplayNameFor(model => model.Users.First().Position)
                         </sort-header>
                     </th>
                     <th>
-                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
                                      current="@Model.UserSortView.Current" property="@Model.UserSortView.HireDateSort">
                             @Html.DisplayNameFor(model => model.Users.First().HireDate)
                          </sort-header>
                     </th>
                     <th>
-                        <sort-header action="Index" up="@Model.UserSortView.Up"
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
                                      current="@Model.UserSortView.Current" property="@Model.UserSortView.FiredSort">
                             @Html.DisplayNameFor(model => model.Users.First().Fired)
                             </sort-header>
@@ -206,6 +206,20 @@
             </tbody>
         </table>
     </div>
+    <div class="row">
+        <page-link page-model="Model.UserPageView" page-action="Index"
+                   page-url-name="@(Model.UserFilter.Name)"
+                   page-url-surname="@(Model.UserFilter.Surname)"
+                   page-url-patronymic="@(Model.UserFilter.Patronymic)"
+                   page-url-position="@(Model.UserFilter.Position)"
+                   page-url-email="@(Model.UserFilter.Email)"
+                   page-url-fired="@(Model.UserFilter.Fired)"
+                   page-url-fromhiredate="@(Model.UserFilter.fromHireDate)"
+                   page-url-tohiredate="@(Model.UserFilter.toHireDate)"
+                   page-url-sortorder="@(Model.UserSortView.Current)"
+                   ></page-link>
+    </div>
+
     @Html.Partial("_Dialog", new DialogViewModel("deleteUser")
         {
             Content = "Are you sure that you want to fire this Employee?",
