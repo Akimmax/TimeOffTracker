@@ -12,6 +12,8 @@ using TOT.Business.Exceptions;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Authorization;
 using TOT.Data.RoleInitializer;
+using TOT.Dto.TimeOffPolicies.Models;
+using TOT.Web.ViewModels;
 
 namespace TOT.Web.Controllers
 {
@@ -30,11 +32,24 @@ namespace TOT.Web.Controllers
             _EmployeePositionTimeOffPolicyService = EmployeePositionTimeOffPolicyService;
         }
 
-        public IActionResult Index(string Error = "")
+        public IActionResult Index(PolicyFilterModel filterModel, string Error = "")
         {
-            ViewData.Add("Error", Error);
-            var PoliciesList = _EmployeePositionTimeOffPolicyService.GetAll().ToList();
-            return View(PoliciesList);
+            ViewData["Error"]=Error;
+            ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+            ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
+            var activeState = new Dictionary<string, bool?>();
+            activeState.Add("Do not search", null);
+            activeState.Add("Is Active", true);
+            activeState.Add("In Archive", false);
+            ViewData["ActiveState"] = new SelectList(activeState, "Value", "Key");
+
+            var PoliciesList = _EmployeePositionTimeOffPolicyService.GetFilteredPolicies(filterModel);
+            return View(new PoliciesShowModel()
+                {
+                    Policies = PoliciesList,
+                    PolicyFilter = filterModel
+                }
+                );
         }
 
         public IActionResult Details(int id)

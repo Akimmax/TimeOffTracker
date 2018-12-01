@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TOT.Business.Exceptions;
 using TOT.Dto;
 using TOT.Dto.TimeOffPolicies;
+using TOT.Dto.TimeOffPolicies.Models;
 using TOT.Entities.TimeOffPolicies;
 using TOT.Interfaces;
 
@@ -13,10 +14,57 @@ namespace TOT.Business.Services
 {
     public class EmployeePositionTimeOffPolicyService : BaseService
     {
+        public IUnitOfWork _unitOfWork;
+
         public EmployeePositionTimeOffPolicyService(IUnitOfWork unitOfWork, IMapper mapper)
             : base(unitOfWork, mapper)
         {
+            _unitOfWork = unitOfWork;
         }
+
+        public IEnumerable<EmployeePositionTimeOffPolicyDTO> GetFilteredPolicies(PolicyFilterModel model)
+        {
+            if (model == null)
+            {
+                return GetAll();
+            }
+            var Items = _unitOfWork.EmployeePositionTimeOffPolicies.GetAll();
+            if (model.Type != null && model.Type.Id!=0)
+            {
+                Items = Items.Where(x => x.Type.Id == model.Type.Id);
+            }
+            if (model.Position != null && model.Position.Id != 0)
+            {
+                Items = Items.Where(x => x.PositionId == model.Position.Id);
+            }
+            if (!String.IsNullOrEmpty(model.Name))
+            {
+                Items = Items.Where(x => x.Policy.Name.Contains(model.Name));
+            }
+            if (model.SearchByDelay)
+            {
+                Items = Items.Where(x => x.Policy.DelayBeforeAvailable == model.DelayBeforeAvailable);
+            }
+            if (model.TimeOffDaysPerYear != null && model.TimeOffDaysPerYear!=0)
+            {
+                Items = Items.Where(x => x.Policy.TimeOffDaysPerYear == model.TimeOffDaysPerYear);
+            }
+            if (model.IsActive != null)
+            {
+                Items = Items.Where(x => x.IsActive == model.IsActive);
+            }
+            if (model.ApproverPositions != null && model.ApproverPositions.Id !=0)
+            {
+                Items = Items.Where(x => x.Approvers.Any(y=>y.EmployeePositionId == model.ApproverPositions.Id));
+            }
+            if (!Items.Any())
+            {
+                return new List<EmployeePositionTimeOffPolicyDTO>();
+            }
+            return mapper.Map<IEnumerable<EmployeePositionTimeOffPolicy>, IEnumerable<EmployeePositionTimeOffPolicyDTO>>(Items);
+        }
+
+
 
         public EmployeePositionTimeOffPolicyDTO GetById(int id)
         {

@@ -1,5 +1,5 @@
 ﻿@using TOT.Web.ViewModels;
-@model IEnumerable<TOT.Dto.TimeOffPolicies.EmployeePositionTimeOffPolicyDTO>
+@model TOT.Web.ViewModels.PoliciesShowModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -19,6 +19,9 @@
                 Policies List
             </strong>
         </h4>
+    </div>
+    <div class="row">
+        @Html.Partial("_FilterForm", Model.PolicyFilter,ViewData)
     </div>
     <div class="row text-center">
         <h4>
@@ -40,19 +43,19 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Type)
+                        @Html.DisplayNameFor(model => model.Policies.First().Type)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Position)
+                        @Html.DisplayNameFor(model => model.Policies.First().Position)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Policy)
+                        @Html.DisplayNameFor(model => model.Policies.First().Policy)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.IsActive)
+                        @Html.DisplayNameFor(model => model.Policies.First().IsActive)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Approvers)
+                        @Html.DisplayNameFor(model => model.Policies.First().Approvers)
                     </th>
                     <th>
                         Actions
@@ -60,7 +63,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Policies)
                 {
                     <tr id="@("element" + item.Id)" class="@(item.IsActive ? "alert-info":"alert-warning")">
                         <td style="vertical-align:middle">
@@ -90,7 +93,7 @@
                             </table>
                         </td>
                         <td style="vertical-align:middle">
-                            @if (User.IsInRole("Admin") && item.Position !=null && item.IsActive)
+                            @if (User.IsInRole("Admin") && item.Position != null && item.IsActive)
                             {
                                 <input type="button" class="btn btn-warning btn-block" onclick="location.href='@Url.Action("Edit", "Policies", new { id = item.Id })'" value="Edit">
                                 <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Policies", new { id = item.Id })'" value="Details">
