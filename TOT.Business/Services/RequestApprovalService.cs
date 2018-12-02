@@ -90,7 +90,7 @@ namespace TOT.Business.Services
         {
             var approval = unitOfWork.RequestApprovals.Find(
                 a => a.TimeOffRequest.Id == accepted.TimeOffRequestId
-                && a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.InProgres);
+                && a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Queued);
 
             if (approval != null)
             {

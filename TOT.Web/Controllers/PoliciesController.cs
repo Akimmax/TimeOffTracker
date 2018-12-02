@@ -12,6 +12,8 @@ using TOT.Business.Exceptions;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Authorization;
 using TOT.Data.RoleInitializer;
+using TOT.Dto.TimeOffPolicies.Models;
+using TOT.Web.ViewModels;
 
 namespace TOT.Web.Controllers
 {
@@ -30,10 +32,24 @@ namespace TOT.Web.Controllers
             _EmployeePositionTimeOffPolicyService = EmployeePositionTimeOffPolicyService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(PolicyFilterModel filterModel, string Error = "")
         {
-            var PoliciesList = _EmployeePositionTimeOffPolicyService.GetAll().ToList();
-            return View(PoliciesList);
+            ViewData["Error"]=Error;
+            ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
+            ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
+            var activeState = new Dictionary<string, bool?>();
+            activeState.Add("Do not search", null);
+            activeState.Add("Is Active", true);
+            activeState.Add("In Archive", false);
+            ViewData["ActiveState"] = new SelectList(activeState, "Value", "Key");
+
+            var PoliciesList = _EmployeePositionTimeOffPolicyService.GetFilteredPolicies(filterModel);
+            return View(new PoliciesShowModel()
+                {
+                    Policies = PoliciesList,
+                    PolicyFilter = filterModel
+                }
+                );
         }
 
         public IActionResult Details(int id)
@@ -84,6 +100,7 @@ namespace TOT.Web.Controllers
             }
             catch (Exception ex)
             {
+                ModelState.AddModelError(string.Empty, ex.Message);
                 ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                 ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
                 if (ex is ArgumentException || ex is ArgumentNullException || ex is EntityNotFoundException)
@@ -126,10 +143,11 @@ namespace TOT.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     if (_UnitOfWork.EmployeePositionTimeOffPolicies
-                        .Find(x => x.PositionId == ItemCreateModel.Position.Id &&
+                        .Find(x =>
+                        x.Id != ItemCreateModel.Id &&
+                        x.PositionId == ItemCreateModel.Position.Id &&
                         x.TypeId == ItemCreateModel.Type.Id &&
-                        x.IsActive ==true &&
-                        x.Id != ItemCreateModel.Id) != null)
+                        x.IsActive ==true) != null)
                     {
                         ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                         ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
@@ -157,6 +175,7 @@ namespace TOT.Web.Controllers
             }
             catch (Exception ex)
             {
+                ModelState.AddModelError(string.Empty, ex.Message);
                 ViewData["Type"] = new SelectList(_UnitOfWork.TimeOffTypes.GetAll(), "Id", "Title");
                 ViewData["Position"] = new SelectList(_UnitOfWork.EmployeePositions.GetAll(), "Id", "Title");
                 if (ex is ArgumentException || ex is ArgumentNullException || ex is EntityNotFoundException)
@@ -181,8 +200,7 @@ namespace TOT.Web.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index),new { Error = ex.Message});
             }
         }
 

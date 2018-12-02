@@ -14,8 +14,9 @@ namespace TOT.Web.TagHelpers
 {
     public class SortHeaderTagHelper : TagHelper
     {
-        public UserSortState Property { get; set; }
-        public UserSortState Current { get; set; }
+        public Enum Property { get; set; }
+        public Enum Current { get; set; }
+        public Enum SortedBy { get; set; }
         public string Action { get; set; }
         public bool Up { get; set; }
 
@@ -33,25 +34,22 @@ namespace TOT.Web.TagHelpers
         {
             IUrlHelper urlHelper = urlHelperFactory.GetUrlHelper(ViewContext);
             output.TagName = "a";
-            //var propList = ViewContext.HttpContext.Request.Query.ToList();
-            //if (ViewContext.HttpContext.Request.Query.Any())
-            //{
-            //    if (ViewContext.HttpContext.Request.Query.ContainsKey("sortOrder"))
-            //    {
-            //        propList["sortOrder"] = Property.ToString();
-            //    }
-            //    else
-            //    {
-            //        propList.Add("sortOrder", Property.ToString());
-            //    }
-            //}
-            //else
-            //{
-            //    propList.Add("sortOrder", Property.ToString());
-            //}
-            var url = urlHelper.Action(Action, new { sortOrder = Property});
+            var queryList = ViewContext.HttpContext.Request.Query;
+            var propObj = new {
+                Name = queryList["Name"],
+                Surame = queryList["Surame"],
+                Patronymic = queryList["Patronymic"],
+                Email = queryList["Email"],
+                Position = queryList["Position"],
+                fromHireDate = queryList["fromHireDate"],
+                toHireDate = queryList["toHireDate"],
+                Fired = queryList["Fired"],
+                sortOrder = Property
+            };
+
+            var url = urlHelper.Action(Action, propObj);
             output.Attributes.SetAttribute("href", url);
-            if (Current == Property)
+            if (SortedBy.GetHashCode() == Property.GetHashCode())
             {
                 TagBuilder tag = new TagBuilder("i");
                 tag.AddCssClass("glyphicon");

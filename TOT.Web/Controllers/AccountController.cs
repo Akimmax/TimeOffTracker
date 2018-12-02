@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TOT.Business.Services;
 using TOT.Data.RoleInitializer;
@@ -25,6 +26,7 @@ namespace TOT.Web.Controllers
         private readonly IdentityService _identityService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly Interfaces.IMapper mapper;
+        private const int pageSize = 10;
 
         public AccountController(Interfaces.IMapper _mapper,IUnitOfWork unitOfWork, UserManager<User> userManager, SignInManager<User> signInManager,IdentityService identityService)
         {
@@ -35,7 +37,7 @@ namespace TOT.Web.Controllers
             _identityService = identityService;
         }
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> Index(UserFilterModel model, UserSortState sortOrder)
+        public async Task<IActionResult> Index(UserFilterModel model, UserSortState sortOrder=UserSortState.NameAsc,int page=1)
         {
             ViewData["Position"] = new SelectList(_unitOfWork.EmployeePositions.GetAll(), "Id", "Title");
             ViewData["Roles"] = new SelectList(_identityService.GetAllRoles(), "Name", "Name");
@@ -45,11 +47,14 @@ namespace TOT.Web.Controllers
             ViewData["FiredState"] = new SelectList(fireState,"Value","Key");
 
             var Users = await _identityService.GetFilteredUsersAsync(model);
+            int userCount = Users.Count();
             Users = _identityService.SortUsers(Users, sortOrder);
+            Users = _identityService.Pagginator(Users, page, pageSize);
             return View(new UserShowModel(){
                 UserFilter = new UserFilterModel(),
                 Users = mapper.Map<IEnumerable<UserDTO>,IEnumerable<UserUpdateDTO>>(Users),
-                UserSortView = new UserSortViewModel(sortOrder)
+                UserSortView = new UserSortViewModel(sortOrder),
+                UserPageView = new UserPageViewModel(userCount,page,pageSize)
             });
         }
 

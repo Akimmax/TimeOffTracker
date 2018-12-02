@@ -253,7 +253,7 @@ namespace TOT.Business.Services
                     UserId = approverId,
                     TimeOffRequest = request,
                     Status = unitOfWork.RequestApprovalStatuses.Get(
-                    (int)TimeOffRequestApprovalStatusesEnum.InProgres)
+                    (int)TimeOffRequestApprovalStatusesEnum.Queued)
                 };
 
                 approvals.Add(approval);

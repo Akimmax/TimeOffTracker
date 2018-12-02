@@ -187,6 +187,14 @@ namespace TOT.Business.Services
             return Users;
         }
 
+        public IEnumerable<UserDTO> Pagginator(IEnumerable<UserDTO> Items,int page, int pageSize)
+        {
+            var count = Items.Count();
+            var result = Items.Skip((page - 1) * pageSize).Take(pageSize);
+            return result;
+        }
+
+
             public async Task RegisterAsync(UserDTO model)
         {
             var user = _mapper.Map<UserDTO, User>(model);

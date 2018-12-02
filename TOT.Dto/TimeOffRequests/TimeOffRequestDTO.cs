@@ -27,10 +27,12 @@ namespace TOT.Dto.TimeOffRequests
         [Display(Name = "Start")]
         [Required(ErrorMessage = "The value is invalid.")]
         [DateLessThan("EndsOn", ErrorMessage = "Start date must be earlier than End date")]
+        [DataType(DataType.Date)]
         public DateTime StartsAt { get; set; }
 
         [Display(Name = "End")]
         [Required(ErrorMessage = "The value is invalid.")]
+        [DataType(DataType.Date)]
         public DateTime? EndsOn { get; set; }
 
         public string Note { get; set; }
