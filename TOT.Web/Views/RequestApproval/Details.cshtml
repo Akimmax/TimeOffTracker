@@ -1,0 +1,105 @@
+﻿@model TOT.Dto.TimeOffRequests.TimeOffRequestDTO
+
+@{
+    ViewData["Title"] = "Details";
+
+    int counter = 0;
+}
+
+<hr />
+<h4>@ViewData["Title"]</h4>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 ">
+            <div class="col-md-8">
+
+
+
+                <dl class="dl-horizontal ">
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.Type)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => Model.Type.Title)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.StartsAt)
+                    </dt>
+                    <dd>
+                        @Model.StartsAt.ToString("MM/dd/yyyy")
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.EndsOn)
+                    </dt>
+                    <dd>
+                        @Model.EndsOn?.ToString("MM/dd/yyyy")
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.Note)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => Model.Note)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => Model.Approvals)
+                    </dt>
+                    <dd>
+                        @if (Model.Approvals.Any())
+                        {
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Approver</td>
+                                        <td>Status</td>
+                                        <td>Date</td>
+                                        <td>Comment</td>
+                                    </tr>
+
+                                    @foreach (var approval in Model.Approvals)
+                                    {
+                                        counter++;
+
+                                        <tr>
+                                            <td>
+                                                @counter
+                                            </td>
+                                            <td>
+                                                @approval.User.Email
+                                            </td>
+                                            <td>
+                                                @approval.Status.Title
+                                            </td>
+                                            <td>
+                                                @approval.SolvedDate?.ToString("MM/dd/yyyy")
+                                            </td>
+                                            <td>
+                                                @approval.Reason
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        }
+
+                        else
+                        {
+                            <center>No items found</center>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<div>
+    <a href="javascript:history.back()">Back to List</a>
+</div>
+<br />

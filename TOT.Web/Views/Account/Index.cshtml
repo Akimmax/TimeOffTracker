@@ -1,0 +1,259 @@
+﻿@using TOT.Web.ViewModels;
+@using TOT.Dto.Identity;
+@addTagHelper " *, TOT.Web"
+@model TOT.Dto.Identity.Models.UserShowModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Users</title>
+</head>
+<body>
+    <div class="row text-center">
+        <h4>
+            <strong>
+                Accounts List
+            </strong>
+        </h4>
+    </div>
+    <div class="row">
+        <div class="panel-group">
+            <div class="panel panel-primary">
+                <div class="panel-heading" onclick="$('#collapse1').collapse('toggle')">
+                    <h4 class="panel-title text-center">
+                        Filtration form
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <form method="get" class="form-horizontal">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label asp-for="UserFilter.Name" class="col-md-offset-3 col-sm-2 col-md-1 control-label"></label>
+                                <div class="col-sm-10 col-md-4">
+                                    @Html.TextBox("name", Model.UserFilter.Name, htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserFilter.Surname" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                                <div class="col-sm-10 col-md-4">
+                                    @Html.TextBox("surname", Model.UserFilter.Surname, htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserFilter.Patronymic" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                                <div class="col-sm-10 col-md-4">
+                                    @Html.TextBox("patronymic", Model.UserFilter.Patronymic, htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserFilter.Email" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                                <div class="col-sm-10 col-md-4">
+                                    @Html.TextBox("email", Model.UserFilter.Email, htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserFilter.Position" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                                <div class="col-sm-10 col-md-4">
+                                    @Html.DropDownList("position", ViewBag.Position as SelectList, "All positions",
+                 htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-offset-3 col-sm-2 col-md-1  control-label">From</label>
+                                <div class="col-sm-10 col-md-4">
+                                    <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy"
+                                         data-link-field="dtp_fromhiredate" data-link-format="yyyy-mm-dd"
+                                         id="fromhiredate_datepiker">
+                                        <input name="fromHireDate" type="text" class="form-control" placeholder="dd MM yyyy" readonly />
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
+                                    <input name="fromHireDate" type="hidden" id="dtp_fromhiredate" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-offset-3 col-sm-2 col-md-1  control-label">To</label>
+                                <div class="col-sm-10 col-md-4">
+                                    <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy"
+                                         data-link-field="dtp_tohiredate" data-link-format="yyyy-mm-dd"
+                                         id="tohiredate_datepiker">
+                                        <input name="tohiredate" type="text" class="form-control" placeholder="dd MM yyyy" readonly />
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
+                                    <input name="tohiredate" type="hidden" id="dtp_tohiredate" />
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="UserFilter.Roles" class="col-md-offset-3 col-sm-2 col-md-1  control-label"></label>
+                                    <div class="col-sm-10 col-md-4">
+                                        @Html.DropDownList("roles", ViewBag.Roles as SelectList, "All roles",
+                                        htmlAttributes: new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-offset-3 col-sm-2 col-md-1  control-label">State</label>
+                                    <div class="col-sm-10 col-md-4">
+                                        @Html.DropDownList("fired", ViewBag.FiredState , "All",
+                                        htmlAttributes: new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <div class="form-group text-center">
+                                    <input type="submit" value="Filter" class="btn btn-primary" />
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <p>
+            <a asp-action="Register">Register New</a>
+        </p>
+    </div>
+    <div class="row table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.NameSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Name)
+                        </sort-header>
+
+                    </th>
+                    <th>
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.SurnameSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Surname)
+                        </sort-header>
+                    </th>
+                    <th>
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.PatronymicSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Patronymic)
+                        </sort-header>
+                    </th>
+                    <th>
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.EmailSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Email)
+                        </sort-header>
+                    </th>
+                    <th>
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.PositionSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Position)
+                        </sort-header>
+                    </th>
+                    <th>
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.HireDateSort">
+                            @Html.DisplayNameFor(model => model.Users.First().HireDate)
+                        </sort-header>
+                    </th>
+                    <th>
+                        <sort-header action="Index" up="@Model.UserSortView.Up" sorted-by="@Model.UserSortView.SortedBy"
+                                     current="@Model.UserSortView.Current" property="@Model.UserSortView.FiredSort">
+                            @Html.DisplayNameFor(model => model.Users.First().Fired)
+                        </sort-header>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Users.First().Roles)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Users)
+                {
+                    <tr class="@(item.Fired ? "alert-danger":"alert-info")">
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.Surname)
+                        </td>
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.Patronymic)
+                        </td>
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.Position.Title)
+                        </td>
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.HireDate)
+                        </td>
+                        <td style="vertical-align:middle">
+                            <strong>@(item.Fired ? "Fired" : "Working")</strong>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <table class="table table-striped">
+                                @foreach (var role in item.Roles)
+                                {
+                                    <tr>
+                                        <th>
+                                            @role
+                                        </th>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                        <td>
+                            <input type="button" class="btn btn-warning btn-block" onclick="location.href='@Url.Action("Update", "Account", new {id=item.Id})'" value="Edit">
+                            <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Account", new {id=item.Id})'" value="Details">
+                            <input type="button" class="btn btn-danger btn-block" href="#" data-toggle="modal" data-target="#deleteUser" data-arg-id="@item.Id" value="Delete">
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <page-link page-model="Model.UserPageView" page-action="Index"
+                   page-url-name="@(Model.UserFilter.Name)"
+                   page-url-surname="@(Model.UserFilter.Surname)"
+                   page-url-patronymic="@(Model.UserFilter.Patronymic)"
+                   page-url-position="@(Model.UserFilter.Position)"
+                   page-url-email="@(Model.UserFilter.Email)"
+                   page-url-fired="@(Model.UserFilter.Fired)"
+                   page-url-fromhiredate="@(Model.UserFilter.fromHireDate)"
+                   page-url-tohiredate="@(Model.UserFilter.toHireDate)"
+                   page-url-sortorder="@(Model.UserSortView.Current)"></page-link>
+    </div>
+
+    @Html.Partial("_Dialog", new DialogViewModel("deleteUser")
+        {
+            Content = "Are you sure that you want to fire this Employee?",
+            SubmitAction = "Delete",
+            SubmitController = "Account"
+        })
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap-datetimepicker.js" type="text/javascript" charset="UTF-8"></script>
+<script type="text/javascript">
+    $('.form_date').datetimepicker({
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+</script>
+</body>
+</html>
+
+

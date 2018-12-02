@@ -1,0 +1,101 @@
+﻿@using TOT.Dto.TimeOffRequests
+@using TOT.Web.ViewModels;
+@model IEnumerable<TimeOffRequestApprovalDTO>
+
+@{
+    ViewData["Title"] = "Create";
+
+    var type = (int)ViewData["TypeOfList"];
+}
+
+@if (Model.Any())
+{
+    <div class="row table-responsive">
+        <table class="table table-bordered table-hover" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    <td class="col-md-2">
+                        <b>Name</b>
+                    </td>
+                    <td class="col-md-2">
+                        <b>Type</b>
+                    </td>
+                    <td class="col-md-2">
+                        <b>Day(s) Off</b>
+                    </td>
+                    <td class="col-md-2">
+                        <b>Notes</b>
+                    </td>
+                    <td class="col-md-2">
+                        <b>Status</b>
+                    </td>
+                    <th class="col-md-2">
+                        <b>Actions</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="@(item.Status.Id==(int)ApprovalStatuses.Denied ? "alert-danger":item.Status.Id==(int)ApprovalStatuses.Accepted ? "alert-success":"alert-info")">
+                        <td style="overflow:hidden">
+                            @item.TimeOffRequest.User.Email
+                        </td>
+
+                        <td>
+                            @item.TimeOffRequest.Type.Title
+                        </td>
+                        <td>
+                            @item.TimeOffRequest.StartsAt.ToString("MM/dd/yyyy") - @item.TimeOffRequest.EndsOn?.ToString("MM/dd/yyyy")
+                        </td>
+                        <td style="overflow:hidden">
+                            @item.TimeOffRequest.Note
+                        </td>
+                        <td>
+                            @item.Status.Title
+                        </td>
+                        <td>
+                            @switch (type)
+                            {
+                                case (int)TypeOfApprovalsList.RequestedApprovals:
+
+                                    <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "RequestApproval", new {id=item.Id})'" value="Details">
+
+                                    <input type="button" class="btn btn-success btn-block" href="#" data-toggle="modal" data-target="#approveModal" data-arg-id="@item.Id" value="Approve">
+
+                                    <input type="button" class="btn btn-danger btn-block" href="#" data-toggle="modal" data-target="#refuseModal" data-arg-id="@item.Id" value="Refuse">
+                                    break;
+
+                                case (int)TypeOfApprovalsList.RefusedApprovals:
+
+                                    <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "RequestApproval", new {id=item.Id})'" value="Details">
+
+                                    <input type="button" class="btn btn-success btn-block" href="#" data-toggle="modal" data-target="#approveModal" data-arg-id="@item.Id" value="Approve">
+
+                                    <input type="button" class="btn btn-warning btn-block" href="#" data-toggle="modal" data-target="#editModal" data-arg-id="@item.Id" value="Change comment">
+                                    break;
+
+                                case (int)TypeOfApprovalsList.AllMyApprovals:
+
+                                    <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "RequestApproval", new {id=item.Id})'" value="Details">
+
+                                    break;
+
+                                case (int)TypeOfApprovalsList.AllApprovals:
+
+                                    <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "RequestApproval", new {id=item.Id})'" value="Details">
+
+                                    break;
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <center>No items found</center>
+}

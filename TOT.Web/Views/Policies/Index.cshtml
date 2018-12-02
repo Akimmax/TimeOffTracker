@@ -1,0 +1,119 @@
+﻿@using TOT.Web.ViewModels;
+@model TOT.Web.ViewModels.PoliciesShowModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Policies</title>
+</head>
+<body>
+    <div class="row text-center">
+        <h4>
+            <strong>
+                Policies List
+            </strong>
+        </h4>
+    </div>
+    <div class="row">
+        @Html.Partial("_FilterForm", Model.PolicyFilter,ViewData)
+    </div>
+    <div class="row text-center">
+        <h4>
+            <strong class="text-danger">
+                @ViewBag.Error
+            </strong>
+        </h4>
+    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="row">
+            <p>
+                <a asp-action="Create">Create New</a>
+            </p>
+        </div>
+    }
+    <div class="row table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Policies.First().Type)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Policies.First().Position)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Policies.First().Policy)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Policies.First().IsActive)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Policies.First().Approvers)
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Policies)
+                {
+                    <tr id="@("element" + item.Id)" class="@(item.IsActive ? "alert-info":"alert-warning")">
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.Type.Title)
+                        </td>
+                        <td style="vertical-align:middle">
+                            @(item.Position == null ? "Default" : item.Position.Title)
+                        </td>
+                        <td style="vertical-align:middle">
+                            @Html.DisplayFor(modelItem => item.Policy.Name)
+                        </td>
+                        <td style="vertical-align:middle">
+                            <strong>
+                                @(item.IsActive ? "Active" : "In Archive")
+                            </strong>
+                        </td>
+                        <td style="vertical-align:middle">
+                            <table class="table table-striped">
+                                @foreach (var approver in item.Approvers)
+                                {
+                                    <tr>
+                                        <th>
+                                            @(approver.EmployeePosition.Title) : @(approver.Amount)
+                                        </th>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                        <td style="vertical-align:middle">
+                            @if (User.IsInRole("Admin") && item.Position != null && item.IsActive)
+                            {
+                                <input type="button" class="btn btn-warning btn-block" onclick="location.href='@Url.Action("Edit", "Policies", new { id = item.Id })'" value="Edit">
+                                <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Policies", new { id = item.Id })'" value="Details">
+                                <input type="button" class="btn btn-danger btn-block" href="#" data-toggle="modal" data-target="#deletePolicy" data-arg-id="@item.Id" value="Delete">
+                            }
+                            else
+                            {
+                                <input type="button" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Details", "Policies", new { id = item.Id })'" value="Details">
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_Dialog", new DialogViewModel("deletePolicy")
+        {
+            Content = "Are you sure that you want to delete this Policy?",
+            SubmitAction = "Delete",
+            SubmitController = "Policies"
+        })
+</body>
+</html>

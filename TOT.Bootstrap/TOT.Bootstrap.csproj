@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TOT.Business\TOT.Business.csproj" />
+    <ProjectReference Include="..\TOT.Data\TOT.Data.csproj" />
+    <ProjectReference Include="..\TOT.Interfaces\TOT.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

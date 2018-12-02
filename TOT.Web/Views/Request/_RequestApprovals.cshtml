@@ -1,0 +1,32 @@
+﻿@model TOT.Dto.TimeOffRequests.TimeOffRequestDTO
+
+@{
+
+    var userslists = ((List<IEnumerable<SelectListItem>>)ViewData["Users"]);
+
+    int? amountApprovals = (int?)ViewData["AmountRequestApprovalsForRequest"];
+    int counter = 0;
+}
+
+@if (userslists != null && userslists.Any())
+{
+    <div class="row">
+        <div class="col-md-6">
+            <label class="control-label">Approvals</label>
+
+            @foreach (var users in userslists)
+            {
+                <div class="form-group">
+                    @Html.DropDownListFor(model => model.ApproversId, users,
+                    new { @class = "form-control", @id = "selectUser" + counter })
+                </div>
+                counter++;
+            }
+
+        </div>
+    </div>
+}
+else
+{
+    <center>@ViewData["Eror message"]</center>
+}

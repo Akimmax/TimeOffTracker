@@ -1,0 +1,39 @@
+﻿@using TOT.Web.ViewModels;
+@model DialogViewModel
+
+<div id="@Model.Id" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">@Model.Title</h4>
+            </div>
+            <div class="modal-body">
+                <p>@Model.Content</p>
+            </div>
+            <div class="modal-footer">
+                <form asp-action="@Model.SubmitAction" asp-controller="@Model.SubmitController" method="post">
+                    <button type="submit" class="btn btn-primary">@Model.SubmitAction</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    window.addEventListener("load", function () {
+        $('#@Model.Id').on('show.bs.modal', function (event) {
+            var data = $(event.relatedTarget).data();
+            var form = $(this).find('form');
+            for (var key in data) {
+                if (key.startsWith("arg")) {
+                    form.prepend("<input name='" + key.slice(3) + "' value='" + data[key] + "' hidden />");
+                }
+            }
+        })
+    });
+</script>
