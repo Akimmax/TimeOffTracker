@@ -12,6 +12,7 @@ using System;
 using TOT.Business.Exceptions;
 using System.Collections.Generic;
 using TOT.Data.RoleInitializer;
+using TOT.Dto.Identity.Models;
 
 namespace TOT.Web.Controllers
 {
@@ -23,11 +24,11 @@ namespace TOT.Web.Controllers
         private readonly TimeOffTypeService requestTypeService;
         private readonly Interfaces.IMapper dtoMapper;
         private readonly UserManager<User> _userManager;
-      
+
         private static TimeOffRequestDTO TransferringRequestToEdit;
 
         public RequestController(UserManager<User> userManager, TimeOffRequestService requests, TimeOffTypeService requestTypes,
-            EmployeePositionTimeOffPolicyService _employeePositionTimeOffPolicyService ,Interfaces.IMapper mapper)
+            EmployeePositionTimeOffPolicyService _employeePositionTimeOffPolicyService, Interfaces.IMapper mapper)
         {
             requestService = requests;
             dtoMapper = mapper;
@@ -72,7 +73,7 @@ namespace TOT.Web.Controllers
 
         [HttpGet]
         public IActionResult Edit()
-        {           
+        {
             var request = TransferringRequestToEdit;
 
             if (requestService.IfApprovedAtLeastOnce(request.Id))
@@ -84,7 +85,7 @@ namespace TOT.Web.Controllers
                 ViewData["AvailableTypes"] = requestTypeService.GetAll().Select(t =>
                 new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
 
-                return View(request);
+                return View("Edit", request);
             }
         }
 
@@ -103,10 +104,10 @@ namespace TOT.Web.Controllers
 
         [HttpPost]
         public async Task<IActionResult> EditOnlyName(TimeOffRequestDTO req)
-        {            
-                User curentUser = await _userManager.GetUserAsync(HttpContext.User);
-                await requestService.UpdateAsync(req, curentUser);
-                return RedirectToAction(nameof(List));            
+        {
+            User curentUser = await _userManager.GetUserAsync(HttpContext.User);
+            await requestService.UpdateAsync(req, curentUser);
+            return RedirectToAction(nameof(List));
         }
 
         [HttpGet]
@@ -126,44 +127,60 @@ namespace TOT.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult List()
+        public IActionResult List(TimeOffRequestFilterModel model)
         {
             var currentUserId = _userManager.GetUserId(HttpContext.User);
-            var requests = requestService.GetAllForCurrentUser(currentUserId);
 
-            return View(requests);
+            var requests = requestService.GetAllForCurrentUserFilter(currentUserId, model);
+
+            ViewData["AvailableTypes"] = requestTypeService.GetAll().Select(t =>
+               new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
+
+            List<SelectListItem> statuses = new List<SelectListItem>();
+            statuses.Add(new SelectListItem() { Text = "Accepted", Value = ((int)RequestStatuses.Accepted).ToString() });
+            statuses.Add(new SelectListItem() { Text = "Denied", Value = ((int)RequestStatuses.Denied).ToString() });
+            statuses.Add(new SelectListItem() { Text = "In Process", Value = ((int)RequestStatuses.InProcess).ToString() });
+
+            ViewData["AvailableStatuses"] = statuses;
+
+            return View("List", new RequestShowModel()
+            {
+                RequestFilter = new TimeOffRequestFilterModel(),
+                Requests = requests
+            });
         }
 
         [HttpGet]
-        [ActionName(name:"UserRequsts")]
+        [ActionName(name: "UserRequsts")]
         [Authorize(Roles = Roles.Admin)]
         public IActionResult UserRequstsList(string id)
         {
             var requests = requestService.GetAllForCurrentUser(id);
             ViewData["OnlyShow"] = true;
-            return View(nameof(List),requests);
+            return View(nameof(List), requests);
         }
 
         [HttpGet]
         public async Task<IActionResult> PartialAsync(int typeId)
         {
-
             User curentUser = await _userManager.GetUserAsync(HttpContext.User);
 
             try
             {
-                var users = requestService.GetUsers(typeId, curentUser.PositionId, _userManager);
-                ViewData["Users"] = users.Select(u =>
-                new SelectListItem() { Value = u.Id.ToString(), Text = u.Email });
+                var userslists = await requestService.GetUsersAsync(typeId, curentUser.PositionId, _userManager);
 
-                var employeePolicy = employeePositionTimeOffPolicyService
-                    .GetByTypeIdAndPositionId(typeId, curentUser.PositionId);
-                var amount = 0;
-                foreach (var item in employeePolicy.Approvers)
+                List<IEnumerable<SelectListItem>> listOfUserSelectLists = new List<IEnumerable<SelectListItem>>();
+
+                foreach (var users in userslists)
                 {
-                    amount += item.Amount;
+                    listOfUserSelectLists.Add(users.Select(u =>
+                    new SelectListItem() { Value = u.Id.ToString(), Text = u.Email }));
                 }
-                ViewData["AmountRequestApprovalsForRequest"] = amount;
+
+                ViewData["Users"] = listOfUserSelectLists;
+
+                ViewData["AmountRequestApprovalsForRequest"] = listOfUserSelectLists.Count();
+
             }
             catch (Exception e)
             {

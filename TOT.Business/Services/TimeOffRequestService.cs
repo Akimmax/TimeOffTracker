@@ -10,17 +10,23 @@ using TOT.Entities.IdentityEntities;
 using System.Linq;
 using TOT.Entities.TimeOffPolicies;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+using System.Net;
+using TOT.Dto.Identity.Models;
 
 namespace TOT.Business.Services
 {
     public class TimeOffRequestService : BaseService
     {
-        public TimeOffRequestService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly UserManager<User> _userManager;
+
+        public TimeOffRequestService(UserManager<User> userManager, IUnitOfWork unitOfWork, IMapper mapper)
             : base(unitOfWork, mapper)
         {
+            _userManager = userManager;
         }
 
-        public Task CreateAsync(TimeOffRequestDTO requestDTO, User user)
+        public async Task CreateAsync(TimeOffRequestDTO requestDTO, User user)
         {
             if (requestDTO == null)
             {
@@ -31,10 +37,15 @@ namespace TOT.Business.Services
 
             entry.UserId = user.Id;
             entry.Policy = GetEmployeePositionTimeOffPolicyByTypeAndPosition((int)requestDTO.TypeId, user.PositionId);
+
             unitOfWork.TimeOffRequests.Create(entry);
             CreateTimeOffRequestApprovalsForRequest(entry, requestDTO.ApproversId);
 
-            return unitOfWork.SaveAsync();
+            var firstApproval = entry.Approvals.FirstOrDefault();
+
+            await SendNotificationAsync(firstApproval, entry, " requested your to approve request");
+
+            await unitOfWork.SaveAsync();
         }
 
         public Task DeleteAsync(int id)
@@ -44,7 +55,7 @@ namespace TOT.Business.Services
             return unitOfWork.SaveAsync();
         }
 
-        public Task UpdateAsync(TimeOffRequestDTO requestDTO, User user)
+        public async Task UpdateAsync(TimeOffRequestDTO requestDTO, User user)
         {
             if (requestDTO == null)
             {
@@ -64,6 +75,22 @@ namespace TOT.Business.Services
             }
             else
             {
+                if ((request.StartsAt != requestDTO.StartsAt) ||
+                    (request.EndsOn != requestDTO.EndsOn) ||
+                    (request.Note != requestDTO.Note))
+                {
+                    var deniedApproval = request.Approvals.FirstOrDefault(a =>
+                    a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Denied);
+
+                    if (deniedApproval != null)
+                    {
+                        deniedApproval.Status = unitOfWork.RequestApprovalStatuses.Get(
+                        (int)TimeOffRequestApprovalStatusesEnum.Requested);
+
+                        await SendNotificationAsync(deniedApproval, request, " changed the request that was denied by you");
+                    }
+                }
+
                 request.StartsAt = requestDTO.StartsAt;
                 request.EndsOn = requestDTO.EndsOn;
                 request.Note = requestDTO.Note;
@@ -73,7 +100,7 @@ namespace TOT.Business.Services
                     request.TypeId = (int)requestDTO.TypeId;
                     request.Policy = GetEmployeePositionTimeOffPolicyByTypeAndPosition(
                         (int)requestDTO.TypeId, user.PositionId);
-                }                
+                }
 
                 var currentUsersApproveRequestId = request.Approvals.Select(i => i.UserId);
                 var newUsersApproveRequestId = requestDTO.ApproversId;
@@ -95,7 +122,7 @@ namespace TOT.Business.Services
                 }
             }
 
-            return unitOfWork.SaveAsync();
+            await unitOfWork.SaveAsync();
         }
 
         public TimeOffRequestDTO GetById(int requestId)
@@ -139,9 +166,8 @@ namespace TOT.Business.Services
             return requestsDTO;
         }
 
-        public IEnumerable<User> GetUsers(int typeId, int positionId, UserManager<User> userManager)
+        public async Task<IEnumerable<IEnumerable<User>>> GetUsersAsync(int typeId, int positionId, UserManager<User> userManager)
         {
-
             var appropriateEmployeePositionTimeOffPolicy = GetEmployeePositionTimeOffPolicyByTypeAndPosition(typeId, positionId);
 
             if (appropriateEmployeePositionTimeOffPolicy == null)
@@ -150,15 +176,47 @@ namespace TOT.Business.Services
             }
 
             var approvers = appropriateEmployeePositionTimeOffPolicy.Approvers;
-            var aviableUserAsApprovers = userManager.Users.Where(u =>
-            approvers.Any(a => a.EmployeePositionId == u.PositionId));//select Users available to approve requests this policy
 
-            if (aviableUserAsApprovers == null || !aviableUserAsApprovers.Any())
+            List<List<User>> listsOfAviableUsersAsApproversByPosition = new List<List<User>>();
+
+            foreach (var approver in approvers)
+            {
+                for (int i = 0; i < approver.Amount; i++)
+                {
+                    listsOfAviableUsersAsApproversByPosition.Add(
+                        userManager.Users.Where(u =>
+                        u.PositionId == approver.EmployeePositionId).ToList());
+                }
+            }
+
+            if (listsOfAviableUsersAsApproversByPosition == null
+                || !listsOfAviableUsersAsApproversByPosition.Any())
             {
                 throw new ApprovalsNotFoundException("Approvals for appropriate policy");
             }
 
-            return aviableUserAsApprovers;
+            List<List<User>> listsOfAviableUsersAsApproversInRoleApprover = new List<List<User>>();
+
+            foreach (var usersList in listsOfAviableUsersAsApproversByPosition)
+            {
+                List<User> ListApproversInRoleApprover = new List<User>();
+
+                foreach (var user in usersList)
+                {
+                    IList<string> userRoles = await _userManager.GetRolesAsync(user);
+                    var foundRole = userRoles.FirstOrDefault(role => role == "Approver");
+
+                    if (foundRole != null)
+                    {
+                        ListApproversInRoleApprover.Add(user);
+                    }
+                }
+
+                listsOfAviableUsersAsApproversInRoleApprover.Add(ListApproversInRoleApprover);
+
+            }
+
+            return listsOfAviableUsersAsApproversInRoleApprover;
         }
 
         public EmployeePositionTimeOffPolicy GetEmployeePositionTimeOffPolicyByTypeAndPosition
@@ -210,7 +268,6 @@ namespace TOT.Business.Services
             }
         }
 
-
         public bool IfApprovedAtLeastOnce(int id)
         {
             var request = unitOfWork.TimeOffRequests.Get(id);
@@ -222,6 +279,102 @@ namespace TOT.Business.Services
 
             return request.Approvals.Any(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Accepted);
         }
+
+        async Task SendNotificationAsync(TimeOffRequestApproval approval, TimeOffRequest request, string descriptionOfReason)
+        {
+            if (approval == null|| request == null)
+            {
+                return;
+            }
+
+            var addressee = await _userManager.FindByIdAsync(approval.UserId);
+            var requesting = await _userManager.FindByIdAsync(request.UserId);
+
+              if (addressee == null || requesting == null)
+            {
+                return;
+            }
+
+            string mailAddressee = addressee.Email;
+            string mailRequesting = requesting.Email;
+
+            string description = $"User {mailRequesting} {descriptionOfReason}";
+
+            SendMail(mailAddressee, description);
+        }
+
+        void SendMail(string mailAddressee, string description)
+        {
+            MailAddress sender = new MailAddress("totapriorit2018@gmail.com", "Time Off Tracker");
+
+            MailAddress addressee = new MailAddress(mailAddressee);
+
+            MailMessage message = new MailMessage(sender, addressee);
+
+            message.Subject = "There are requests that need your approvement.";
+            message.Body = "<p>" + description + " </br>" +
+                "  <a href=\"https://tot-apriorit.azurewebsites.net\"> View it on Time Off Tracker</a>.</p>";
+            message.IsBodyHtml = true;
+
+            //In the case of access arror check that "Unsafe applications allowed" in account 
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+            smtp.Credentials = new NetworkCredential("totapriorit2018@gmail.com", "Password-TOT1");
+            smtp.EnableSsl = true;
+
+            //smtp.Send(message);
+        }
+
+        public IEnumerable<TimeOffRequestDTO> GetAllForCurrentUserFilter(string userid, TimeOffRequestFilterModel model)
+        {
+            var requests = unitOfWork.TimeOffRequests.Filter(r => r.UserId == userid);
+
+            if (model == null)
+            {
+                return mapper.Map<IEnumerable<TimeOffRequest>, IEnumerable<TimeOffRequestDTO>>(requests);
+            }
+
+            if (model.StartsAt != null)
+            {
+                requests = requests.Where(r => r.StartsAt > model.StartsAt);
+            }
+
+            if (model.EndsOn != null)
+            {
+                requests = requests.Where(r => r.EndsOn < model.EndsOn);
+            }
+
+            if (model.TypeId != null)
+            {
+                requests = requests.Where(r => r.TypeId == model.TypeId);
+            }
+
+            if (!String.IsNullOrEmpty(model.Note))
+            {
+                requests = requests.Where(r => r.Note.Contains(model.Note));
+            }
+
+            if (model.RequestStatuses != null)
+            {
+                switch (model.RequestStatuses)
+                {
+                    case (int)RequestStatuses.InProcess:
+                        requests = requests.Where(r => r.Approvals.Any(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Requested));
+                        break;
+                    case (int)RequestStatuses.Denied:
+                        requests = requests.Where(r => r.Approvals.Any(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Denied));
+                        break;
+                    case (int)RequestStatuses.Accepted:
+                        requests = requests.Where(r => r.Approvals.All(a => a.Status.Id == (int)TimeOffRequestApprovalStatusesEnum.Accepted));
+                        break;
+                }
+            }
+
+            var requestsDTO = mapper.Map<IEnumerable<TimeOffRequest>, IEnumerable<TimeOffRequestDTO>>(requests);
+
+            return requestsDTO;
+        }
+
+
 
     }
 }
