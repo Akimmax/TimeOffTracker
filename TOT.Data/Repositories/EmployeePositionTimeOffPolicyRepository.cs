@@ -36,6 +36,7 @@ namespace TOT.Data.Repositories
                 catch (Exception ex)
                 {
                     transaction.Rollback();
+                    throw new Exception("Some thing go wrong during work whith DB. Changes do not saved.");
                 }
             }
         }
@@ -47,12 +48,11 @@ namespace TOT.Data.Repositories
                 try
                 {
                     var newItem = dbContext.Set<EmployeePositionTimeOffPolicy>().First(x => x.Id == item.Id);
+                    newItem.Policy.Id = item.Policy.Id;
                     newItem.Policy.Name = item.Policy.Name;
                     newItem.Policy.TimeOffDaysPerYear = item.Policy.TimeOffDaysPerYear;
                     newItem.Policy.DelayBeforeAvailable = item.Policy.DelayBeforeAvailable;
                     newItem.IsActive = item.IsActive;
-                    newItem.PolicyId = item.Policy.Id;
-                    newItem.TypeId = item.Type.Id;
 
                     var ApproversSet = dbContext.Set<TimeOffPolicyApprover>();
                     var oldApprovers = ApproversSet.Where(x => x.EmployeePositionTimeOffPolicyId == item.Id);
@@ -69,6 +69,7 @@ namespace TOT.Data.Repositories
                 catch (Exception ex)
                 {
                     transaction.Rollback();
+                    throw new Exception("Some thing go wrong during work whith DB. Changes do not saved.");
                 }
             }
         }
@@ -91,6 +92,7 @@ namespace TOT.Data.Repositories
                 catch (Exception ex)
                 {
                     transaction.Rollback();
+                    throw new Exception("Some thing go wrong during work whith DB. Changes do not saved.");
                 }
             }
         }

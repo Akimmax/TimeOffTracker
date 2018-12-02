@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TOT.Business.Exceptions;
 using TOT.Dto;
 using TOT.Dto.TimeOffPolicies;
+using TOT.Dto.TimeOffPolicies.Models;
 using TOT.Entities.TimeOffPolicies;
 using TOT.Interfaces;
 
@@ -13,10 +14,57 @@ namespace TOT.Business.Services
 {
     public class EmployeePositionTimeOffPolicyService : BaseService
     {
+        public IUnitOfWork _unitOfWork;
+
         public EmployeePositionTimeOffPolicyService(IUnitOfWork unitOfWork, IMapper mapper)
             : base(unitOfWork, mapper)
         {
+            _unitOfWork = unitOfWork;
         }
+
+        public IEnumerable<EmployeePositionTimeOffPolicyDTO> GetFilteredPolicies(PolicyFilterModel model)
+        {
+            if (model == null)
+            {
+                return GetAll();
+            }
+            var Items = _unitOfWork.EmployeePositionTimeOffPolicies.GetAll();
+            if (model.Type != null && model.Type.Id!=0)
+            {
+                Items = Items.Where(x => x.Type.Id == model.Type.Id);
+            }
+            if (model.Position != null && model.Position.Id != 0)
+            {
+                Items = Items.Where(x => x.PositionId == model.Position.Id);
+            }
+            if (!String.IsNullOrEmpty(model.Name))
+            {
+                Items = Items.Where(x => x.Policy.Name.Contains(model.Name));
+            }
+            if (model.SearchByDelay)
+            {
+                Items = Items.Where(x => x.Policy.DelayBeforeAvailable == model.DelayBeforeAvailable);
+            }
+            if (model.TimeOffDaysPerYear != null && model.TimeOffDaysPerYear!=0)
+            {
+                Items = Items.Where(x => x.Policy.TimeOffDaysPerYear == model.TimeOffDaysPerYear);
+            }
+            if (model.IsActive != null)
+            {
+                Items = Items.Where(x => x.IsActive == model.IsActive);
+            }
+            if (model.ApproverPositions != null && model.ApproverPositions.Id !=0)
+            {
+                Items = Items.Where(x => x.Approvers.Any(y=>y.EmployeePositionId == model.ApproverPositions.Id));
+            }
+            if (!Items.Any())
+            {
+                return new List<EmployeePositionTimeOffPolicyDTO>();
+            }
+            return mapper.Map<IEnumerable<EmployeePositionTimeOffPolicy>, IEnumerable<EmployeePositionTimeOffPolicyDTO>>(Items);
+        }
+
+
 
         public EmployeePositionTimeOffPolicyDTO GetById(int id)
         {
@@ -54,6 +102,10 @@ namespace TOT.Business.Services
             {
                 throw new EntityNotFoundException<EmployeePositionTimeOffPolicy>(id);
             }
+            if (template.Position == null)
+            {
+                throw new Exception("It is not posible to delete default Policy.");
+            }
             var requsts = unitOfWork.TimeOffRequests.Find(x=>x.Policy.Id == id);
             if (requsts == null)
             {
@@ -66,6 +118,10 @@ namespace TOT.Business.Services
             }
             else
             {
+                if (template.IsActive == false)
+                {
+                    return Task.CompletedTask;
+                }
                 template.IsActive = false;
                 unitOfWork.EmployeePositionTimeOffPolicies.Update(template);
             }
@@ -78,7 +134,8 @@ namespace TOT.Business.Services
             EmployeePositionTimeOffPolicyDTOChecker(ItemDTO);
 
             var policy = unitOfWork.TimeOffPolicies
-                .Find(x=>x.Name == ItemDTO.Policy.Name &&
+                .Find(x=>
+                x.Name == ItemDTO.Policy.Name &&
                 x.TimeOffDaysPerYear == ItemDTO.Policy.TimeOffDaysPerYear &&
                 x.DelayBeforeAvailable == ItemDTO.Policy.DelayBeforeAvailable);
             if (policy != null)
@@ -130,7 +187,8 @@ namespace TOT.Business.Services
             EmployeePositionTimeOffPolicyDTOChecker(ItemDTO);
 
             var policy = unitOfWork.TimeOffPolicies
-                .Find(x => x.Name == ItemDTO.Policy.Name &&
+                .Find(x =>
+                x.Name == ItemDTO.Policy.Name &&
                 x.TimeOffDaysPerYear == ItemDTO.Policy.TimeOffDaysPerYear &&
                 x.DelayBeforeAvailable == ItemDTO.Policy.DelayBeforeAvailable);
             if (policy != null)
@@ -148,6 +206,10 @@ namespace TOT.Business.Services
 
             if (unitOfWork.EmployeePositionTimeOffPolicies.Get(Item.Id) is EmployeePositionTimeOffPolicy oldItem)
             {
+                if (oldItem.IsActive == false)
+                {
+                    throw new Exception("It is not posible to change Policy in Archive");
+                }
                 if (Item.TypeId == oldItem.TypeId &&
                     Item.PolicyId == oldItem.PolicyId &&
                     Item.Position.Id == oldItem.Position.Id &&
@@ -161,6 +223,14 @@ namespace TOT.Business.Services
                 } else
                 if (template == null)
                 {
+                    Item.IsActive = true;
+                    if (unitOfWork.EmployeePositionTimeOffPolicies.Filter(x => x.IsActive && x.PolicyId == Item.PolicyId).Count() > 1 &&
+                        (oldItem.Policy.Name != Item.Policy.Name
+                        || oldItem.Policy.TimeOffDaysPerYear != Item.Policy.TimeOffDaysPerYear
+                        || oldItem.Policy.DelayBeforeAvailable != Item.Policy.DelayBeforeAvailable))
+                    {
+                        Item.Policy.Id = 0;
+                    }
                     unitOfWork.EmployeePositionTimeOffPolicies.Update(Item);
                     return Task.CompletedTask;
                 }
@@ -169,10 +239,7 @@ namespace TOT.Business.Services
                     Item.Id = 0;
                     Item.IsActive = true;
 
-                    oldItem.IsActive = false;
-                    oldItem.NextPolicy = Item;
-
-                    unitOfWork.EmployeePositionTimeOffPolicies.Update(oldItem);
+                    DeleteByIdAsync(oldItem.Id);
                     unitOfWork.EmployeePositionTimeOffPolicies.Create(Item);
                     return Task.CompletedTask;
                 }

@@ -3,10 +3,9 @@
 
 @{
     ViewData["Title"] = "Create";
-
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var types = ((IEnumerable<SelectListItem>)ViewData["AvailableTypes"]);
 }
-
 <hr />
 <h4>@ViewData["Title"]</h4>
 <div class="row">
@@ -16,20 +15,27 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <div class="form-group col-md-6">
-                    <label asp-for="StartsAt" class="control-label"></label>
-                    <input asp-for="StartsAt" class="form-control"
-                           type="date" id="start"
-                           min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
-                           max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
+                    <label for="dtp_start" asp-for="StartsAt" class="control-label"></label>
+                    <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy"
+                         data-link-field="dtp_start" data-link-format="yyyy-mm-dd"
+                         id="start_datepiker">
+                        <input asp-for="StartsAt" class="form-control" type="text" id="start" placeholder="dd MM yyyy" readonly />
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                    <input asp-for="StartsAt" type="hidden" id="dtp_start" />
                     <span asp-validation-for="StartsAt" class="text-danger"></span>
                 </div>
-
                 <div class="form-group col-md-6">
-                    <label asp-for="EndsOn" class="control-label"></label>
-                    <input asp-for="EndsOn" class="form-control"
-                           type="date" id="end"
-                           min=@string.Format("{0:yyyy-MM-dd}", DateTime.Now)
-                           max=@string.Format("{0:yyyy-MM-dd}", DateTime.Now.Add(new TimeSpan( 365, 0, 0,0))) />
+                    <label for="dtp_end" asp-for="EndsOn" class="control-label"></label>
+                    <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy"
+                         data-link-field="dtp_end" data-link-format="yyyy-mm-dd"
+                         id="end_datepiker">
+                        <input asp-for="EndsOn" class="form-control" type="text" id="end" placeholder="dd MM yyyy" readonly />
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                    <input asp-for="EndsOn" type="hidden" id="dtp_end" />
                     <span asp-validation-for="EndsOn" class="text-danger"></span>
                 </div>
             </div>
@@ -70,9 +76,24 @@
     <a asp-action="List">Back to List</a>
 </div>
 <br />
-
-<script src="~/scripts/jquery-3.3.1.js"></script>
 <script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap-datetimepicker.js" type="text/javascript" charset="UTF-8"></script>
+<script type="text/javascript">
+    var today = new Date();
+    var inYear = new Date();
+    inYear.setFullYear(today.getFullYear() + 1);
+    $('.form_date').datetimepicker({
+        startDate: today,
+        endDate: inYear,
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+</script>
 
 <script>
 

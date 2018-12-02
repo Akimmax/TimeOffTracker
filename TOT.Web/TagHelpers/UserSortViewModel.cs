@@ -17,6 +17,7 @@ namespace TOT.Web.TagHelpers
         public UserSortState FiredSort { get; set; }
         public UserSortState PositionSort { get; set; }
         public UserSortState Current { get; set; }
+        public UserSortState SortedBy { get; set; }
         public bool Up { get; set; }
 
         public UserSortViewModel(UserSortState sortOrder)
@@ -39,49 +40,51 @@ namespace TOT.Web.TagHelpers
                 Up = false;
             }
 
+            Current = sortOrder;
+
             switch (sortOrder)
             {
                 case UserSortState.NameDesc:
-                    Current = NameSort = UserSortState.NameAsc;
+                    SortedBy = NameSort = UserSortState.NameAsc;
                     break;
                 case UserSortState.SurnameAsc:
-                    Current = SurnameSort = UserSortState.SurnameDesc;
+                    SortedBy = SurnameSort = UserSortState.SurnameDesc;
                     break;
                 case UserSortState.SurnameDesc:
-                    Current = SurnameSort = UserSortState.SurnameAsc;
+                    SortedBy = SurnameSort = UserSortState.SurnameAsc;
                     break;
                 case UserSortState.PatronymicAsc:
-                    Current = PatronymicSort = UserSortState.PatronymicDesc;
+                    SortedBy = PatronymicSort = UserSortState.PatronymicDesc;
                     break;
                 case UserSortState.PatronymicDesc:
-                    Current = PatronymicSort = UserSortState.PatronymicAsc;
+                    SortedBy = PatronymicSort = UserSortState.PatronymicAsc;
                     break;
                 case UserSortState.EmailAsc:
-                    Current = EmailSort = UserSortState.EmailDesc;
+                    SortedBy = EmailSort = UserSortState.EmailDesc;
                     break;
                 case UserSortState.EmailDesc:
-                    Current = EmailSort = UserSortState.EmailAsc;
+                    SortedBy = EmailSort = UserSortState.EmailAsc;
                     break;
                 case UserSortState.HireDateAsc:
-                    Current = HireDateSort = UserSortState.HireDateDesc;
+                    SortedBy = HireDateSort = UserSortState.HireDateDesc;
                     break;
                 case UserSortState.HireDateDesc:
-                    Current = HireDateSort = UserSortState.HireDateAsc;
+                    SortedBy = HireDateSort = UserSortState.HireDateAsc;
                     break;
                 case UserSortState.FiredDesc:
-                    Current = FiredSort = UserSortState.FiredAsc;
+                    SortedBy = FiredSort = UserSortState.FiredAsc;
                     break;
                 case UserSortState.FiredAsc:
-                    Current = FiredSort = UserSortState.FiredDesc;
+                    SortedBy = FiredSort = UserSortState.FiredDesc;
                     break;
                 case UserSortState.PositionAsc:
-                    Current = PositionSort = UserSortState.PositionDesc;
+                    SortedBy = PositionSort = UserSortState.PositionDesc;
                     break;
                 case UserSortState.PositionDesc:
-                    Current = PositionSort = UserSortState.PositionAsc;
+                    SortedBy = PositionSort = UserSortState.PositionAsc;
                     break;
                 default:
-                    Current = NameSort = UserSortState.NameDesc;
+                    SortedBy = NameSort = UserSortState.NameDesc;
                     break;
             }
         }

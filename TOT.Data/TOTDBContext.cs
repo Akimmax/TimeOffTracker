@@ -34,9 +34,6 @@ namespace TOT.Data
             modelBuilder.Entity<TimeOffType>()
                 .Property(x => x.Id)
                 .ValueGeneratedNever();
-            modelBuilder.Entity<EmployeePosition>()
-               .HasData(
-               new EmployeePosition() { Title = "Employee", Id = (int)EmployeePositionEnum.Employee });
 
             modelBuilder.Entity<TimeOffType>()
                 .HasKey(x => x.Id);
@@ -89,7 +86,7 @@ namespace TOT.Data
             modelBuilder.Entity<TimeOffRequestApprovalStatuses>()
                 .HasData(
                 new TimeOffRequestApprovalStatuses() { Title = "Requested", Id = (int)TimeOffRequestApprovalStatusesEnum.Requested },
-                new TimeOffRequestApprovalStatuses() { Title = "In progres", Id = (int)TimeOffRequestApprovalStatusesEnum.InProgres },
+                new TimeOffRequestApprovalStatuses() { Title = "Queued", Id = (int)TimeOffRequestApprovalStatusesEnum.Queued },
                 new TimeOffRequestApprovalStatuses() { Title = "Denied", Id = (int)TimeOffRequestApprovalStatusesEnum.Denied },
                 new TimeOffRequestApprovalStatuses() { Title = "Accepted", Id = (int)TimeOffRequestApprovalStatusesEnum.Accepted });
 
@@ -130,9 +127,15 @@ namespace TOT.Data
                 .HasData(
                 new EmployeePosition()
                 {
-                    Id = 1,
-                    Title = "Admin"
+                    Title = "Admin",
+                    Id =(int)EmployeePositionEnum.Admin
+                },
+                new EmployeePosition()
+                {
+                    Title = "Employee",
+                    Id = (int)EmployeePositionEnum.Employee
                 });
+
 
             modelBuilder.Entity<TimeOffPolicy>()
                 .HasData(
