@@ -212,7 +212,7 @@ namespace TOT.Business.Services
             smtp.Credentials = new NetworkCredential("totapriorit2018@gmail.com", "Password-TOT1");
             smtp.EnableSsl = true;
 
-            //smtp.Send(message);
+            smtp.Send(message);
         }
     }
 }

@@ -35,10 +35,10 @@ namespace TOT.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            string connectionString = Configuration.GetConnectionString("DefaultConnection2");
 
             services.AddDbContext<TOTDBContext>(options =>
-            options.UseMySql(connectionString));
+            options.UseMySql(connectionString, opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds)));
 
             services.AddIdentity<User, IdentityRole>(opts =>
             {
