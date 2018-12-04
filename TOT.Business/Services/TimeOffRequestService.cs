@@ -374,6 +374,18 @@ namespace TOT.Business.Services
             return requestsDTO;
         }
 
+        public IEnumerable<TimeOffRequestStatusesDTO> GetRequestStatuses()
+        {
+            IEnumerable<TimeOffRequestStatusesDTO> availableRequestStatuses
+                = new List<TimeOffRequestStatusesDTO>
+                {
+                new TimeOffRequestStatusesDTO{Id=(int)RequestStatuses.InProcess,Title="In Process" },
+                new TimeOffRequestStatusesDTO{Id=(int)RequestStatuses.Denied,Title="Denied" },
+                new TimeOffRequestStatusesDTO{Id=(int)RequestStatuses.Accepted,Title="Accepted" }
+                };
+
+            return availableRequestStatuses;
+        }
 
 
     }

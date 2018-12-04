@@ -33,19 +33,19 @@
                 <ul class="nav navbar-nav">
                     @if (User.Claims.Any())
                     {
-                        <a asp-area="" asp-controller="Request" asp-action="List" class="navbar-brand">My Requsts</a>
+                        <li><a asp-area="" asp-controller="Request" asp-action="List">My Requsts</a></li>
                         <li><a asp-area="" asp-controller="Policies" asp-action="Index">Policies</a></li>
                         <li><a asp-area="" asp-controller="Account" asp-action="UpdatePassword">Change Password</a></li>
-                    }
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <li><a asp-area="" asp-controller="Account" asp-action="Index">Accounts</a></li>
-                    }
-                    @if (User.IsInRole("Approver"))
-                    {
-                        <li><a asp-area="" asp-controller="RequestApproval" asp-action="List">Approvals</a></li>
-                    }
-                </ul>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li><a asp-area="" asp-controller="Account" asp-action="Index">Accounts</a></li>
+                        }
+                        @if (User.IsInRole("Approver"))
+                        {
+                            <li><a asp-area="" asp-controller="RequestApproval" asp-action="List">Approvals</a></li>
+                        }
+                    </ul>
 
                 <partial name="_LoginPartial" />
             </div>
