@@ -136,12 +136,8 @@ namespace TOT.Web.Controllers
             ViewData["AvailableTypes"] = requestTypeService.GetAll().Select(t =>
                new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
 
-            List<SelectListItem> statuses = new List<SelectListItem>();
-            statuses.Add(new SelectListItem() { Text = "Accepted", Value = ((int)RequestStatuses.Accepted).ToString() });
-            statuses.Add(new SelectListItem() { Text = "Denied", Value = ((int)RequestStatuses.Denied).ToString() });
-            statuses.Add(new SelectListItem() { Text = "In Process", Value = ((int)RequestStatuses.InProcess).ToString() });
-
-            ViewData["AvailableStatuses"] = statuses;
+            ViewData["AvailableStatuses"] = requestService.GetRequestStatuses().Select(t =>
+               new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
 
             return View("List", new RequestShowModel()
             {
@@ -152,12 +148,24 @@ namespace TOT.Web.Controllers
 
         [HttpGet]
         [ActionName(name: "UserRequsts")]
-        [Authorize(Roles = Roles.Admin)]
-        public IActionResult UserRequstsList(string id)
+        [Authorize(Roles = Roles.Admin)]     
+        public IActionResult UserRequstsList(TimeOffRequestFilterModel model, string id)
         {
-            var requests = requestService.GetAllForCurrentUser(id);
-            ViewData["OnlyShow"] = true;
-            return View(nameof(List), requests);
+            var requests = requestService.GetAllForCurrentUserFilter(id, model);
+
+                ViewData["OnlyShow"] = true;
+
+            ViewData["AvailableTypes"] = requestTypeService.GetAll().Select(t =>
+               new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
+
+            ViewData["AvailableStatuses"] = requestService.GetRequestStatuses().Select(t =>
+               new SelectListItem() { Value = t.Id.ToString(), Text = t.Title });
+
+            return View("List", new RequestShowModel()
+            {
+                RequestFilter = new TimeOffRequestFilterModel(),
+                Requests = requests
+            });
         }
 
         [HttpGet]

@@ -43,12 +43,4 @@ namespace TOT.Dto.TimeOffRequests
         public ICollection<string> ApproversId { get; set; }
 
     }
-
-    public enum RequestStatuses : int
-    {
-        InProcess = 1,
-        Denied = 2,
-        Accepted = 3
-    }
-
 }
