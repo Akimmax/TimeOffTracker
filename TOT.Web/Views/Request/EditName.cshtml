@@ -1,0 +1,38 @@
+﻿@model TOT.Dto.TimeOffRequests.TimeOffRequestDTO
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<h4>@ViewData["Title"]</h4>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditOnlyName">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="StartsAt" type="hidden" />
+            <input asp-for="EndsOn" type="hidden" />
+            <input asp-for="ApproversId" type="hidden" />
+
+            <div class="form-group col-md-12">
+                <label asp-for="Note" class="control-label"></label>
+                <textarea asp-for="Note" class="form-control" rows="4" cols="50" maxlength="70" style="resize: none"></textarea>
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-md-12">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<br />
+<div>
+    <a asp-action="List">Back to List</a>
+</div>
+<br />

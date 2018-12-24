@@ -1,0 +1,45 @@
+﻿@model TOT.Dto.TimeOffPolicies.PolicyCreateModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+</head>
+<body onload="ShowApr()">
+    <script src="~/js/AddApproversScript.js"></script>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="text-center">
+                    <div class="col-md-offset-4 col-md-3">
+                        <h2>Update policy</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form asp-action="Edit" class="form-horizontal">
+                @Html.Partial("_FieldForm", Model)
+            </form>
+        </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-4 col-md-3">
+            <div class="text-center">
+                <input type="button" class="btn btn-danger" onclick="location.href='@Url.Action("Index", "Policies")'" value="Back to List">
+            </div>
+        </div>
+    </div>
+
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
+</body>
+</html>
