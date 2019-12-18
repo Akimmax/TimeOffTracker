@@ -1,7 +1,7 @@
 # TimeOffTracker
 
 Система для менеджмента отпусков и отгулов. Функциональные возможности:
-* Создание запросов на отпуск
+* Создание запросов на отпуск.
 
 ![Создание запросов на отпуск](https://images.ctfassets.net/9gvb5n00xbqb/2KrMBnQMAU6CkiWOE4EeyQ/4542fbb9e4e60d0dc8541e92359afed1/Intuitive_Interface.jpg)
 * Подтверждение запросов на отпуск
