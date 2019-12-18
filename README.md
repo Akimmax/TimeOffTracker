@@ -12,4 +12,4 @@
 ![Учет и отчетность о использованных дней отпуска](https://images.ctfassets.net/9gvb5n00xbqb/1da12EwzOaysA00QCiaMma/239dde6dbe9c2e7df167fe16851a9207/Time_off_reporting.jpg)
 
 
-### Documentation for this project: https://github.com/Akimmax/TimeOffTracker-docs/blob/master/README.md
+### Documentation for this project: <a href="https://github.com/Akimmax/TimeOffTracker-docs/blob/master/README.md">TimeOffTracker-docs</a>
